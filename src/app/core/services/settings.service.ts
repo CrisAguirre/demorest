@@ -36,7 +36,7 @@ export class SettingsService {
 
   get storeName(): string {
     const name = this.settings?.storeName;
-    return (name && name !== 'Demostore') ? name : 'Daily Mart';
+    return (name && name !== 'Demostore') ? name : "La Soupe a l'Oignon";
   }
 
   get logoUrl(): string {
