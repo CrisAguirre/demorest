@@ -86,11 +86,6 @@ export class SidebarComponent {
         { icon: '🌐', label: 'Tienda Virtual', route: '/storefront' },
         { icon: '⚙️', label: 'Mi Perfil',      route: '/settings' }
       ];
-    } else if (role === 'invitado') {
-      this.menuItems = [
-        { icon: '📊', label: 'Mis Compras',    route: '/dashboard' },
-        { icon: '🌐', label: 'Tienda Virtual', route: '/storefront' }
-      ];
     } else if (role === 'cajero') {
       this.menuItems = [
         { divider: 'Operaciones' },

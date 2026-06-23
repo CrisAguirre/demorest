@@ -76,13 +76,7 @@ export class AuthService {
     );
   }
 
-  loginGuest(): Observable<any> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login-guest`, {}).pipe(
-      tap(res => this._saveSession(res)),
-      switchMap(() => this.preloadSvc.preload()),
-      tap(() => this.preloadSvc.startKeepAlive())
-    );
-  }
+
 
   // ── Other auth methods (unchanged) ────────────────────────────────────────
 
