@@ -408,7 +408,7 @@ input, select, textarea { font-family: inherit; }
   .page-header h1 { font-size: 1.25rem; text-align: center; }
   .neon-card, .neon-card-violet { padding: 1.25rem 1rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: 1fr; }
+  .grid-3, .grid-2 { grid-template-columns: 1fr; }
   .stat-card { flex-direction: column; text-align: center; justify-content: center; padding: 1.5rem; }
   .stat-card .stat-icon { margin: 0 auto; }
 }

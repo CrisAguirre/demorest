@@ -51,6 +51,19 @@ import { AuthService } from '@core/services/auth.service';
         </p>
       </div>
     </div>
+    
+    <div class="neon-card mt-3">
+      <h3 style="margin-bottom:1rem">🪑 Estado de Mesas</h3>
+      <div class="tables-grid">
+        <div *ngFor="let t of tables" 
+             class="table-item" 
+             [class.occupied]="t.isOccupied"
+             (click)="toggleTable(t)">
+          <div class="table-number">{{ t.number }}</div>
+          <div class="table-status">{{ t.isOccupied ? 'Ocupada' : 'Libre' }}</div>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .top-product-item {
@@ -65,6 +78,44 @@ import { AuthService } from '@core/services/auth.service';
       font-size: 0.75rem; font-weight: 700;
     }
     .top-name { flex: 1; font-size: 0.875rem; font-weight: 500; }
+    .mt-3 { margin-top: 1.5rem; }
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .table-item {
+      background: var(--bg-input);
+      border: 1px solid #2E8B57; /* Verde para Libre */
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2E8B57;
+    }
+    .table-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .table-item.occupied {
+      border-color: #D32F2F; /* Rojo para Ocupada */
+      background: rgba(211, 47, 47, 0.05);
+      color: #D32F2F;
+    }
+    .table-number {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .table-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    @media (max-width: 600px) {
+      .tables-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -75,6 +126,7 @@ export class DashboardComponent implements OnInit {
   topProducts: any[] = [];
   salesChartData: any = null;
   salesChartLabels: string[] = [];
+  tables: { id: number; number: number; isOccupied: boolean }[] = [];
   chartOptions = {
     responsive: true,
     plugins: { legend: { display: false } },
@@ -88,6 +140,23 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStats();
+    this.initTables();
+  }
+
+  initTables(): void {
+    const saved = localStorage.getItem('restaurant_tables');
+    if (saved) {
+      this.tables = JSON.parse(saved);
+    } else {
+      for (let i = 1; i <= 16; i++) {
+        this.tables.push({ id: i, number: i, isOccupied: false });
+      }
+    }
+  }
+
+  toggleTable(table: any): void {
+    table.isOccupied = !table.isOccupied;
+    localStorage.setItem('restaurant_tables', JSON.stringify(this.tables));
   }
 
   loadStats(): void {
