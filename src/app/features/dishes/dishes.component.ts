@@ -18,10 +18,13 @@ import { Dish } from '../../core/models/interfaces';
         <input class="form-input" placeholder="🔍 Buscar plato..." [(ngModel)]="search" (input)="applySort()" />
         <select class="form-input" [(ngModel)]="categoryFilter" (change)="applySort()">
           <option value="">Todas las categorías</option>
-          <option value="Menú ejecutivo">Menú ejecutivo</option>
-          <option value="Ejecutivo especial">Ejecutivo especial</option>
-          <option value="Especialidades">Especialidades</option>
-          <option value="Servicio de tiquetera">Servicio de tiquetera</option>
+          <option value="Entradas">Entradas</option>
+          <option value="Sopas">Sopas</option>
+          <option value="Platos fuertes">Platos fuertes</option>
+          <option value="Platos a la carta">Platos a la carta</option>
+          <option value="Postres">Postres</option>
+          <option value="Bebidas">Bebidas</option>
+          <option value="Cócteles">Cócteles</option>
         </select>
       </div>
 
@@ -68,10 +71,13 @@ import { Dish } from '../../core/models/interfaces';
             <div class="form-group">
               <label>Categoría</label>
               <select class="form-input" [(ngModel)]="form.category">
-                <option value="Menú ejecutivo">Menú ejecutivo</option>
-                <option value="Ejecutivo especial">Ejecutivo especial</option>
-                <option value="Especialidades">Especialidades</option>
-                <option value="Servicio de tiquetera">Servicio de tiquetera</option>
+                <option value="Entradas">Entradas</option>
+                <option value="Sopas">Sopas</option>
+                <option value="Platos fuertes">Platos fuertes</option>
+                <option value="Platos a la carta">Platos a la carta</option>
+                <option value="Postres">Postres</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Cócteles">Cócteles</option>
               </select>
             </div>
             <div class="form-group">
@@ -156,7 +162,7 @@ export class DishesComponent implements OnInit {
   }
 
   openForm() {
-    this.form = { category: 'Menú ejecutivo', price: 0, description: '', isAvailable: true };
+    this.form = { category: 'Platos fuertes', price: 0, description: '', isAvailable: true };
     this.editing = false; this.editingId = ''; this.showForm = true;
   }
   edit(item: Dish) {

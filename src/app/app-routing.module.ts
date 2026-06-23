@@ -14,7 +14,7 @@ const routes: Routes = [
       { path: 'cash',       loadChildren: () => import('./features/cash/cash.module').then(m => m.CashModule) },
       { path: 'reports',    loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule),    canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'alerts',     loadChildren: () => import('./features/alerts/alerts.module').then(m => m.AlertsModule),      canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },
-      { path: 'storefront', loadChildren: () => import('./features/storefront/storefront.module').then(m => m.StorefrontModule) },
+      { path: 'domicilios', loadChildren: () => import('./features/domicilios/domicilios.module').then(m => m.DomiciliosModule) },
       { path: 'settings',   loadChildren: () => import('./features/settings/settings.module').then(m => m.SettingsModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cliente'] } },
       // ── NUEVAS RUTAS RESTAURANTE ──────────────────────────────────────────
       { path: 'suppliers',  loadChildren: () => import('./features/suppliers/suppliers.module').then(m => m.SuppliersModule),  canActivate: [RoleGuard], data: { roles: ['admin'] } },

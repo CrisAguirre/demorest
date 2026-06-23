@@ -13,7 +13,16 @@ import { AuthService } from '../../../core/services/auth.service';
         <ng-container *ngFor="let item of menuItems">
           <!-- Separador de sección -->
           <div class="section-divider" *ngIf="item.divider && !collapsed">{{ item.divider }}</div>
-          <a *ngIf="!item.divider" [routerLink]="item.route" routerLinkActive="active"
+          
+          <!-- Enlace Interno -->
+          <a *ngIf="!item.divider && !item.externalUrl" [routerLink]="item.route" routerLinkActive="active"
+             class="nav-item" [title]="item.label">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
+          </a>
+
+          <!-- Enlace Externo -->
+          <a *ngIf="!item.divider && item.externalUrl" [href]="item.externalUrl" target="_blank"
              class="nav-item" [title]="item.label">
             <span class="nav-icon">{{ item.icon }}</span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
@@ -75,7 +84,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class SidebarComponent {
   collapsed = false;
-  menuItems: { icon?: string; label?: string; route?: string; divider?: string }[] = [];
+  menuItems: { icon?: string; label?: string; route?: string; divider?: string; externalUrl?: string }[] = [];
 
   constructor(private auth: AuthService) {
     const role = this.auth.currentUser?.role;
@@ -83,7 +92,8 @@ export class SidebarComponent {
     if (role === 'cliente') {
       this.menuItems = [
         { icon: '📊', label: 'Mis Compras',    route: '/dashboard' },
-        { icon: '🌐', label: 'Tienda Virtual', route: '/storefront' },
+        { icon: '🛵', label: 'Domicilios',     route: '/domicilios' },
+        { icon: '🌍', label: 'Landing',        externalUrl: 'https://www.restmarieantoinette.com/' },
         { icon: '⚙️', label: 'Mi Perfil',      route: '/settings' }
       ];
     } else if (role === 'cajero') {
@@ -121,9 +131,10 @@ export class SidebarComponent {
         { icon: '🧠', label: 'Centro Financiero', route: '/finance' },
         { icon: '📈', label: 'Reportes',        route: '/reports' },
         { icon: '🔔', label: 'Alertas',         route: '/alerts' },
-        // Configuración
+        // Configuración y Enlaces Externos
         { divider: 'Sistema' },
-        { icon: '🌐', label: 'Tienda Virtual',  route: '/storefront' },
+        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },
+        { icon: '🌍', label: 'Landing',         externalUrl: 'https://www.restmarieantoinette.com/' },
         { icon: '⚙️', label: 'Configuración',    route: '/settings' }
       ];
     }
