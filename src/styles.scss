@@ -139,27 +139,24 @@ input, select, textarea { font-family: inherit; }
    ══════════════════════════════════════════════════ */
 .neon-card {
   background: var(--bg-card);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(211, 47, 47, 0.3); /* Color rojo opaco */
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
-  animation: neonPulse 3s ease-in-out infinite;
   transition: all var(--transition-base);
 
   &:hover {
-    border-color: rgba(212, 175, 55, 0.35);
-    box-shadow: var(--shadow-cyan-strong);
+    border-color: rgba(211, 47, 47, 0.8);
     transform: translateY(-2px);
   }
 }
 
 .neon-card-violet {
   @extend .neon-card;
-  border-color: rgba(124, 77, 255, 0.15);
-  animation: neonPulseViolet 3s ease-in-out infinite;
+  border-color: rgba(123, 31, 162, 0.3); /* Color morado opaco */
 
   &:hover {
-    border-color: rgba(124, 77, 255, 0.35);
+    border-color: rgba(123, 31, 162, 0.8);
   }
 }
 
