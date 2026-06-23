@@ -95,11 +95,12 @@ export class SidebarComponent {
       this.menuItems = [
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { icon: '📦', label: 'Inventario',      route: '/inventory' },
+        { icon: '🧅', label: 'Ingredientes',    route: '/ingredients' },
+        { icon: '🍲', label: 'Platos',          route: '/dishes' },
         { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         { divider: 'Gestión' },
-        { icon: '👥', label: 'Deudores',        route: '/debtors' },
+        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
         { icon: '🔔', label: 'Alertas',         route: '/alerts' }
       ];
     } else if (role === 'admin') {
@@ -107,17 +108,19 @@ export class SidebarComponent {
         // Operaciones diarias
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { icon: '📦', label: 'Inventario',      route: '/inventory' },
+        { icon: '🧅', label: 'Ingredientes',    route: '/ingredients' },
+        { icon: '🍲', label: 'Platos',          route: '/dishes' },
         { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         // Compras y proveedores
         { divider: 'Compras' },
         { icon: '🏭', label: 'Proveedores',     route: '/suppliers' },
         { icon: '🛍️', label: 'Compras',         route: '/purchases' },
-        { icon: '👥', label: 'Deudores',        route: '/debtors' },
-        // Gastos
-        { divider: 'Gastos' },
+        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
+        // Gastos y Personal
+        { divider: 'Gastos y Personal' },
         { icon: '💸', label: 'Gastos Operativos', route: '/expenses' },
+        { icon: '👨‍🍳', label: 'Personal',        route: '/staff' },
         // Inteligencia
         { divider: 'Inteligencia' },
         { icon: '🧠', label: 'Centro Financiero', route: '/finance' },

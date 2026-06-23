@@ -390,52 +390,125 @@ export class ApiService {
     return this.cachedGet(k, this.http.get(`${this.baseUrl}/finance/monthly-pl`, { params }), TTL.finance);
   }
 
-  // ── Debtors (Deudores) ──────────────────────────────────────────────────
+  // ── Ingredients ─────────────────────────────────────────────────────────
 
-  getDebtors(params?: any): Observable<any> {
-    const k = this.key('debtors', params);
-    return this.cachedGet(k, this.http.get(`${this.baseUrl}/debtors`, { params }), TTL.suppliers);
+  getIngredients(params?: any): Observable<any> {
+    const k = this.key('ingredients', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/ingredients`, { params }), TTL.products);
   }
 
-  getDebtor(id: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/debtors/${id}`);
+  getIngredient(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/ingredients/${id}`);
   }
 
-  createDebtor(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/debtors`, data).pipe(
-      tap(() => this.preload.invalidatePrefix('debtors'))
+  createIngredient(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ingredients`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('ingredients'))
     );
   }
 
-  updateDebtor(id: string, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/debtors/${id}`, data).pipe(
-      tap(() => this.preload.invalidatePrefix('debtors'))
+  updateIngredient(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/ingredients/${id}`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('ingredients'))
     );
   }
 
-  deleteDebtor(id: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/debtors/${id}`).pipe(
-      tap(() => this.preload.invalidatePrefix('debtors'))
+  deleteIngredient(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/ingredients/${id}`).pipe(
+      tap(() => this.preload.invalidatePrefix('ingredients'))
     );
   }
 
-  addDebtorTransaction(id: string, data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/debtors/${id}/transactions`, data).pipe(
-      tap(() => this.preload.invalidatePrefix('debtors'))
+  // ── Dishes ──────────────────────────────────────────────────────────────
+
+  getDishes(params?: any): Observable<any> {
+    const k = this.key('dishes', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/dishes`, { params }), TTL.products);
+  }
+
+  getDish(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/dishes/${id}`);
+  }
+
+  createDish(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/dishes`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('dishes'))
     );
   }
 
-  getDebtorTransactions(id: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/debtors/${id}/transactions`);
+  updateDish(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/dishes/${id}`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('dishes'))
+    );
   }
 
-  getNextDebtorCode(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/debtors/next-code`);
+  deleteDish(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/dishes/${id}`).pipe(
+      tap(() => this.preload.invalidatePrefix('dishes'))
+    );
   }
 
-  checkDebtorMora(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/debtors/check-mora`, {}).pipe(
-      tap(() => this.preload.invalidatePrefix('alerts'))
+  // ── Staff ───────────────────────────────────────────────────────────────
+
+  getStaff(params?: any): Observable<any> {
+    const k = this.key('staff', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/staff`, { params }), TTL.suppliers);
+  }
+
+  getStaffMember(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/staff/${id}`);
+  }
+
+  createStaffMember(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/staff`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('staff'))
+    );
+  }
+
+  updateStaffMember(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/staff/${id}`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('staff'))
+    );
+  }
+
+  deleteStaffMember(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/staff/${id}`).pipe(
+      tap(() => this.preload.invalidatePrefix('staff'))
+    );
+  }
+
+  // ── TicketBooks ─────────────────────────────────────────────────────────
+
+  getTicketBooks(params?: any): Observable<any> {
+    const k = this.key('ticketbooks', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/ticketbooks`, { params }), TTL.sales);
+  }
+
+  getTicketBook(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/ticketbooks/${id}`);
+  }
+
+  createTicketBook(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ticketbooks`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('ticketbooks'))
+    );
+  }
+
+  updateTicketBook(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/ticketbooks/${id}`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('ticketbooks'))
+    );
+  }
+
+  consumeTicketBook(id: string, data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ticketbooks/${id}/consume`, data).pipe(
+      tap(() => this.preload.invalidatePrefix('ticketbooks'))
+    );
+  }
+
+  deleteTicketBook(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/ticketbooks/${id}`).pipe(
+      tap(() => this.preload.invalidatePrefix('ticketbooks'))
     );
   }
 }

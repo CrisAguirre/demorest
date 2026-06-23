@@ -92,30 +92,55 @@ export interface MonthlyPL {
   revenue: number; expenses: number; purchases: number; profit: number; salesCount: number;
 }
 
-// ── INTERFACES DEUDORES ─────────────────────────────────────────────────────
+// ── NUEVAS INTERFACES RESTAURANTE ─────────────────────────────────────────────
 
-export type DebtorTransactionType = 'abono' | 'pago_completo' | 'aumento_credito' | 'nueva_deuda';
-
-export interface DebtorTransaction {
+export interface Ingredient {
   _id: string;
-  type: DebtorTransactionType;
-  amount: number;
-  balanceBefore: number;
-  balanceAfter: number;
-  notes: string;
+  name: string;
+  unit: string;
+  stock: number;
+  minStock: number;
+  cost: number;
+  isActive: boolean;
   createdAt: string;
 }
 
-export interface Debtor {
+export interface Dish {
   _id: string;
-  code: string;
   name: string;
-  address: string;
+  category: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  isAvailable: boolean;
+  createdAt: string;
+}
+
+export interface Staff {
+  _id: string;
+  name: string;
   phone: string;
-  totalDebt: number;
-  creditLimit: number;
-  transactions: DebtorTransaction[];
-  lastPaymentDate: string | null;
+  position: string;
+  salary: number;
+  paymentDate: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface Consumption {
+  _id: string;
+  date: string;
+  notes: string;
+}
+
+export interface TicketBook {
+  _id: string;
+  customerName: string;
+  phone: string;
+  totalMeals: number;
+  consumedMeals: number;
+  pricePaid: number;
+  consumptions: Consumption[];
   isActive: boolean;
   createdAt: string;
 }
