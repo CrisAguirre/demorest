@@ -145,7 +145,7 @@ import { SettingsService } from '@core/services/settings.service';
     .login-logo-img { display: block; max-height: 60px; margin: 0 auto 1rem; border-radius: 8px; }
     .login-header h1 {
       font-family: 'Outfit', sans-serif; font-size: 1.5rem;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .login-header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem; }
@@ -185,8 +185,8 @@ import { SettingsService } from '@core/services/settings.service';
       border-radius: 50%;
       background: radial-gradient(
         circle,
-        rgba(0,229,255,0.07) 0%,
-        rgba(124,77,255,0.05) 40%,
+        rgba(211,47,47,0.07) 0%,
+        rgba(123,31,162,0.05) 40%,
         transparent 70%
       );
       animation: pulse-glow 3s ease-in-out infinite;
@@ -215,8 +215,8 @@ import { SettingsService } from '@core/services/settings.service';
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        #00E5FF 90deg,
-        #7C4DFF 180deg,
+        #D32F2F 90deg,
+        #7B1FA2 180deg,
         transparent 260deg
       );
       animation: ring-rotate 1.6s linear infinite;
@@ -248,7 +248,7 @@ import { SettingsService } from '@core/services/settings.service';
     .overlay-store-name {
       font-family: 'Outfit', sans-serif;
       font-size: 1.4rem; font-weight: 700;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       letter-spacing: 0.5px;
     }
@@ -285,9 +285,9 @@ import { SettingsService } from '@core/services/settings.service';
       height: 100%;
       width: 40%;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(90deg, #D32F2F, #7B1FA2);
       animation: progress-slide 1.6s ease-in-out infinite;
-      box-shadow: 0 0 8px rgba(0,229,255,0.6);
+      box-shadow: 0 0 8px rgba(211,47,47,0.6);
     }
 
     /* ── Keyframes ────────────────────────────────── */
@@ -297,8 +297,8 @@ import { SettingsService } from '@core/services/settings.service';
     }
 
     @keyframes logo-pulse {
-      0%, 100% { filter: drop-shadow(0 0 6px rgba(0,229,255,0.4)); }
-      50%       { filter: drop-shadow(0 0 16px rgba(124,77,255,0.6)); }
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(211,47,47,0.4)); }
+      50%       { filter: drop-shadow(0 0 16px rgba(123,31,162,0.6)); }
     }
 
     @keyframes pulse-glow {

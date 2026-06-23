@@ -49,7 +49,7 @@ import { environment } from '../../../../environments/environment';
     .navbar-logo { height: 36px; width: auto; border-radius: 6px; }
     .navbar-title {
       font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .navbar-actions { display: flex; align-items: center; gap: 1rem; }
