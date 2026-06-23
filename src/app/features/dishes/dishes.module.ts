@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { DishesRoutingModule } from './dishes-routing.module';
 import { DishesComponent } from './dishes.component';
-
 
 @NgModule({
   declarations: [
@@ -11,6 +11,7 @@ import { DishesComponent } from './dishes.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     DishesRoutingModule
   ]
 })
