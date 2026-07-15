@@ -180,3 +180,11 @@ export interface TicketBook {
   isActive: boolean;
   createdAt: string;
 }
+
+export interface RestaurantTable {
+  _id: string;
+  number: number;
+  isOccupied: boolean;
+  currentSale?: string | Sale;
+  occupiedAt?: string;
+}

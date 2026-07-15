@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-dashboard',
@@ -58,7 +59,7 @@ import { AuthService } from '@core/services/auth.service';
         <div *ngFor="let t of tables" 
              class="table-item" 
              [class.occupied]="t.isOccupied"
-             (click)="toggleTable(t)">
+             (click)="freeTable(t)">
           <div class="table-number">{{ t.number }}</div>
           <div class="table-status">{{ t.isOccupied ? 'Ocupada' : 'Libre' }}</div>
         </div>
@@ -126,7 +127,7 @@ export class DashboardComponent implements OnInit {
   topProducts: any[] = [];
   salesChartData: any = null;
   salesChartLabels: string[] = [];
-  tables: { id: number; number: number; isOccupied: boolean }[] = [];
+  tables: any[] = [];
   chartOptions = {
     responsive: true,
     plugins: { legend: { display: false } },
@@ -140,23 +141,37 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStats();
-    this.initTables();
+    this.loadTables();
   }
 
-  initTables(): void {
-    const saved = localStorage.getItem('restaurant_tables');
-    if (saved) {
-      this.tables = JSON.parse(saved);
-    } else {
-      for (let i = 1; i <= 16; i++) {
-        this.tables.push({ id: i, number: i, isOccupied: false });
+  loadTables(): void {
+    this.api.getTables().subscribe({
+      next: (res: any) => this.tables = res
+    });
+  }
+
+  freeTable(table: any): void {
+    if (!table.isOccupied) return;
+    Swal.fire({
+      title: `¿Liberar Mesa ${table.number}?`,
+      text: 'La mesa será marcada como libre',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#D4AF37',
+      confirmButtonText: 'Sí, liberar',
+      cancelButtonText: 'Cancelar'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        this.api.freeTable(table._id).subscribe({
+          next: () => {
+            table.isOccupied = false;
+            table.currentSale = null;
+            table.occupiedAt = null;
+            Swal.fire({ icon: 'success', title: 'Mesa liberada', timer: 1500, showConfirmButton: false });
+          }
+        });
       }
-    }
-  }
-
-  toggleTable(table: any): void {
-    table.isOccupied = !table.isOccupied;
-    localStorage.setItem('restaurant_tables', JSON.stringify(this.tables));
+    });
   }
 
   loadStats(): void {

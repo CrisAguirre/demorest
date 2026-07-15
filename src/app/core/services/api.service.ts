@@ -523,5 +523,19 @@ export class ApiService {
       tap(() => this.preload.invalidatePrefix('ticketbooks'))
     );
   }
+
+  // ── Tables ────────────────────────────────────────────────────────────
+
+  getTables(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/tables`);
+  }
+
+  occupyTable(id: string, saleId: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/tables/${id}/occupy`, { saleId });
+  }
+
+  freeTable(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/tables/${id}/free`, {});
+  }
 }
 

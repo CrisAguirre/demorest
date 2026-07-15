@@ -52,6 +52,14 @@ import Swal from 'sweetalert2';
           </div>
         </div>
         <div class="cart-footer" *ngIf="cart.length > 0">
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+            <select class="form-input" [(ngModel)]="selectedTable" style="flex:1">
+              <option [ngValue]="null">🪑 Sin mesa</option>
+              <option *ngFor="let t of tables" [ngValue]="t.number" [disabled]="t.number !== selectedTable && t.isOccupied">
+                Mesa {{ t.number }} {{ t.isOccupied ? '(Ocupada)' : '' }}
+              </option>
+            </select>
+          </div>
           <div class="cart-total">
             <span>TOTAL</span>
             <span class="total-amount">\${{ total | number:'1.0-0' }}</span>
@@ -141,6 +149,8 @@ export class PosComponent implements OnInit {
   selectedCategory = '';
   paymentMethod = 'efectivo';
   processing = false;
+  tables: any[] = [];
+  selectedTable: number | null = null;
 
   get total(): number {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
@@ -154,6 +164,9 @@ export class PosComponent implements OnInit {
         this.products = res.filter((p: any) => p.isAvailable !== false); 
         this.filteredProducts = [...this.products]; 
       }
+    });
+    this.api.getTables().subscribe({
+      next: (res: any) => this.tables = res
     });
   }
 
@@ -209,10 +222,12 @@ export class PosComponent implements OnInit {
 
   finalizeSale(): void {
     this.processing = true;
-    this.api.createSale({
+    const payload: any = {
       items: this.cart.map(i => ({ product: i.product, quantity: i.quantity })),
       paymentMethod: this.paymentMethod
-    }).subscribe({
+    };
+    if (this.selectedTable) payload.tableNumber = this.selectedTable;
+    this.api.createSale(payload).subscribe({
       next: () => {
         this.processing = false;
         Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#D4AF37' });
