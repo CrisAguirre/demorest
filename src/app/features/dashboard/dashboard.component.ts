@@ -11,7 +11,7 @@ import { AuthService } from '@core/services/auth.service';
 
     <div class="grid-4 mb-3">
       <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(0,229,255,0.1)">💰</div>
+        <div class="stat-icon" style="background:rgba(212,175,55,0.1)">💰</div>
         <div><div class="stat-value">\${{ todaySales | number:'1.0-0' }}</div><div class="stat-label">Ventas Hoy</div></div>
       </div>
       <div class="stat-card">
@@ -73,7 +73,7 @@ import { AuthService } from '@core/services/auth.service';
     .top-product-item:last-child { border-bottom: none; }
     .top-rank {
       width: 26px; height: 26px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(135deg, var(--brand-gold), var(--brand-bronze));
       color: #fff; display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 700;
     }
@@ -131,7 +131,7 @@ export class DashboardComponent implements OnInit {
     responsive: true,
     plugins: { legend: { display: false } },
     scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(0,229,255,0.05)' } },
+      y: { beginAtZero: true, grid: { color: 'rgba(212,175,55,0.05)' } },
       x: { grid: { display: false } }
     }
   };
@@ -188,8 +188,8 @@ export class DashboardComponent implements OnInit {
         });
         this.salesChartData = [{
           data: days.map((d: any) => d.total),
-          backgroundColor: 'rgba(0,229,255,0.3)',
-          borderColor: '#00E5FF',
+          backgroundColor: 'rgba(212,175,55,0.3)',
+          borderColor: '#D4AF37',
           borderWidth: 2,
           borderRadius: 6
         }];

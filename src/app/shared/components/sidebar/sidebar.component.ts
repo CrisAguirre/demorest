@@ -35,7 +35,7 @@ import { AuthService } from '../../../core/services/auth.service';
     .sidebar {
       width: 220px; min-height: calc(100vh - 60px);
       background: var(--bg-sidebar);
-      border-right: 1px solid rgba(0,229,255,0.08);
+      border-right: 1px solid rgba(212,175,55,0.08);
       padding: 1rem 0; transition: width 0.25s ease;
       display: flex; flex-direction: column;
       position: sticky; top: 60px;
@@ -62,10 +62,10 @@ import { AuthService } from '../../../core/services/auth.service';
       color: var(--text-secondary); transition: all 0.15s;
       white-space: nowrap; overflow: hidden;
     }
-    .nav-item:hover { background: rgba(0,229,255,0.06); color: var(--text-primary); }
+    .nav-item:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
     .nav-item.active {
-      background: rgba(0,229,255,0.1); color: #00B8D4;
-      font-weight: 600; border-left: 3px solid var(--neon-cyan);
+      background: rgba(212,175,55,0.1); color: var(--brand-gold);
+      font-weight: 600; border-left: 3px solid var(--brand-gold);
     }
     .nav-icon { font-size: 1.2rem; min-width: 24px; text-align: center; }
     .nav-label { transition: opacity 0.2s; }
@@ -78,7 +78,7 @@ import { AuthService } from '../../../core/services/auth.service';
       .section-divider { display: none; }
       .nav-item { justify-content: center; padding: 0.85rem 0; margin: 0.15rem 0.25rem; }
       .nav-icon { font-size: 1.4rem; }
-      .nav-item.active { border-left: none; border-bottom: 3px solid var(--neon-cyan); border-radius: 6px; }
+      .nav-item.active { border-left: none; border-bottom: 3px solid var(--brand-gold); border-radius: 6px; }
     }
   `]
 })

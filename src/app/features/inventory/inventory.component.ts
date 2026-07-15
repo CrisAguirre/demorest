@@ -232,7 +232,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         </select>
         <input id="swal-qty" class="swal2-input" type="number" placeholder="Cantidad" min="1">
       `,
-      showCancelButton: true, confirmButtonText: 'Aplicar', confirmButtonColor: '#00E5FF',
+      showCancelButton: true, confirmButtonText: 'Aplicar', confirmButtonColor: '#D4AF37',
       preConfirm: () => ({
         type: (document.getElementById('swal-type') as HTMLSelectElement).value,
         quantity: +(document.getElementById('swal-qty') as HTMLInputElement).value,
@@ -250,7 +250,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     Swal.fire({
       title: `¿${action === 'activar' ? 'Activar' : 'Desactivar'} producto?`, 
       text: `${product.name} (${product.barcode})`,
-      icon: 'question', showCancelButton: true, confirmButtonColor: '#00E5FF',
+      icon: 'question', showCancelButton: true, confirmButtonColor: '#D4AF37',
       confirmButtonText: `Sí, ${action}`
     }).then(r => {
       if (r.isConfirmed) {

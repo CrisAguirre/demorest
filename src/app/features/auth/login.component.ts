@@ -84,7 +84,7 @@ import { SettingsService } from '@core/services/settings.service';
             {{ loading ? '⏳ Ingresando...' : '🔐 Ingresar' }}
           </button>
           <p class="toggle-view">¿No tienes cuenta?
-            <a href="javascript:void(0)" (click)="toggleView()">Regístrate aquí</a>
+            <button type="button" class="link-btn" (click)="toggleView()">Regístrate aquí</button>
           </p>
         </form>
 
@@ -118,7 +118,7 @@ import { SettingsService } from '@core/services/settings.service';
             {{ loading ? '⏳ Registrando...' : '📝 Crear cuenta' }}
           </button>
           <p class="toggle-view">¿Ya tienes cuenta?
-            <a href="javascript:void(0)" (click)="toggleView()">Inicia sesión</a>
+            <button type="button" class="link-btn" (click)="toggleView()">Inicia sesión</button>
           </p>
         </form>
 
@@ -136,7 +136,7 @@ import { SettingsService } from '@core/services/settings.service';
       width: 100%; max-width: 400px; padding: 2.5rem 2rem;
       animation: fadeInUp 0.6s ease;
       background: var(--bg-card);
-      border: 1px solid rgba(0,229,255,0.15);
+      border: 1px solid rgba(212,175,55,0.15);
       border-radius: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
@@ -145,8 +145,7 @@ import { SettingsService } from '@core/services/settings.service';
     .login-logo-img { display: block; max-height: 60px; margin: 0 auto 1rem; border-radius: 8px; }
     .login-header h1 {
       font-family: 'Outfit', sans-serif; font-size: 1.5rem;
-      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      color: var(--brand-gold);
     }
     .login-header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem; }
     .login-form { display: flex; flex-direction: column; }
@@ -156,14 +155,16 @@ import { SettingsService } from '@core/services/settings.service';
       background: none; border: none; cursor: pointer; font-size: 1rem;
     }
     .error-msg {
-      color: var(--neon-red); font-size: 0.8rem; text-align: center;
+      color: var(--brand-red); font-size: 0.8rem; text-align: center;
       margin-bottom: 0.5rem; animation: fadeIn 0.3s;
     }
     .login-btn { width: 100%; margin-top: 0.5rem; }
     .toggle-view {
       text-align: center; font-size: 0.85rem; margin-top: 1rem; color: var(--text-primary);
     }
-    .toggle-view a { color: var(--neon-cyan); text-decoration: none; font-weight: 600; }
+    .toggle-view a, .link-btn { color: var(--brand-gold); text-decoration: none; font-weight: 600; }
+    .link-btn { background: none; border: none; cursor: pointer; font-size: 0.85rem; font-family: inherit; padding: 0; }
+    .link-btn:hover { text-decoration: underline; }
     .login-footer {
       text-align: center; margin-top: 1.5rem;
       font-size: 0.75rem; color: var(--text-muted);
@@ -215,8 +216,8 @@ import { SettingsService } from '@core/services/settings.service';
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        #D32F2F 90deg,
-        #7B1FA2 180deg,
+        var(--brand-gold) 90deg,
+        var(--brand-bronze) 180deg,
         transparent 260deg
       );
       animation: ring-rotate 1.6s linear infinite;
@@ -248,8 +249,7 @@ import { SettingsService } from '@core/services/settings.service';
     .overlay-store-name {
       font-family: 'Outfit', sans-serif;
       font-size: 1.4rem; font-weight: 700;
-      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      color: var(--brand-gold);
       letter-spacing: 0.5px;
     }
 
@@ -285,7 +285,7 @@ import { SettingsService } from '@core/services/settings.service';
       height: 100%;
       width: 40%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #D32F2F, #7B1FA2);
+      background: var(--brand-gold);
       animation: progress-slide 1.6s ease-in-out infinite;
       box-shadow: 0 0 8px rgba(211,47,47,0.6);
     }

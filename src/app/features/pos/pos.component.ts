@@ -40,9 +40,9 @@ import Swal from 'sweetalert2';
               <span class="cart-item-price">\${{ item.unitPrice | number:'1.0-0' }} c/u</span>
             </div>
             <div class="cart-item-controls">
-              <button class="qty-btn" (click)="changeQty(i, -1)">−</button>
+              <button class="qty-btn" (click)="changeQty(i, -1)" aria-label="Reducir cantidad">−</button>
               <span class="qty-display">{{ item.quantity }}</span>
-              <button class="qty-btn" (click)="changeQty(i, 1)">+</button>
+              <button class="qty-btn" (click)="changeQty(i, 1)" aria-label="Aumentar cantidad">+</button>
               <span class="cart-item-subtotal">\${{ item.subtotal | number:'1.0-0' }}</span>
               <button class="btn-ghost btn-sm" (click)="removeItem(i)">✕</button>
             </div>
@@ -85,14 +85,14 @@ import Swal from 'sweetalert2';
       background: #fff; font-size: 0.75rem; white-space: nowrap; cursor: pointer;
       transition: all 0.15s;
     }
-    .cat-btn.active { background: var(--neon-cyan); color: #fff; border-color: var(--neon-cyan); }
+    .cat-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
     .product-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem;
       max-height: calc(100vh - 240px); overflow-y: auto;
     }
-    .product-tile:hover { transform: translateY(-2px); border-color: var(--neon-cyan); }
+    .product-tile:hover { transform: translateY(-2px); border-color: var(--brand-gold); }
     .product-tile-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.375rem; line-height: 1.3; }
-    .product-tile-price { font-family: 'Outfit'; font-weight: 700; color: var(--neon-violet); }
+    .product-tile-price { font-family: 'Outfit'; font-weight: 700; color: var(--brand-bronze); }
     .pos-cart { display: flex; flex-direction: column; position: sticky; top: 76px; max-height: calc(100vh - 100px); }
     .cart-items { flex: 1; overflow-y: auto; }
     .cart-item {
@@ -111,13 +111,12 @@ import Swal from 'sweetalert2';
     .cart-item-subtotal { font-family: 'Outfit'; font-weight: 700; margin-left: auto; }
     .cart-total {
       display: flex; justify-content: space-between; align-items: center;
-      padding-top: 0.75rem; border-top: 2px solid var(--neon-violet);
+      padding-top: 0.75rem; border-top: 2px solid var(--brand-bronze);
       font-weight: 700;
     }
     .total-amount {
       font-family: 'Outfit'; font-size: 1.5rem;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      color: var(--brand-gold);
     }
     @media (max-width: 768px) {
       .pos-layout { grid-template-columns: 1fr; }
@@ -216,7 +215,7 @@ export class PosComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.processing = false;
-        Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#00E5FF' });
+        Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#D4AF37' });
         this.cart = [];
         this.ngOnInit(); // Recargar productos con stock actualizado
       },

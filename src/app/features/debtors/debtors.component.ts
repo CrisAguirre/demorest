@@ -23,7 +23,7 @@ import { Debtor, DebtorTransaction } from '../../core/models/interfaces';
       <!-- Stat Cards -->
       <div class="grid-4 mb-3">
         <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(0,229,255,0.1)">👥</div>
+          <div class="stat-icon" style="background:rgba(212,175,55,0.1)">👥</div>
           <div>
             <div class="stat-value">{{ debtors.length }}</div>
             <div class="stat-label">Total Deudores</div>
@@ -123,7 +123,7 @@ import { Debtor, DebtorTransaction } from '../../core/models/interfaces';
             <div class="form-group">
               <label>Consecutivo</label>
               <input class="form-input" [(ngModel)]="form.code" readonly
-                     style="color:var(--neon-cyan); font-weight:700" />
+                     style="color:var(--brand-gold); font-weight:700" />
               <small class="hint">Generado automáticamente</small>
             </div>
             <div class="form-group">
@@ -273,8 +273,8 @@ import { Debtor, DebtorTransaction } from '../../core/models/interfaces';
 
     /* Table */
     .amount-col { font-weight: 600; }
-    .debt-active { color: var(--neon-orange); }
-    .debt-zero { color: var(--neon-green); }
+    .debt-active { color: var(--brand-orange); }
+    .debt-zero { color: var(--brand-green); }
     .text-muted { color: var(--text-muted); font-size: .8rem; }
     .address-cell { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nowrap { white-space: nowrap; }
@@ -283,7 +283,7 @@ import { Debtor, DebtorTransaction } from '../../core/models/interfaces';
 
     /* Mora row highlighting */
     .mora-row td { background: rgba(255, 23, 68, 0.03) !important; }
-    .mora-row td:first-child { border-left: 3px solid var(--neon-red); }
+    .mora-row td:first-child { border-left: 3px solid var(--brand-red); }
 
     /* Mora badge with pulse */
     .badge-mora { background: rgba(255, 23, 68, 0.15); color: #FF1744; }
@@ -338,7 +338,7 @@ import { Debtor, DebtorTransaction } from '../../core/models/interfaces';
                          animation: fadeInUp 0.2s ease; }
     .transaction-form { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
     .transaction-form .form-input { max-width: 200px; }
-    .tx-type-label { font-weight: 700; font-size: .85rem; color: var(--neon-cyan); white-space: nowrap; min-width: 120px; }
+    .tx-type-label { font-weight: 700; font-size: .85rem; color: var(--brand-gold); white-space: nowrap; min-width: 120px; }
     .tx-buttons { display: flex; gap: .5rem; }
 
     /* Transaction history */

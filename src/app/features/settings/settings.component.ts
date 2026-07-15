@@ -39,7 +39,7 @@ import Swal from 'sweetalert2';
           <p *ngIf="!currentLogo" style="color:var(--text-muted);margin-bottom:1rem">Sin logo configurado</p>
           <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display:none">
           <button class="btn-outline" (click)="fileInput.click()">📤 Subir Logo</button>
-          <p *ngIf="selectedFile" style="font-size:0.8rem;margin-top:0.5rem;color:var(--neon-green)">
+          <p *ngIf="selectedFile" style="font-size:0.8rem;margin-top:0.5rem;color:var(--brand-green)">
             ✅ {{ selectedFile.name }}
           </p>
         </div>

@@ -144,7 +144,7 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
   styles: [`
     .period-selector { display:flex; gap:.4rem; }
     .btn-period { padding:.4rem .9rem; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); cursor:pointer; font-size:.8rem; transition:all .15s; }
-    .btn-period.active { background:var(--neon-cyan); color:#000; border-color:var(--neon-cyan); font-weight:700; }
+    .btn-period.active { background:var(--brand-gold); color:#000; border-color:var(--brand-gold); font-weight:700; }
 
     .pl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
     @media(max-width:768px){ .pl-grid { grid-template-columns:1fr 1fr; } }
@@ -154,7 +154,7 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
     .pl-label { font-size:.75rem; color:var(--text-secondary); margin-bottom:.3rem; }
     .pl-value { font-size:1.15rem; font-weight:700; color:var(--text-primary); }
     .pl-sub { font-size:.72rem; color:var(--text-muted,var(--text-secondary)); margin-top:.2rem; }
-    .pl-card.income  { border-color:rgba(0,229,255,.25); }
+    .pl-card.income  { border-color:rgba(212,175,55,.25); }
     .pl-card.gross.positive  { border-color:rgba(0,200,100,.3); }
     .pl-card.gross.negative  { border-color:rgba(255,80,80,.3); }
     .pl-card.net.positive  { border-color:rgba(0,200,100,.4); background:rgba(0,200,100,.05); }
@@ -190,11 +190,11 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
     .bar-group { display:flex; gap:4px; align-items:flex-end; height:100px; }
     .bar-wrap { display:flex; align-items:flex-end; }
     .bar { width:18px; border-radius:3px 3px 0 0; min-height:4px; transition:height .3s; }
-    .bar-income  { background:var(--neon-cyan,#00e5ff); }
+    .bar-income  { background:var(--brand-gold); }
     .bar-expense { background:#ff7043; }
     .month-profit { font-size:.72rem; font-weight:600; margin-top:.4rem; }
     .legend { display:flex; gap:1.5rem; justify-content:center; margin-top:.5rem; font-size:.78rem; }
-    .income-dot { color:var(--neon-cyan,#00e5ff); }
+    .income-dot { color:var(--brand-gold); }
     .expense-dot { color:#ff7043; }
   `]
 })

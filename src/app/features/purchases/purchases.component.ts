@@ -220,7 +220,7 @@ interface PurchaseFormItem {
     .form-input.sm { max-width:180px; }
     
     .modal-xl { max-width: 1000px !important; width: 95vw; }
-    .modal-subtitle { font-size: 0.9rem; color: var(--neon-cyan); margin-top: -0.5rem; margin-bottom: 1.5rem; }
+    .modal-subtitle { font-size: 0.9rem; color: var(--brand-gold); margin-top: -0.5rem; margin-bottom: 1.5rem; }
     
     .form-grid-header { display:grid; grid-template-columns: 2fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
     @media(max-width: 768px) { .form-grid-header { grid-template-columns: 1fr; } }
@@ -236,16 +236,16 @@ interface PurchaseFormItem {
     .search-catalog { margin-bottom: 1rem; width: 100%; }
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; max-height: 400px; overflow-y: auto; padding-right: 0.5rem; }
     .product-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; cursor: pointer; transition: all 0.2s; position: relative; }
-    .product-card:hover { border-color: var(--neon-cyan); transform: translateY(-2px); }
-    .product-card.selected { border-color: var(--neon-cyan); background: rgba(0, 229, 255, 0.05); }
+    .product-card:hover { border-color: var(--brand-gold); transform: translateY(-2px); }
+    .product-card.selected { border-color: var(--brand-gold); background: rgba(212, 175, 55, 0.05); }
     .prod-check { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.8rem; }
     .prod-name { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; line-height: 1.2; }
     .prod-stock { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
-    .prod-price { font-size: 0.85rem; color: var(--neon-green); font-weight: 600; }
+    .prod-price { font-size: 0.85rem; color: var(--brand-green); font-weight: 600; }
     .empty-catalog { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem 0; font-size: 0.9rem; }
     
     /* Cart */
-    .cart-section { background: var(--bg-card); border-radius: 8px; padding: 1rem; border: 1px solid rgba(0, 229, 255, 0.1); display: flex; flex-direction: column; }
+    .cart-section { background: var(--bg-card); border-radius: 8px; padding: 1rem; border: 1px solid rgba(212, 175, 55, 0.1); display: flex; flex-direction: column; }
     .empty-cart { text-align: center; color: var(--text-muted); padding: 3rem 1rem; font-size: 0.9rem; border: 1px dashed var(--border); border-radius: 8px; margin-top: 1rem; }
     .cart-items { max-height: 330px; overflow-y: auto; padding-right: 0.5rem; flex: 1; }
     .cart-item { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem; background: rgba(0,0,0,0.2); }
@@ -255,18 +255,18 @@ interface PurchaseFormItem {
     .control-group { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
     .control-group label { font-size: 0.7rem; color: var(--text-secondary); }
     .num-input { padding: 0.3rem 0.5rem; height: auto; font-size: 0.85rem; }
-    .subtotal-val { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.9rem; padding-top: 0.4rem; color: var(--neon-cyan); }
+    .subtotal-val { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.9rem; padding-top: 0.4rem; color: var(--brand-gold); }
     .item-options { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px dashed var(--border); padding-top: 0.5rem; }
     .toggle-label.sm { font-size: 0.75rem; }
-    .stock-hint { font-size: 0.75rem; color: var(--neon-green); font-weight: 600; }
+    .stock-hint { font-size: 0.75rem; color: var(--brand-green); font-weight: 600; }
     
     .cart-footer { margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border); text-align: right; }
     .purchase-total { font-size: 1.2rem; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
     .purchase-total span { color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; }
-    .purchase-total strong { color: var(--neon-cyan); font-family: 'Outfit', sans-serif; }
+    .purchase-total strong { color: var(--brand-gold); font-family: 'Outfit', sans-serif; }
     
     /* General */
-    .amount-col { font-weight:600; color:var(--neon-cyan); }
+    .amount-col { font-weight:600; color:var(--brand-gold); }
     .actions { display:flex; gap:.4rem; }
     .detail-row { display:flex; justify-content:space-between; padding:.4rem 0; border-bottom:1px solid var(--border); font-size:.9rem; }
     .pagination { display:flex; align-items:center; justify-content:center; gap:1rem; padding:1rem; }

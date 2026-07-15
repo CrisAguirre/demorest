@@ -18,7 +18,7 @@ import { environment } from '../../../../environments/environment';
         <button class="btn-theme" (click)="toggleTheme()" [title]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
           {{ isDarkMode ? '☀️' : '🌙' }}
         </button>
-        <button class="btn-notification" (click)="toggleAlerts()" *ngIf="authService.hasRole('admin')">
+        <button class="btn-notification" (click)="toggleAlerts()" aria-label="Ver alertas" *ngIf="authService.hasRole('admin')">
           🔔
           <span class="notification-badge" *ngIf="unreadAlerts > 0">{{ unreadAlerts }}</span>
         </button>
@@ -38,7 +38,7 @@ import { environment } from '../../../../environments/environment';
     .navbar {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 1.5rem; height: 60px;
-      background: var(--bg-card); border-bottom: 1px solid rgba(0,229,255,0.12);
+      background: var(--bg-card); border-bottom: 1px solid rgba(212,175,55,0.12);
       box-shadow: 0 1px 8px rgba(0,0,0,0.03);
       position: sticky; top: 0; z-index: 100;
       color: var(--text-primary);
@@ -49,8 +49,7 @@ import { environment } from '../../../../environments/environment';
     .navbar-logo { height: 36px; width: auto; border-radius: 6px; }
     .navbar-title {
       font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;
-      background: linear-gradient(135deg, #D32F2F, #7B1FA2);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      color: var(--brand-gold);
     }
     .navbar-actions { display: flex; align-items: center; gap: 1rem; }
     .btn-notification, .btn-theme {
@@ -58,10 +57,10 @@ import { environment } from '../../../../environments/environment';
       width: 38px; height: 38px; border-radius: 8px; font-size: 1.1rem;
       cursor: pointer; transition: all 0.2s; color: var(--text-primary);
     }
-    .btn-notification:hover, .btn-theme:hover { background: rgba(0,229,255,0.08); }
+    .btn-notification:hover, .btn-theme:hover { background: rgba(212,175,55,0.08); }
     .notification-badge {
       position: absolute; top: -4px; right: -4px;
-      background: var(--neon-red); color: #fff; font-size: 0.65rem;
+      background: var(--brand-red); color: #fff; font-size: 0.65rem;
       min-width: 18px; height: 18px; border-radius: 9px;
       display: flex; align-items: center; justify-content: center;
       font-weight: 700;
@@ -74,7 +73,7 @@ import { environment } from '../../../../environments/environment';
     .user-menu:hover { background: var(--bg-input); }
     .user-avatar {
       width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+      background: linear-gradient(135deg, var(--brand-gold), var(--brand-bronze));
       color: #fff; display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 0.85rem;
     }
@@ -82,7 +81,7 @@ import { environment } from '../../../../environments/environment';
     .user-role { font-size: 0.65rem; }
     .dropdown {
       position: absolute; top: 56px; right: 1.5rem;
-      background: var(--bg-card); border: 1px solid rgba(0,229,255,0.15);
+      background: var(--bg-card); border: 1px solid rgba(212,175,55,0.15);
       border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.1);
       overflow: hidden; z-index: 200; min-width: 180px;
     }

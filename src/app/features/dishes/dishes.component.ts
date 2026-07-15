@@ -48,8 +48,8 @@ import { Dish, Ingredient } from '../../core/models/interfaces';
               <td><span class="badge badge-violet">{{ item.category }}</span></td>
               <td>{{ item.price | currency }}</td>
               <td>
-                <span class="badge" [class.badge-green]="item.ingredients?.length" [class.badge-red]="!item.ingredients?.length">
-                  {{ item.ingredients?.length ? item.ingredients.length + ' insumos' : 'Sin receta' }}
+                <span class="badge" [class.badge-green]="item.ingredients.length" [class.badge-red]="!item.ingredients.length">
+                  {{ item.ingredients.length ? item.ingredients.length + ' insumos' : 'Sin receta' }}
                 </span>
               </td>
               <td>
@@ -245,7 +245,7 @@ export class DishesComponent implements OnInit {
   edit(item: Dish) {
     this.form = {
       ...item,
-      ingredients: item.ingredients?.map(i => ({
+      ingredients: item.ingredients.map(i => ({
         ingredient: typeof i.ingredient === 'string' ? i.ingredient : i.ingredient?._id,
         quantity: i.quantity
       })) || []

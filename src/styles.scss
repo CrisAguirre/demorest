@@ -17,16 +17,16 @@
   --text-muted: #9CA3AF;
 
   /* Colores Corporativos */
-  --neon-cyan: #D4AF37; /* Oro */
-  --neon-violet: #8B5A2B; /* Bronce/Marrón */
-  --neon-green: #2E8B57;
-  --neon-orange: #FF8C00;
-  --neon-red: #D32F2F;
-  --neon-pink: #C06C2D;
+  --brand-gold: #D4AF37; /* Oro */
+  --brand-bronze: #8B5A2B; /* Bronce/Marrón */
+  --brand-green: #2E8B57;
+  --brand-orange: #FF8C00;
+  --brand-red: #D32F2F;
+  --brand-pink: #C06C2D;
 
   /* Sombras */
-  --shadow-cyan: 0 0 8px rgba(212,175,55,0.2), 0 0 20px rgba(212,175,55,0.05);
-  --shadow-cyan-strong: 0 0 14px rgba(212,175,55,0.4), 0 0 30px rgba(212,175,55,0.1);
+  --shadow-gold: 0 0 8px rgba(212,175,55,0.2), 0 0 20px rgba(212,175,55,0.05);
+  --shadow-gold-strong: 0 0 14px rgba(212,175,55,0.4), 0 0 30px rgba(212,175,55,0.1);
   --shadow-violet: 0 0 8px rgba(139,90,43,0.2), 0 0 20px rgba(139,90,43,0.05);
   --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
 
@@ -105,8 +105,8 @@ input, select, textarea { font-family: inherit; }
    ✨ ANIMACIONES NEÓN
    ══════════════════════════════════════════════════ */
 @keyframes neonPulse {
-  0%, 100% { box-shadow: var(--shadow-cyan); }
-  50% { box-shadow: var(--shadow-cyan-strong); }
+  0%, 100% { box-shadow: var(--shadow-gold); }
+  50% { box-shadow: var(--shadow-gold-strong); }
 }
 
 @keyframes neonPulseViolet {
@@ -186,7 +186,7 @@ input, select, textarea { font-family: inherit; }
 
 .btn-primary {
   @extend .btn;
-  background: linear-gradient(135deg, var(--neon-cyan), #B8860B);
+  background: linear-gradient(135deg, var(--brand-gold), #B8860B);
   color: #fff;
   box-shadow: 0 2px 12px rgba(212,175,55,0.3);
 
@@ -198,7 +198,7 @@ input, select, textarea { font-family: inherit; }
 
 .btn-violet {
   @extend .btn;
-  background: linear-gradient(135deg, var(--neon-violet), #651FFF);
+  background: linear-gradient(135deg, var(--brand-bronze), #651FFF);
   color: #fff;
   box-shadow: 0 2px 12px rgba(124,77,255,0.3);
 
@@ -210,13 +210,13 @@ input, select, textarea { font-family: inherit; }
 
 .btn-success {
   @extend .btn;
-  background: linear-gradient(135deg, var(--neon-green), #00C853);
+  background: linear-gradient(135deg, var(--brand-green), #00C853);
   color: #fff;
 }
 
 .btn-danger {
   @extend .btn;
-  background: linear-gradient(135deg, var(--neon-red), #D50000);
+  background: linear-gradient(135deg, var(--brand-red), #D50000);
   color: #fff;
 }
 
@@ -227,7 +227,7 @@ input, select, textarea { font-family: inherit; }
   color: var(--text-primary);
 
   &:hover:not(:disabled) {
-    border-color: var(--neon-cyan);
+    border-color: var(--brand-gold);
     background: rgba(212,175,55,0.05);
   }
 }
@@ -243,8 +243,16 @@ input, select, textarea { font-family: inherit; }
 .btn-sm { padding: 0.4rem 0.875rem; font-size: 0.8rem; }
 .btn-lg { padding: 0.8rem 1.75rem; font-size: 1rem; }
 .btn-icon {
-  width: 36px; height: 36px; padding: 0;
+  width: 44px; height: 44px; padding: 0;
   border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
 }
 
 /* ══════════════════════════════════════════════════
@@ -277,7 +285,7 @@ input, select, textarea { font-family: inherit; }
   outline: none;
 
   &:focus {
-    border-color: var(--neon-cyan);
+    border-color: var(--brand-gold);
     box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
     background-color: var(--bg-input-focus) !important;
   }
@@ -290,14 +298,14 @@ input, select, textarea { font-family: inherit; }
   &::placeholder { color: var(--text-muted); }
 
   &.error {
-    border-color: var(--neon-red);
+    border-color: var(--brand-red);
     box-shadow: 0 0 0 3px rgba(255,23,68,0.1);
   }
 }
 
 .form-error {
   font-size: 0.75rem;
-  color: var(--neon-red);
+  color: var(--brand-red);
   margin-top: 0.125rem;
 }
 
@@ -461,7 +469,7 @@ input, select, textarea { font-family: inherit; }
   background: var(--bg-card);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-cyan-strong);
+  box-shadow: var(--shadow-gold-strong);
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
@@ -535,20 +543,8 @@ input, select, textarea { font-family: inherit; }
 }
 
 /* ══════════════════════════════════════════════════
-   🔴 BTN-ICON VARIANTS
+   🔴 BTN-ICON VARIANTS (hover states only)
    ══════════════════════════════════════════════════ */
-.btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px; height: 34px;
-  padding: 0; border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-size: 1rem;
-  transition: all var(--transition-fast);
-  cursor: pointer;
-}
 .btn-icon:hover { background: rgba(212,175,55,0.08); }
 .btn-icon-danger:hover { background: rgba(255,23,68,0.1); }
 
@@ -571,6 +567,6 @@ input, select, textarea { font-family: inherit; }
   transition: all var(--transition-fast);
 }
 .btn-secondary:hover {
-  border-color: var(--neon-cyan);
+  border-color: var(--brand-gold);
   background: rgba(212,175,55,0.05);
 }

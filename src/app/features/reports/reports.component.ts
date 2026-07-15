@@ -18,7 +18,7 @@ export class ReportsComponent implements OnInit {
   inventory: any = { totalProducts: 0, totalUnits: 0, totalCostValue: 0, totalSaleValue: 0, potentialProfit: 0, marginPercent: 0, lowStockCount: 0, outOfStockCount: 0, byCategory: [] };
   profitMargins: any[] = [];
 
-  pieColors = ['#00E5FF', '#7C4DFF', '#00E676', '#FF9100', '#F50057', '#FFEA00', '#00B0FF', '#D500F9', '#76FF03', '#FF3D00'];
+  pieColors = ['#D4AF37', '#8B5A2B', '#2E8B57', '#FF8C00', '#D32F2F', '#FFD700', '#C06C2D', '#6B4226', '#4CAF50', '#E65100'];
 
   constructor(private api: ApiService) {}
   ngOnInit(): void { this.loadAll(); }

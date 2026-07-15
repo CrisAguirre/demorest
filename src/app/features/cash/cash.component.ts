@@ -37,7 +37,7 @@ import Swal from 'sweetalert2';
               <td>\${{ c.totalSales | number:'1.0-0' }}</td>
               <td>\${{ c.expectedCash | number:'1.0-0' }}</td>
               <td>{{ c.actualCash !== null ? ('$' + (c.actualCash | number:'1.0-0')) : '-' }}</td>
-              <td [style.color]="c.difference < 0 ? 'var(--neon-red)' : 'var(--neon-green)'">
+              <td [style.color]="c.difference < 0 ? 'var(--brand-red)' : 'var(--brand-green)'">
                 {{ c.difference !== 0 ? ('$' + (c.difference | number:'1.0-0')) : '$0' }}
               </td>
               <td><span [class]="c.status === 'abierta' ? 'badge badge-green' : 'badge badge-violet'">{{ c.status }}</span></td>
@@ -64,7 +64,7 @@ export class CashComponent implements OnInit {
   async openCash(): Promise<void> {
     const { value } = await Swal.fire({
       title: '🔓 Abrir Caja', input: 'number', inputLabel: 'Monto inicial en caja',
-      inputPlaceholder: '0', showCancelButton: true, confirmButtonColor: '#00E5FF'
+      inputPlaceholder: '0', showCancelButton: true, confirmButtonColor: '#D4AF37'
     });
     if (value !== undefined) {
       this.api.openCash(+value).subscribe({ next: () => { this.loadData(); Swal.fire('✅', 'Caja abierta', 'success'); } });

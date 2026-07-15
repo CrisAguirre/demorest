@@ -144,7 +144,7 @@ import { Expense, ExpenseCategoryOption, Supplier } from '../../core/models/inte
     .full-width { grid-column:1 / -1; }
     .toggle-group { display:flex; align-items:center; }
     .toggle-label { display:flex; align-items:center; gap:.5rem; font-size:.85rem; cursor:pointer; }
-    .amount-col { font-weight:600; color:var(--neon-cyan); }
+    .amount-col { font-weight:600; color:var(--brand-gold); }
     .actions { display:flex; gap:.4rem; }
     .pagination { display:flex; align-items:center; justify-content:center; gap:1rem; padding:1rem; }
     .badge-info { background:rgba(0,150,255,.15); color:#4db8ff; }

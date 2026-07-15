@@ -65,8 +65,8 @@ import { PreloadService } from './core/services/preload.service';
     }
 
     .floating-wa.show-logo {
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
-      box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+      background: linear-gradient(135deg, var(--brand-gold), var(--brand-bronze));
+      box-shadow: 0 4px 15px rgba(212,175,55,0.4);
     }
     .floating-wa.show-logo .wa-icon { opacity: 0; transform: translateX(-20px); }
     .floating-wa.show-logo .store-icon { opacity: 1; transform: translateX(0); }

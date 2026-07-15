@@ -15,14 +15,14 @@
   color: var(--text-primary);
   transition: all 0.15s;
 }
-.cat-btn.active { background: var(--neon-cyan); color: #fff; border-color: var(--neon-cyan); }
+.cat-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
 
 /* ── Product Form ── */
 .product-form { animation: fadeInUp 0.3s ease; }
 .form-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 1.5rem; padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(0,229,255,0.15);
+  border-bottom: 1px solid rgba(212,175,55,0.15);
   h3 { font-size: 1.1rem; }
 }
 
@@ -34,7 +34,7 @@
 .code-input {
   font-family: 'Outfit', monospace !important; font-size: 1.1rem !important;
   font-weight: 700 !important; letter-spacing: 0.15em;
-  color: var(--neon-cyan) !important; background: var(--bg-input) !important;
+  color: var(--brand-gold) !important; background: var(--bg-input) !important;
 }
 
 .form-hint {
@@ -48,9 +48,9 @@
   font-size: 0.85rem;
   span:first-child { color: var(--text-secondary); }
 }
-.margin-good { color: var(--neon-green); font-weight: 700; }
-.margin-ok { color: var(--neon-orange); font-weight: 700; }
-.margin-low { color: var(--neon-red); font-weight: 700; }
+.margin-good { color: var(--brand-green); font-weight: 700; }
+.margin-ok { color: var(--brand-orange); font-weight: 700; }
+.margin-low { color: var(--brand-red); font-weight: 700; }
 
 .form-actions {
   display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;
@@ -60,7 +60,7 @@
 .product-code {
   font-family: 'Outfit', monospace; font-weight: 700;
   font-size: 0.85rem; letter-spacing: 0.1em;
-  color: var(--neon-cyan); background: rgba(0,229,255,0.08);
+  color: var(--brand-gold); background: rgba(212,175,55,0.08);
   padding: 0.2rem 0.5rem; border-radius: 4px;
 }
 
