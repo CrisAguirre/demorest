@@ -448,6 +448,18 @@ export class ApiService {
     );
   }
 
+  getRecipeCost(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/dishes/${id}/recipe-cost`);
+  }
+
+  checkDishAvailability(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/dishes/${id}/availability`);
+  }
+
+  batchCheckAvailability(dishIds: string[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/dishes/batch-availability`, { dishIds });
+  }
+
   // ── Staff ───────────────────────────────────────────────────────────────
 
   getStaff(params?: any): Observable<any> {

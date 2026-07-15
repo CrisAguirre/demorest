@@ -101,8 +101,14 @@ export interface Ingredient {
   stock: number;
   minStock: number;
   cost: number;
+  product?: string | Product;
   isActive: boolean;
   createdAt: string;
+}
+
+export interface DishIngredient {
+  ingredient: string | Ingredient;
+  quantity: number;
 }
 
 export interface Dish {
@@ -113,7 +119,37 @@ export interface Dish {
   description: string;
   imageUrl: string;
   isAvailable: boolean;
+  preparation: string;
+  ingredients: DishIngredient[];
+  recipeCost?: number;
   createdAt: string;
+}
+
+export interface RecipeCost {
+  dishId: string;
+  dishName: string;
+  salePrice: number;
+  recipeCost: number;
+  margin: number;
+  ingredients: {
+    name: string;
+    quantity: number;
+    unit: string;
+    costPerUnit: number;
+    subtotal: number;
+  }[];
+}
+
+export interface DishAvailability {
+  dishId: string;
+  dishName: string;
+  available: boolean;
+  missing: {
+    ingredient: string;
+    required?: number;
+    available?: number;
+    deficit?: number;
+  }[];
 }
 
 export interface Staff {
