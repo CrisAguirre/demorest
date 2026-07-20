@@ -117,4 +117,51 @@ describe('ApiService', () => {
       httpMock.expectNone(`${environment.apiUrl}/settings`);
     });
   });
+
+  describe('Kitchen Orders', () => {
+    it('getKitchenOrders should call GET /kitchen-orders', () => {
+      service.getKitchenOrders().subscribe(res => {
+        expect(res).toEqual([{ _id: 'ko1', status: 'nuevo' }]);
+      });
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders`);
+      expect(req.request.method).toBe('GET');
+      req.flush([{ _id: 'ko1', status: 'nuevo' }]);
+    });
+
+    it('getPendingKitchenOrders should call GET /kitchen-orders/pending', () => {
+      service.getPendingKitchenOrders().subscribe();
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders/pending`);
+      expect(req.request.method).toBe('GET');
+      req.flush([]);
+    });
+
+    it('acceptKitchenOrder should call PATCH /kitchen-orders/:id/accept', () => {
+      service.acceptKitchenOrder('ko123').subscribe();
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders/ko123/accept`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush({ status: 'en_preparacion' });
+    });
+
+    it('deliverKitchenOrder should call PATCH /kitchen-orders/:id/deliver', () => {
+      service.deliverKitchenOrder('ko123').subscribe();
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders/ko123/deliver`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush({ status: 'entregado' });
+    });
+
+    it('markKitchenOrderPaid should call PATCH /kitchen-orders/:id/paid', () => {
+      service.markKitchenOrderPaid('ko123').subscribe();
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders/ko123/paid`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush({ status: 'pagado' });
+    });
+
+    it('printKitchenOrder should call GET /kitchen-orders/:id/print with blob responseType', () => {
+      service.printKitchenOrder('ko123').subscribe();
+      const req = httpMock.expectOne(`${environment.apiUrl}/kitchen-orders/ko123/print`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+      req.flush(new Blob(['%PDF'], { type: 'application/pdf' }));
+    });
+  });
 });
