@@ -524,6 +524,32 @@ export class ApiService {
     );
   }
 
+  // ── Kitchen Orders ────────────────────────────────────────────────────
+
+  getKitchenOrders(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/kitchen-orders`);
+  }
+
+  getPendingKitchenOrders(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/kitchen-orders/pending`);
+  }
+
+  acceptKitchenOrder(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/kitchen-orders/${id}/accept`, {});
+  }
+
+  deliverKitchenOrder(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/kitchen-orders/${id}/deliver`, {});
+  }
+
+  markKitchenOrderPaid(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/kitchen-orders/${id}/paid`, {});
+  }
+
+  printKitchenOrder(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/kitchen-orders/${id}/print`, { responseType: 'blob' });
+  }
+
   // ── Tables ────────────────────────────────────────────────────────────
 
   getTables(): Observable<any> {

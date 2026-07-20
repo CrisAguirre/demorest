@@ -56,13 +56,16 @@ import Swal from 'sweetalert2';
     <div class="neon-card mt-3">
       <h3 style="margin-bottom:1rem">🪑 Estado de Mesas</h3>
       <div class="tables-grid">
-        <div *ngFor="let t of tables" 
-             class="table-item" 
-             [class.occupied]="t.isOccupied"
-             (click)="freeTable(t)">
-          <div class="table-number">{{ t.number }}</div>
-          <div class="table-status">{{ t.isOccupied ? 'Ocupada' : 'Libre' }}</div>
-        </div>
+         <div *ngFor="let t of tables" 
+              class="table-item" 
+              [class.occupied]="t.isOccupied"
+              (click)="freeTable(t)">
+           <div class="table-number">{{ t.number }}</div>
+           <div class="table-status">{{ t.isOccupied ? 'Ocupada' : 'Libre' }}</div>
+           <div class="table-order" *ngIf="t.isOccupied && t.currentSale">
+             #{{ t.currentSale?._id?.toString()?.slice(-6)?.toUpperCase() }}
+           </div>
+         </div>
       </div>
     </div>
   `,
@@ -113,6 +116,12 @@ import Swal from 'sweetalert2';
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
+    }
+    .table-order {
+      font-size: 0.65rem;
+      margin-top: 0.2rem;
+      opacity: 0.7;
+      font-family: monospace;
     }
     @media (max-width: 600px) {
       .tables-grid { grid-template-columns: repeat(2, 1fr); }
