@@ -614,5 +614,10 @@ export class ApiService {
   cancelDelivery(id: string): Observable<any> {
     return this.http.patch(`${this.baseUrl}/delivery/${id}/cancel`, {});
   }
+
+  clearCache(): void {
+    this.preload.clear();
+    localStorage.clear();
+  }
 }
 

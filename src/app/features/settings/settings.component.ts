@@ -81,6 +81,11 @@ import Swal from 'sweetalert2';
             <input class="form-input" [(ngModel)]="alertEmail" placeholder="admin@ejemplo.com">
           </div>
         </div>
+        <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
+          <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
+          <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>
+          <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Borra datos en caché para forzar recarga fresca</p>
+        </div>
       </div>
     </div>
 
@@ -186,5 +191,10 @@ export class SettingsComponent implements OnInit {
       },
       error: () => Swal.fire('❌', 'Error al actualizar perfil', 'error')
     });
+  }
+
+  clearCache(): void {
+    this.api.clearCache();
+    Swal.fire('🧹', 'Caché local limpiada', 'success');
   }
 }
