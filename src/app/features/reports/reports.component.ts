@@ -8,7 +8,7 @@ import { ApiService } from '@core/services/api.service';
 })
 export class ReportsComponent implements OnInit {
   period = 'month';
-  activeTab = 'ventas';
+  activeTab: string = 'ventas';
   summary: any = { totalRevenue: 0, totalTransactions: 0, averageTicket: 0, totalItems: 0, salesByDay: [] };
   topProducts: any[] = [];
   lowRotation: any[] = [];
