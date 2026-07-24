@@ -81,6 +81,14 @@ import Swal from 'sweetalert2';
             <input class="form-input" [(ngModel)]="alertEmail" placeholder="admin@ejemplo.com">
           </div>
         </div>
+        <div class="neon-card" style="margin-top:1rem;border-color:var(--brand-gold)">
+          <h3 style="margin-bottom:1rem">📖 Manual de Usuario</h3>
+          <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
+            Consulta el manual completo del sistema con descripción de cada módulo, capturas de pantalla, matriz de accesos y solución de problemas.
+          </p>
+          <a href="/assets/manual.pdf" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">📖 Abrir Manual (PDF)</a>
+          <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña</p>
+        </div>
         <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
           <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
           <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>

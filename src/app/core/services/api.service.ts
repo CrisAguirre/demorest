@@ -290,6 +290,12 @@ export class ApiService {
     );
   }
 
+  uploadManual(data: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/settings/manual`, data).pipe(
+      tap(() => this.preload.invalidate('settings'))
+    );
+  }
+
   // ── Users (admin) ─────────────────────────────────────────────────────────
 
   registerUser(data: any): Observable<any> {
