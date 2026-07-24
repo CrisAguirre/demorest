@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +24,7 @@
     "ng2-charts": "^4.1.1",
     "ngx-toastr": "^20.0.5",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.8.3",
     "sweetalert2": "^11.26.24",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
@@ -31,6 +34,7 @@
     "@angular/cli": "~16.1.7",
     "@angular/compiler-cli": "^16.1.0",
     "@types/jasmine": "~4.3.0",
+    "cypress": "^15.19.0",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

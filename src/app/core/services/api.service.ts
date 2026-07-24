@@ -246,6 +246,23 @@ export class ApiService {
     return this.cachedGet('profit-margins', this.http.get(`${this.baseUrl}/reports/profit-margins`), TTL.reports);
   }
 
+  getPreparationTimes(params?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/reports/preparation-times`, { params });
+  }
+
+  exportSalesSummaryCSV(period?: string): Observable<Blob> {
+    const params: any = period ? { period } : {};
+    return this.http.get(`${this.baseUrl}/reports/export/sales-summary`, { params, responseType: 'blob' });
+  }
+
+  exportTopProductsCSV(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/reports/export/top-products`, { responseType: 'blob' });
+  }
+
+  exportInventoryCSV(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/reports/export/inventory`, { responseType: 'blob' });
+  }
+
   // ── Storefront (Public) ───────────────────────────────────────────────────
 
   getStorefrontProducts(params?: any): Observable<any> {
@@ -277,6 +294,18 @@ export class ApiService {
 
   registerUser(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/register`, data);
+  }
+
+  getAllUsers(params?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/auth/users`, { params });
+  }
+
+  updateUser(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/auth/users/${id}`, data);
+  }
+
+  deleteUser(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/auth/users/${id}`);
   }
 
   changePassword(data: any): Observable<any> {
@@ -562,6 +591,28 @@ export class ApiService {
 
   freeTable(id: string): Observable<any> {
     return this.http.patch(`${this.baseUrl}/tables/${id}/free`, {});
+  }
+
+  // ── Deliveries ─────────────────────────────────────────────────────────
+
+  getAllDeliveries(params?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/delivery`, { params });
+  }
+
+  acceptDelivery(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/delivery/${id}/accept`, {});
+  }
+
+  dispatchDelivery(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/delivery/${id}/dispatch`, {});
+  }
+
+  deliverDelivery(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/delivery/${id}/deliver`, {});
+  }
+
+  cancelDelivery(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/delivery/${id}/cancel`, {});
   }
 }
 

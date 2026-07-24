@@ -1,13 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { KitchenOrderComponent } from './kitchen-order.component';
 import { ApiService } from '@core/services/api.service';
+import { WebSocketService } from '@core/services/websocket.service';
 import Swal from 'sweetalert2';
+
+class MockWebSocket {
+  connect = jasmine.createSpy('connect');
+  joinKitchen = jasmine.createSpy('joinKitchen');
+  private newSub = new Subject<any>();
+  private accSub = new Subject<any>();
+  private delSub = new Subject<any>();
+  private paidSub = new Subject<any>();
+  onNewOrder = () => this.newSub.asObservable();
+  onOrderAccepted = () => this.accSub.asObservable();
+  onOrderDelivered = () => this.delSub.asObservable();
+  onOrderPaid = () => this.paidSub.asObservable();
+}
 
 describe('KitchenOrderComponent', () => {
   let component: KitchenOrderComponent;
   let fixture: ComponentFixture<KitchenOrderComponent>;
   let api: jasmine.SpyObj<ApiService>;
+  let ws: MockWebSocket;
 
   const mockOrders = [
     { _id: '1', status: 'nuevo', tableNumber: 3, items: [{ productName: 'Burger', quantity: 2 }] },
@@ -17,6 +32,7 @@ describe('KitchenOrderComponent', () => {
   ];
 
   beforeEach(async () => {
+    ws = new MockWebSocket();
     api = jasmine.createSpyObj('ApiService', [
       'getKitchenOrders', 'acceptKitchenOrder', 'deliverKitchenOrder', 'printKitchenOrder'
     ]);
@@ -25,7 +41,8 @@ describe('KitchenOrderComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [KitchenOrderComponent],
       providers: [
-        { provide: ApiService, useValue: api }
+        { provide: ApiService, useValue: api },
+        { provide: WebSocketService, useValue: ws }
       ]
     }).compileComponents();
 
@@ -57,7 +74,6 @@ describe('KitchenOrderComponent', () => {
 
     await component.acceptOrder(mockOrders[0]);
     expect(api.acceptKitchenOrder).toHaveBeenCalledWith('1');
-    expect(api.getKitchenOrders).toHaveBeenCalledTimes(2);
   });
 
   it('should NOT call acceptKitchenOrder when Swal is cancelled', async () => {
@@ -73,7 +89,6 @@ describe('KitchenOrderComponent', () => {
 
     await component.deliverOrder(mockOrders[2]);
     expect(api.deliverKitchenOrder).toHaveBeenCalledWith('3');
-    expect(api.getKitchenOrders).toHaveBeenCalledTimes(2);
   });
 
   it('should NOT call deliverKitchenOrder when Swal is cancelled', async () => {
@@ -105,10 +120,9 @@ describe('KitchenOrderComponent', () => {
     expect(window.open).toHaveBeenCalledWith('blob:url', '_blank');
   });
 
-  it('should start auto-refresh interval on init', () => {
-    spyOn(window, 'setInterval');
-    component.ngOnInit();
-    expect(setInterval).toHaveBeenCalledWith(jasmine.any(Function), 15000);
+  it('should connect WebSocket and join kitchen on init', () => {
+    expect(ws.connect).toHaveBeenCalled();
+    expect(ws.joinKitchen).toHaveBeenCalled();
   });
 
   it('should render 3 columns in template', () => {

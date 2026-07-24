@@ -1,17 +1,24 @@
 <div class="page-header">
   <h1>📊 Centro de Inteligencia</h1>
-  <div class="period-btns">
-    <button *ngFor="let p of ['day','week','month','year']"
-            [class]="period===p ? 'btn-primary btn-sm' : 'btn-outline btn-sm'"
-            (click)="setPeriod(p)">
-      {{ p==='day'?'Hoy':p==='week'?'Semana':p==='month'?'Mes':'Año' }}
-    </button>
+  <div class="header-actions">
+    <div class="period-btns">
+      <button *ngFor="let p of ['day','week','month','year']"
+              [class]="period===p ? 'btn-primary btn-sm' : 'btn-outline btn-sm'"
+              (click)="setPeriod(p)">
+        {{ p==='day'?'Hoy':p==='week'?'Semana':p==='month'?'Mes':'Año' }}
+      </button>
+    </div>
+    <div class="export-btns">
+      <button class="btn-outline btn-sm" (click)="exportSalesCSV()" *ngIf="activeTab==='ventas'">📥 CSV Ventas</button>
+      <button class="btn-outline btn-sm" (click)="exportProductsCSV()" *ngIf="activeTab==='productos'">📥 CSV Productos</button>
+      <button class="btn-outline btn-sm" (click)="exportInventoryCSV()" *ngIf="activeTab==='inventario'">📥 CSV Inventario</button>
+    </div>
   </div>
 </div>
 
 <!-- Tabs -->
 <div class="tabs-bar">
-  <button *ngFor="let t of [{id:'ventas',icon:'💰',label:'Ventas'},{id:'inventario',icon:'📦',label:'Inventario'},{id:'productos',icon:'⭐',label:'Productos'}]"
+  <button *ngFor="let t of [{id:'ventas',icon:'💰',label:'Ventas'},{id:'inventario',icon:'📦',label:'Inventario'},{id:'productos',icon:'⭐',label:'Productos'},{id:'cocina',icon:'👨‍🍳',label:'Cocina'}]"
           [class]="activeTab===t.id ? 'tab active' : 'tab'" (click)="activeTab=t.id">
     {{t.icon}} {{t.label}}
   </button>
@@ -49,10 +56,52 @@
           <span class="bar-value">{{ formatCurrency(d.total) }}</span>
         </div>
         <span class="bar-label">{{ d._id.substring(5) }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB: COCINA ═══════ -->
+<div *ngIf="activeTab==='cocina'" class="tab-content">
+  <div class="grid-4 mb-3">
+    <div class="stat-card"><div class="stat-icon bg-cyan">👨‍🍳</div><div><div class="stat-value">{{ prepTimes.totalCompleted }}</div><div class="stat-label">Pedidos Completados</div></div></div>
+    <div class="stat-card"><div class="stat-icon bg-violet">⏱️</div><div><div class="stat-value">{{ prepTimes.avgAcceptanceMin }} min</div><div class="stat-label">Aceptación Promedio</div></div></div>
+    <div class="stat-card"><div class="stat-icon bg-orange">🍳</div><div><div class="stat-value">{{ prepTimes.avgPrepMin }} min</div><div class="stat-label">Preparación Promedio</div></div></div>
+    <div class="stat-card"><div class="stat-icon bg-green">✅</div><div><div class="stat-value">{{ prepTimes.avgTotalMin }} min</div><div class="stat-label">Tiempo Total Promedio</div></div></div>
+  </div>
+
+  <div class="grid-2 mb-3">
+    <div class="neon-card">
+      <h3 class="chart-title">👨‍🍳 Tiempo Promedio por Cocinero</h3>
+      <div *ngFor="let c of prepTimes.byCook" class="top-row">
+        <span class="top-name">👨‍🍳 {{ c.cook }}</span>
+        <span class="badge badge-cyan">{{ c.orders }} pedidos</span>
+        <span class="top-revenue">{{ c.avgPrepTime }} min</span>
+      </div>
+      <p *ngIf="!prepTimes.byCook?.length" class="empty-msg">Sin datos de cocina</p>
+    </div>
+
+    <div class="neon-card-violet">
+      <h3 class="chart-title">📋 Últimos Pedidos</h3>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr>
+            <th>#</th><th>Mesa</th><th>Cocinero</th><th>Aceptación</th><th>Prep.</th><th>Total</th>
+          </tr></thead>
+          <tbody>
+            <tr *ngFor="let o of prepTimes.orders">
+              <td class="mono">#{{ o._id?.toString().slice(-6).toUpperCase() }}</td>
+              <td>{{ o.tableNumber || '—' }}</td>
+              <td>{{ o.cook }}</td>
+              <td>{{ o.acceptanceTime !== null ? o.acceptanceTime.toFixed(0) + 'm' : '—' }}</td>
+              <td>{{ o.prepTime !== null ? o.prepTime.toFixed(0) + 'm' : '—' }}</td>
+              <td><strong>{{ o.totalTime !== null ? o.totalTime.toFixed(0) + 'm' : '—' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    <p *ngIf="!summary.salesByDay?.length" class="empty-msg">Sin datos para el período</p>
   </div>
+</div>
 
   <!-- Pie: Category + Payment -->
   <div class="grid-2 mb-3">

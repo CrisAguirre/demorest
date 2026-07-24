@@ -1,0 +1,5 @@
+[
+  { "_id": "p1", "name": "Hamburguesa Clásica", "salePrice": 15000, "stock": 50, "category": { "name": "Comidas" } },
+  { "_id": "p2", "name": "Pizza Margherita", "salePrice": 22000, "stock": 30, "category": { "name": "Comidas" } },
+  { "_id": "p3", "name": "Coca Cola", "salePrice": 3000, "stock": 100, "category": { "name": "Bebidas" } }
+]

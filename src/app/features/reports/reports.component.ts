@@ -17,6 +17,7 @@ export class ReportsComponent implements OnInit {
   salesByHour: any[] = [];
   inventory: any = { totalProducts: 0, totalUnits: 0, totalCostValue: 0, totalSaleValue: 0, potentialProfit: 0, marginPercent: 0, lowStockCount: 0, outOfStockCount: 0, byCategory: [] };
   profitMargins: any[] = [];
+  prepTimes: any = { totalCompleted: 0, avgAcceptanceMin: 0, avgPrepMin: 0, avgTotalMin: 0, byCook: [], orders: [] };
 
   pieColors = ['#D4AF37', '#8B5A2B', '#2E8B57', '#FF8C00', '#D32F2F', '#FFD700', '#C06C2D', '#6B4226', '#4CAF50', '#E65100'];
 
@@ -34,6 +35,7 @@ export class ReportsComponent implements OnInit {
     this.api.getSalesByHour(this.period).subscribe({ next: (r: any) => this.salesByHour = r || [] });
     this.api.getInventoryValuation().subscribe({ next: (r: any) => this.inventory = r });
     this.api.getProfitMargins().subscribe({ next: (r: any) => this.profitMargins = (r || []).slice(0, 15) });
+    this.api.getPreparationTimes({ period: this.period }).subscribe({ next: (r: any) => this.prepTimes = r });
   }
 
   // ── Pie chart helpers ──
@@ -74,4 +76,34 @@ export class ReportsComponent implements OnInit {
   }
 
   formatCurrency(n: number): string { return '$' + (n || 0).toLocaleString('es-CO', { maximumFractionDigits: 0 }); }
+
+  downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportSalesCSV(): void {
+    this.api.exportSalesSummaryCSV(this.period).subscribe({
+      next: (blob) => this.downloadBlob(blob, `ventas-${this.period}.csv`),
+      error: () => {}
+    });
+  }
+
+  exportProductsCSV(): void {
+    this.api.exportTopProductsCSV().subscribe({
+      next: (blob) => this.downloadBlob(blob, 'top-productos.csv'),
+      error: () => {}
+    });
+  }
+
+  exportInventoryCSV(): void {
+    this.api.exportInventoryCSV().subscribe({
+      next: (blob) => this.downloadBlob(blob, 'inventario.csv'),
+      error: () => {}
+    });
+  }
 }

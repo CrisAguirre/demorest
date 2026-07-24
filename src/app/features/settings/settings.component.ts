@@ -32,16 +32,54 @@ import Swal from 'sweetalert2';
         </div>
         <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
       </div>
-      <div class="neon-card-violet">
-        <h3 style="margin-bottom:1rem">🖼️ Logo</h3>
-        <div style="text-align:center;padding:1rem">
-          <img *ngIf="currentLogo" [src]="currentLogo" alt="Logo actual" style="max-height:120px;margin:0 auto 1rem;border-radius:12px">
-          <p *ngIf="!currentLogo" style="color:var(--text-muted);margin-bottom:1rem">Sin logo configurado</p>
-          <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display:none">
-          <button class="btn-outline" (click)="fileInput.click()">📤 Subir Logo</button>
-          <p *ngIf="selectedFile" style="font-size:0.8rem;margin-top:0.5rem;color:var(--brand-green)">
-            ✅ {{ selectedFile.name }}
-          </p>
+      <div>
+        <div class="neon-card-violet" style="margin-bottom:1rem">
+          <h3 style="margin-bottom:1rem">🖼️ Logo</h3>
+          <div style="text-align:center;padding:1rem">
+            <img *ngIf="currentLogo" [src]="currentLogo" alt="Logo actual" style="max-height:120px;margin:0 auto 1rem;border-radius:12px">
+            <p *ngIf="!currentLogo" style="color:var(--text-muted);margin-bottom:1rem">Sin logo configurado</p>
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display:none">
+            <button class="btn-outline" (click)="fileInput.click()">📤 Subir Logo</button>
+            <p *ngIf="selectedFile" style="font-size:0.8rem;margin-top:0.5rem;color:var(--brand-green)">
+              ✅ {{ selectedFile.name }}
+            </p>
+          </div>
+        </div>
+        <div class="neon-card" style="border-color:var(--brand-bronze)">
+          <h3 style="margin-bottom:1rem">📧 Configuración Email (Alertas Stock)</h3>
+          <div class="form-group">
+            <label class="form-label">Servidor SMTP</label>
+            <input class="form-input" [(ngModel)]="smtpHost" placeholder="smtp.gmail.com">
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Puerto</label>
+              <input class="form-input" [(ngModel)]="smtpPort" type="number" placeholder="587">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Conexión Segura (SSL)</label>
+              <select class="form-input" [(ngModel)]="smtpSecure">
+                <option [ngValue]="false">No (587)</option>
+                <option [ngValue]="true">Sí (465)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Usuario / Email SMTP</label>
+            <input class="form-input" [(ngModel)]="smtpUser" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña SMTP</label>
+            <input class="form-input" [(ngModel)]="smtpPass" type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Remitente (From)</label>
+            <input class="form-input" [(ngModel)]="smtpFrom" placeholder="alertas@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email para Recibir Alertas</label>
+            <input class="form-input" [(ngModel)]="alertEmail" placeholder="admin@ejemplo.com">
+          </div>
         </div>
       </div>
     </div>
@@ -74,6 +112,8 @@ export class SettingsComponent implements OnInit {
   storeName = ''; phone = ''; address = ''; whatsappNumber = '';
   currentLogo = '';
   selectedFile: File | null = null;
+  smtpHost = ''; smtpPort = 587; smtpSecure = false;
+  smtpUser = ''; smtpPass = ''; smtpFrom = ''; alertEmail = '';
 
   // Cliente profile
   userProfile = { name: '', phone: '', address: '' };
@@ -89,6 +129,15 @@ export class SettingsComponent implements OnInit {
           this.storeName = s.storeName; this.phone = s.phone;
           this.address = s.address; this.whatsappNumber = s.whatsappNumber;
           this.currentLogo = s.logoUrl;
+          if (s.email) {
+            this.smtpHost = s.email.host || '';
+            this.smtpPort = s.email.port || 587;
+            this.smtpSecure = s.email.secure || false;
+            this.smtpUser = s.email.user || '';
+            this.smtpPass = s.email.pass || '';
+            this.smtpFrom = s.email.from || '';
+            this.alertEmail = s.email.alertEmail || '';
+          }
         }
       });
     } else if (role === 'cliente') {
@@ -110,6 +159,15 @@ export class SettingsComponent implements OnInit {
     formData.append('phone', this.phone);
     formData.append('address', this.address);
     formData.append('whatsappNumber', this.whatsappNumber);
+    formData.append('email', JSON.stringify({
+      host: this.smtpHost,
+      port: this.smtpPort,
+      secure: this.smtpSecure,
+      user: this.smtpUser,
+      pass: this.smtpPass,
+      from: this.smtpFrom,
+      alertEmail: this.alertEmail
+    }));
     if (this.selectedFile) formData.append('logo', this.selectedFile);
 
     this.api.updateSettings(formData).subscribe({

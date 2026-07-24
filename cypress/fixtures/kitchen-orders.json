@@ -1,0 +1,5 @@
+[
+  { "_id": "ko1", "status": "nuevo", "tableNumber": 5, "items": [{ "productName": "Hamburguesa Clásica", "quantity": 2 }, { "productName": "Coca Cola", "quantity": 1 }], "createdAt": "2026-07-23T20:00:00Z" },
+  { "_id": "ko2", "status": "en_preparacion", "tableNumber": 3, "items": [{ "productName": "Pizza Margherita", "quantity": 1 }], "assignedCook": { "name": "Chef" }, "createdAt": "2026-07-23T19:30:00Z" },
+  { "_id": "ko3", "status": "entregado", "tableNumber": 1, "items": [{ "productName": "Ensalada", "quantity": 1 }], "createdAt": "2026-07-23T18:00:00Z" }
+]

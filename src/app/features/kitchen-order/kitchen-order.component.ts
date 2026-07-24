@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
+import { WebSocketService } from '@core/services/websocket.service';
+import { NotificationSoundService } from '@core/services/notification-sound.service';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-kitchen-order',
   template: `
     <div class="page-header">
       <h1>🍳 Órdenes de Cocina</h1>
-      <button class="btn-primary btn-sm" (click)="loadOrders()">🔄 Refrescar</button>
+      <span class="ws-badge" [class.connected]="wsConnected">⚡</span>
     </div>
 
     <div class="kitchen-grid">
@@ -68,6 +71,8 @@ import Swal from 'sweetalert2';
     </div>
   `,
   styles: [`
+    .ws-badge { font-size: 0.8rem; opacity: 0.4; transition: opacity 0.3s; }
+    .ws-badge.connected { opacity: 1; }
     .kitchen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .order-card {
       background: var(--bg-input); border-radius: var(--radius-sm);
@@ -89,19 +94,38 @@ import Swal from 'sweetalert2';
     .order-print { position: absolute; top: 0.5rem; right: 0.5rem; cursor: pointer; font-size: 1rem; }
     .order-print:hover { transform: scale(1.2); }
     .empty-msg { color: var(--text-muted); text-align: center; padding: 2rem; font-size: 0.85rem; }
+    .page-header { display: flex; align-items: center; gap: 1rem; }
     @media (max-width: 900px) { .kitchen-grid { grid-template-columns: 1fr; } }
   `]
 })
-export class KitchenOrderComponent implements OnInit {
+export class KitchenOrderComponent implements OnInit, OnDestroy {
   newOrders: any[] = [];
   cookingOrders: any[] = [];
   deliveredOrders: any[] = [];
+  wsConnected = false;
+  private subs: Subscription[] = [];
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private ws: WebSocketService,
+    private sound: NotificationSoundService
+  ) {}
 
   ngOnInit(): void {
+    this.ws.connect();
+    this.ws.joinKitchen();
     this.loadOrders();
-    setInterval(() => this.loadOrders(), 15000);
+    this.subs.push(
+      this.ws.onNewOrder().subscribe(o => this.handleNewOrder(o)),
+      this.ws.onOrderAccepted().subscribe(o => this.handleOrderUpdate(o)),
+      this.ws.onOrderDelivered().subscribe(o => this.handleOrderUpdate(o)),
+      this.ws.onOrderPaid().subscribe(o => this.removeOrder(o))
+    );
+    setTimeout(() => this.wsConnected = true, 1000);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   loadOrders(): void {
@@ -112,6 +136,23 @@ export class KitchenOrderComponent implements OnInit {
         this.deliveredOrders = orders.filter((o: any) => o.status === 'entregado');
       }
     });
+  }
+
+  private handleNewOrder(order: any): void {
+    this.newOrders.unshift(order);
+    this.sound.playOrderChime();
+  }
+
+  private handleOrderUpdate(order: any): void {
+    this.removeOrder(order);
+    if (order.status === 'en_preparacion') this.cookingOrders.unshift(order);
+    if (order.status === 'entregado') this.deliveredOrders.unshift(order);
+  }
+
+  private removeOrder(order: any): void {
+    this.newOrders = this.newOrders.filter(o => o._id !== order._id);
+    this.cookingOrders = this.cookingOrders.filter(o => o._id !== order._id);
+    this.deliveredOrders = this.deliveredOrders.filter(o => o._id !== order._id);
   }
 
   acceptOrder(order: any): void {
@@ -128,7 +169,6 @@ export class KitchenOrderComponent implements OnInit {
         this.api.acceptKitchenOrder(order._id).subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Pedido en preparación', timer: 1000, showConfirmButton: false });
-            this.loadOrders();
           },
           error: (err: any) => Swal.fire('Error', err.error?.message || 'Error al aceptar', 'error')
         });
@@ -150,7 +190,6 @@ export class KitchenOrderComponent implements OnInit {
         this.api.deliverKitchenOrder(order._id).subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Pedido entregado', timer: 1000, showConfirmButton: false });
-            this.loadOrders();
           },
           error: (err: any) => Swal.fire('Error', err.error?.message || 'Error al entregar', 'error')
         });
