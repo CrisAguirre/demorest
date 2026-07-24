@@ -7,8 +7,8 @@ import { ApiService } from '@core/services/api.service';
   styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {
-  period = 'month';
-  activeTab: string = 'ventas';
+  period: string = 'month';
+  activeTab = 'ventas';
   summary: any = { totalRevenue: 0, totalTransactions: 0, averageTicket: 0, totalItems: 0, salesByDay: [] };
   topProducts: any[] = [];
   lowRotation: any[] = [];
@@ -19,12 +19,21 @@ export class ReportsComponent implements OnInit {
   profitMargins: any[] = [];
   prepTimes: any = { totalCompleted: 0, avgAcceptanceMin: 0, avgPrepMin: 0, avgTotalMin: 0, byCook: [], orders: [] };
 
+  tabs = [
+    { id: 'ventas', icon: '💰', label: 'Ventas' },
+    { id: 'inventario', icon: '📦', label: 'Inventario' },
+    { id: 'productos', icon: '⭐', label: 'Productos' },
+    { id: 'cocina', icon: '👨‍🍳', label: 'Cocina' }
+  ];
+
   pieColors = ['#D4AF37', '#8B5A2B', '#2E8B57', '#FF8C00', '#D32F2F', '#FFD700', '#C06C2D', '#6B4226', '#4CAF50', '#E65100'];
 
   constructor(private api: ApiService) {}
   ngOnInit(): void { this.loadAll(); }
 
   setPeriod(p: string) { this.period = p; this.loadAll(); }
+
+  setTab(tab: string) { this.activeTab = tab; }
 
   loadAll(): void {
     this.api.getSalesSummary(this.period).subscribe({ next: (r: any) => this.summary = r });
