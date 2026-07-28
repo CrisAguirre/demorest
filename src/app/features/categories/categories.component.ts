@@ -62,6 +62,11 @@ import { ApiService } from '../../core/services/api.service';
               <input class="form-input" [(ngModel)]="form.name" placeholder="Ej: Bebidas" />
             </div>
             <div class="form-group">
+              <label>Código (3 letras) *</label>
+              <input class="form-input" [(ngModel)]="form.code" placeholder="Ej: BEB" maxlength="3" style="text-transform:uppercase" />
+              <small style="color:#888;font-size:0.8rem">Usado para generar códigos de barras automáticos</small>
+            </div>
+            <div class="form-group">
               <label>Icono (emoji)</label>
               <input class="form-input" [(ngModel)]="form.icon" placeholder="Ej: 🥤" maxlength="5" />
             </div>
@@ -153,14 +158,14 @@ export class CategoriesComponent implements OnInit {
   }
 
   openForm() {
-    this.form = { name: '', icon: '', order: 0, isActive: true };
+    this.form = { name: '', code: '', icon: '', order: 0, isActive: true };
     this.editing = false;
     this.editingId = '';
     this.showForm = true;
   }
 
   edit(c: any) {
-    this.form = { name: c.name, icon: c.icon || '', order: c.order ?? 0, isActive: c.isActive !== false };
+    this.form = { name: c.name, code: c.code || '', icon: c.icon || '', order: c.order ?? 0, isActive: c.isActive !== false };
     this.editing = true;
     this.editingId = c._id;
     this.showForm = true;
@@ -173,6 +178,11 @@ export class CategoriesComponent implements OnInit {
       alert('El nombre es obligatorio');
       return;
     }
+    if (!this.form.code?.trim()) {
+      alert('El código de 3 letras es obligatorio');
+      return;
+    }
+    this.form.code = this.form.code.toUpperCase();
     this.saving = true;
     const obs = this.editing
       ? this.api.updateCategory(this.editingId, this.form)
