@@ -29,6 +29,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   sortDirection: 'asc' | 'desc' = 'asc';
   showForm = false;
   editingProduct: any = null;
+  saving = false;
 
   // Form fields
   form: any = { name: '', barcode: '', category: '', supplier: '', purchasePrice: null, salePrice: null, stock: 0, minStock: 5, description: '' };
@@ -213,17 +214,22 @@ export class InventoryComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.saving = true;
     const obs = this.editingProduct
       ? this.api.updateProduct(this.editingProduct._id, this.form)
       : this.api.createProduct(this.form);
     obs.subscribe({
       next: () => {
+        this.saving = false;
         this.showForm = false;
         this.editingProduct = null;
         this.fetchProducts();
         Swal.fire('✅', this.editingProduct ? 'Producto actualizado' : 'Producto registrado', 'success');
       },
-      error: (err: any) => Swal.fire('❌', err.error?.message || 'Error al guardar', 'error')
+      error: (err: any) => {
+        this.saving = false;
+        Swal.fire('❌', err.error?.message || 'Error al guardar. ¿El servidor está despierto?', 'error');
+      }
     });
   }
 

@@ -147,8 +147,8 @@
 
     <div class="modal-actions">
       <button class="btn-outline" (click)="cancelForm()">Cancelar</button>
-      <button class="btn-primary" (click)="saveProduct()">
-        {{ editingProduct ? '💾 Guardar Cambios' : '✅ Registrar Producto' }}
+      <button class="btn-primary" (click)="saveProduct()" [disabled]="saving">
+        {{ saving ? '⏳ Guardando...' : (editingProduct ? '💾 Guardar Cambios' : '✅ Registrar Producto') }}
       </button>
     </div>
   </div>
