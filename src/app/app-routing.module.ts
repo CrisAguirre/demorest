@@ -24,6 +24,7 @@ const routes: Routes = [
       { path: 'staff', loadChildren: () => import('./features/staff/staff.module').then(m => m.StaffModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'kitchen', loadChildren: () => import('./features/kitchen-order/kitchen-order.module').then(m => m.KitchenOrderModule), canActivate: [RoleGuard], data: { roles: ['cocinero', 'admin'] } },
       { path: 'ticket-books', loadChildren: () => import('./features/ticket-books/ticket-books.module').then(m => m.TicketBooksModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },
+      { path: 'categories', loadChildren: () => import('./features/categories/categories.module').then(m => m.CategoriesModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'expenses',   loadChildren: () => import('./features/expenses/expenses.module').then(m => m.ExpensesModule),    canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'finance',    loadChildren: () => import('./features/finance/finance.module').then(m => m.FinanceModule),       canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

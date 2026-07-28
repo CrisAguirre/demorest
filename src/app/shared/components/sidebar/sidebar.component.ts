@@ -124,6 +124,7 @@ export class SidebarComponent {
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
         { icon: '🧅', label: 'Ingredientes',    route: '/ingredients' },
         { icon: '🍲', label: 'Platos',          route: '/dishes' },
+        { icon: '📂', label: 'Categorías',      route: '/categories' },
         { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         // Compras y proveedores
