@@ -4,6 +4,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
+import { WebSocketService } from '@core/services/websocket.service';
 import { environment } from '@env/environment';
 import Swal from 'sweetalert2';
 
@@ -45,7 +46,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     return ((this.form.salePrice - this.form.purchasePrice) / this.form.purchasePrice * 100);
   }
 
-  constructor(public authService: AuthService, private api: ApiService, private http: HttpClient) {}
+  constructor(public authService: AuthService, private api: ApiService, private http: HttpClient, private ws: WebSocketService) {}
 
   @HostListener('document:click')
   onDocumentClick() {
@@ -54,9 +55,17 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.http.get(`${environment.apiUrl}/health`).subscribe();
+    this.ws.connect();
     this.fetchProducts();
     this.api.getCategories().subscribe({ next: (cats: any) => this.categories = cats });
     this.api.getSuppliers({ active: 'true' }).subscribe({ next: (sups: any) => this.suppliers = sups });
+    this.ws.onDataChanged().subscribe(e => {
+      if (e.entity === 'product' || e.entity === 'category' || e.entity === 'supplier') {
+        this.fetchProducts();
+        if (e.entity === 'category') this.api.getCategories().subscribe({ next: (cats: any) => this.categories = cats });
+        if (e.entity === 'supplier') this.api.getSuppliers({ active: 'true' }).subscribe({ next: (sups: any) => this.suppliers = sups });
+      }
+    });
 
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300),

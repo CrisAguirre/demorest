@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PreloadService } from './preload.service';
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
@@ -15,6 +16,9 @@ export class WebSocketService {
   private deliveryDispatchedSub = new Subject<any>();
   private deliveryDeliveredSub = new Subject<any>();
   private deliveryCancelledSub = new Subject<any>();
+  private dataChangedSub = new Subject<{ entity: string; action: string; data: any }>();
+
+  constructor(private preload: PreloadService, private zone: NgZone) {}
 
   connect(): void {
     if (this.socket?.connected) return;
@@ -29,6 +33,43 @@ export class WebSocketService {
     this.socket.on('delivery:dispatched', d => this.deliveryDispatchedSub.next(d));
     this.socket.on('delivery:delivered', d => this.deliveryDeliveredSub.next(d));
     this.socket.on('delivery:cancelled', d => this.deliveryCancelledSub.next(d));
+    this.socket.on('data:changed', (d: any) => {
+      this.zone.run(() => {
+        this.dataChangedSub.next(d);
+        this.invalidateCacheFor(d.entity);
+      });
+    });
+  }
+
+  private invalidateCacheFor(entity: string): void {
+    switch (entity) {
+      case 'product':
+        this.preload.invalidatePrefix('products');
+        this.preload.invalidate('all-products');
+        break;
+      case 'category':
+        this.preload.invalidate('categories');
+        break;
+      case 'supplier':
+        this.preload.invalidatePrefix('suppliers');
+        break;
+      case 'purchase':
+        this.preload.invalidatePrefix('purchases');
+        break;
+      case 'expense':
+        this.preload.invalidatePrefix('expenses');
+        break;
+      case 'sale':
+        this.preload.invalidatePrefix('sales');
+        this.preload.invalidatePrefix('sales-summary');
+        break;
+      case 'ingredient':
+        this.preload.invalidatePrefix('ingredients');
+        break;
+      case 'dish':
+        this.preload.invalidatePrefix('dishes');
+        break;
+    }
   }
 
   joinKitchen(): void {
@@ -69,6 +110,10 @@ export class WebSocketService {
 
   onDeliveryCancelled(): Observable<any> {
     return this.deliveryCancelledSub.asObservable();
+  }
+
+  onDataChanged(): Observable<{ entity: string; action: string; data: any }> {
+    return this.dataChangedSub.asObservable();
   }
 
   disconnect(): void {
