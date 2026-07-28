@@ -101,28 +101,28 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Código de Producto</label>
-        <input class="form-input" [(ngModel)]="form.barcode" readonly>
-        <small class="form-hint" *ngIf="form.category && form.supplier">Prefijo: {{ getCategoryCode(form.category) }}{{ getSupplierCode(form.supplier) }} + consecutivo</small>
+        <label class="form-label">Código de Producto *</label>
+        <input class="form-input" [(ngModel)]="form.barcode" placeholder="Ej: JUG001">
+        <small class="form-hint" *ngIf="form.category && form.supplier">Auto: {{ getCategoryCode(form.category) }}{{ getSupplierCode(form.supplier) }} + consecutivo — o escríbelo manualmente</small>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Nombre del Producto</label>
+        <label class="form-label">Nombre del Producto *</label>
         <input class="form-input" [(ngModel)]="form.name" placeholder="Ej: Coca-Cola 350ml">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Precio de Compra ($)</label>
+        <label class="form-label">Precio de Compra ($) *</label>
         <input class="form-input" type="number" [(ngModel)]="form.purchasePrice" placeholder="0" min="0">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Precio de Venta ($)</label>
+        <label class="form-label">Precio de Venta ($) *</label>
         <input class="form-input" type="number" [(ngModel)]="form.salePrice" placeholder="0" min="0">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Stock Inicial</label>
+        <label class="form-label">Stock Inicial *</label>
         <input class="form-input" type="number" [(ngModel)]="form.stock" min="0">
       </div>
 

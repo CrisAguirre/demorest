@@ -197,13 +197,19 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   saveProduct(): void {
     if (!this.form.name || !this.form.category || !this.form.supplier || !this.form.barcode) {
-      Swal.fire('⚠️', 'Completa nombre, categoría, proveedor y código', 'warning');
+      Swal.fire('⚠️', 'Completa: Nombre, Categoría, Proveedor y Código', 'warning');
       return;
     }
-
-    // Validación solicitada: No permitir registro si el stock inicial es 0 o menor
+    if (!this.form.purchasePrice || this.form.purchasePrice <= 0) {
+      Swal.fire('⚠️', 'El Precio de Compra es obligatorio', 'warning');
+      return;
+    }
+    if (!this.form.salePrice || this.form.salePrice <= 0) {
+      Swal.fire('⚠️', 'El Precio de Venta es obligatorio', 'warning');
+      return;
+    }
     if (!this.editingProduct && (!this.form.stock || this.form.stock <= 0)) {
-      Swal.fire('⚠️', 'El stock inicial no puede ser cero al registrar un nuevo producto', 'warning');
+      Swal.fire('⚠️', 'El Stock Inicial no puede ser cero', 'warning');
       return;
     }
 
