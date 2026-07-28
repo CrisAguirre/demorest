@@ -176,7 +176,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   openNewForm(): void {
     this.editingProduct = null;
-    this.form = { name: '', barcode: '', category: '', supplier: '', purchasePrice: null, salePrice: null, stock: 0, minStock: 5, description: '' };
+    this.form = { name: '', barcode: '', category: '', supplier: '', purchasePrice: 0, salePrice: null, stock: 0, minStock: 5, description: '' };
     this.showForm = true;
     this.http.get(`${environment.apiUrl}/health`).subscribe();
   }
@@ -188,8 +188,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
       barcode: product.barcode,
       category: product.category?._id || '',
       supplier: product.supplier?._id || '',
-      purchasePrice: product.purchasePrice,
-      salePrice: product.salePrice,
+      purchasePrice: product.purchasePrice ?? 0,
+      salePrice: product.salePrice ?? 0,
       stock: product.stock,
       minStock: product.minStock,
       description: product.description || ''
@@ -223,10 +223,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const payload = { ...this.form, purchasePrice: Number(this.form.purchasePrice) || 0, salePrice: Number(this.form.salePrice) || 0, stock: Number(this.form.stock) || 0 };
     this.saving = true;
     const obs = this.editingProduct
-      ? this.api.updateProduct(this.editingProduct._id, this.form)
-      : this.api.createProduct(this.form);
+      ? this.api.updateProduct(this.editingProduct._id, payload)
+      : this.api.createProduct(payload);
     obs.subscribe({
       next: () => {
         this.saving = false;
