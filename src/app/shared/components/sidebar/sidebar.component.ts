@@ -96,12 +96,21 @@ export class SidebarComponent {
         { icon: '🌍', label: 'Landing',        externalUrl: 'https://www.restmarieantoinette.com/' },
         { icon: '⚙️', label: 'Mi Perfil',      route: '/settings' }
       ];
+    } else if (role === 'cocinero') {
+      this.menuItems = [
+        { divider: 'Cocina' },
+        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
+        { icon: '👨‍🍳', label: 'Cocina',         route: '/kitchen' },
+        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' }
+      ];
+    } else if (role === 'mesero') {
+      this.menuItems = [
+        { icon: '📊', label: 'Dashboard',       route: '/dashboard' }
+      ];
     } else if (role === 'cajero') {
       this.menuItems = [
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { icon: '🧅', label: 'Ingredientes',    route: '/ingredients' },
-        { icon: '🍲', label: 'Platos',          route: '/dishes' },
         { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         { divider: 'Gestión' },
