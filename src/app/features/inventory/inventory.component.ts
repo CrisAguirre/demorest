@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
+import { environment } from '@env/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -43,7 +45,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     return ((this.form.salePrice - this.form.purchasePrice) / this.form.purchasePrice * 100);
   }
 
-  constructor(public authService: AuthService, private api: ApiService) {}
+  constructor(public authService: AuthService, private api: ApiService, private http: HttpClient) {}
 
   @HostListener('document:click')
   onDocumentClick() {
@@ -51,6 +53,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.http.get(`${environment.apiUrl}/health`).subscribe();
     this.fetchProducts();
     this.api.getCategories().subscribe({ next: (cats: any) => this.categories = cats });
     this.api.getSuppliers({ active: 'true' }).subscribe({ next: (sups: any) => this.suppliers = sups });
@@ -166,6 +169,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.editingProduct = null;
     this.form = { name: '', barcode: '', category: '', supplier: '', purchasePrice: null, salePrice: null, stock: 0, minStock: 5, description: '' };
     this.showForm = true;
+    this.http.get(`${environment.apiUrl}/health`).subscribe();
   }
 
   openEditForm(product: any): void {
