@@ -205,10 +205,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       Swal.fire('⚠️', 'Completa: Nombre, Categoría, Proveedor y Código', 'warning');
       return;
     }
-    if (!this.form.purchasePrice || this.form.purchasePrice <= 0) {
-      Swal.fire('⚠️', 'El Precio de Compra es obligatorio', 'warning');
-      return;
-    }
     if (!this.form.salePrice || this.form.salePrice <= 0) {
       Swal.fire('⚠️', 'El Precio de Venta es obligatorio', 'warning');
       return;

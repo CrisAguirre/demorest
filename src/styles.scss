@@ -570,3 +570,5 @@ input, select, textarea { font-family: inherit; }
   border-color: var(--brand-gold);
   background: rgba(212,175,55,0.05);
 }
+
+.swal2-container { z-index: 99999 !important; }
