@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "color-function-notation": "modern",
+    "alpha-value-notation": "percentage",
+    "font-family-no-missing-generic-family-keyword": null,
+    "at-rule-no-unknown": null,
+    "no-empty-source": null
+  }
+}
