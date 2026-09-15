@@ -81,7 +81,6 @@ import Swal from 'sweetalert2';
           </div>
           <div class="deliv-info">📍 {{ o.customerAddress }}</div>
         </div>
-        </div>
         <p *ngIf="entregados.length===0" class="empty-msg">Sin entregados hoy</p>
       </div>
     </div>
