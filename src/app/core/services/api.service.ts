@@ -493,13 +493,13 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/dishes/${id}`);
   }
 
-  createDish(data: any): Observable<any> {
+  createDish(data: FormData | any): Observable<any> {
     return this.http.post(`${this.baseUrl}/dishes`, data).pipe(
       tap(() => this.preload.invalidatePrefix('dishes'))
     );
   }
 
-  updateDish(id: string, data: any): Observable<any> {
+  updateDish(id: string, data: FormData | any): Observable<any> {
     return this.http.put(`${this.baseUrl}/dishes/${id}`, data).pipe(
       tap(() => this.preload.invalidatePrefix('dishes'))
     );
