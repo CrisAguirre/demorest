@@ -198,7 +198,7 @@ export class DashboardComponent implements OnInit {
   onTableClick(table: any): void {
     if (table.status === 'libre') {
       Swal.fire({
-        title: table.number === 0 ? 'Pedido para llevar' : \`Mesa \${table.number} - Libre\`,
+        title: table.number === 0 ? 'Pedido para llevar' : `Mesa ${table.number} - Libre`,
         text: '¿Qué desea hacer?',
         icon: 'info',
         showCancelButton: true,
@@ -219,7 +219,7 @@ export class DashboardComponent implements OnInit {
       });
     } else if (table.status === 'ocupada') {
       Swal.fire({
-        title: \`¿Liberar \${table.number === 0 ? 'Para llevar' : 'Mesa ' + table.number}?\`,
+        title: `¿Liberar ${table.number === 0 ? 'Para llevar' : 'Mesa ' + table.number}?`,
         text: 'La mesa será marcada como libre',
         icon: 'question',
         showCancelButton: true,
@@ -239,16 +239,16 @@ export class DashboardComponent implements OnInit {
     } else if (table.status === 'reservada') {
       const resData = table.currentReservation;
       Swal.fire({
-        title: \`Mesa \${table.number} - Reservada\`,
-        html: \`
+        title: `Mesa ${table.number} - Reservada`,
+        html: `
           <div style="text-align: left; padding: 10px;">
-            <p><strong>Cliente:</strong> \${resData?.customerName || 'N/A'}</p>
-            <p><strong>Personas:</strong> \${resData?.numberOfPeople || 'N/A'}</p>
-            <p><strong>Fecha/Hora:</strong> \${resData?.date ? new Date(resData.date).toLocaleString('es-CO') : 'N/A'}</p>
-            \${resData?.notes ? \`<p><strong>Notas:</strong> \${resData.notes}</p>\` : ''}
+            <p><strong>Cliente:</strong> ${resData?.customerName || 'N/A'}</p>
+            <p><strong>Personas:</strong> ${resData?.numberOfPeople || 'N/A'}</p>
+            <p><strong>Fecha/Hora:</strong> ${resData?.date ? new Date(resData.date).toLocaleString('es-CO') : 'N/A'}</p>
+            ${resData?.notes ? `<p><strong>Notas:</strong> ${resData.notes}</p>` : ''}
           </div>
           <p>¿Qué desea hacer?</p>
-        \`,
+        `,
         icon: 'info',
         showCancelButton: true,
         showDenyButton: true,
@@ -301,8 +301,8 @@ export class DashboardComponent implements OnInit {
     const minDateTime = now.toISOString().slice(0, 16);
 
     Swal.fire({
-      title: \`Reservar Mesa \${table.number}\`,
-      html: \`
+      title: `Reservar Mesa ${table.number}`,
+      html: `
         <div style="display:flex; flex-direction:column; gap: 10px; text-align: left;">
           <div>
             <label style="font-weight:600; font-size: 0.85rem;">Nombre del Cliente *</label>
@@ -314,14 +314,14 @@ export class DashboardComponent implements OnInit {
           </div>
           <div>
             <label style="font-weight:600; font-size: 0.85rem;">Fecha y Hora *</label>
-            <input type="datetime-local" id="res-date" class="swal2-input" style="margin:0; width:100%; box-sizing:border-box;" min="\${minDateTime}" value="\${minDateTime}">
+            <input type="datetime-local" id="res-date" class="swal2-input" style="margin:0; width:100%; box-sizing:border-box;" min="${minDateTime}" value="${minDateTime}">
           </div>
           <div>
             <label style="font-weight:600; font-size: 0.85rem;">Anotaciones (Opcional)</label>
             <textarea id="res-notes" class="swal2-textarea" style="margin:0; width:100%; box-sizing:border-box;" rows="2" placeholder="Cumpleaños, alergias, etc."></textarea>
           </div>
         </div>
-      \`,
+      `,
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Guardar Reserva',
