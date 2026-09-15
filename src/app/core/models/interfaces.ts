@@ -50,12 +50,19 @@ export interface Supplier {
 }
 
 export interface PurchaseItem {
-  product: string | Product; productName: string;
-  quantity: number; unitCost: number; subtotal: number;
+  itemType: 'product' | 'ingredient';
+  product?: string | Product;
+  ingredient?: string | Ingredient;
+  itemName: string;
+  unit: string;
+  quantity: number;
+  unitCost: number;
+  subtotal: number;
+  updateCost: boolean;
 }
 
 export interface Purchase {
-  _id: string; supplier: Supplier | string; supplierName: string;
+  _id: string; supplier: Supplier | string | null; supplierName: string;
   user: User | string; items: PurchaseItem[]; total: number;
   invoiceNumber: string; paymentMethod: 'efectivo' | 'transferencia' | 'credito' | 'mixto';
   status: 'pendiente' | 'recibida' | 'anulada'; notes: string; createdAt: string;

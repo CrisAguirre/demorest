@@ -389,6 +389,7 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/purchases`, data).pipe(
       tap(() => {
         this.preload.invalidatePrefix('products');
+        this.preload.invalidatePrefix('ingredients');
         this.preload.invalidatePrefix('finance');
         this.preload.invalidatePrefix('inventory-valuation');
       })
@@ -397,7 +398,10 @@ export class ApiService {
 
   updatePurchaseStatus(id: string, status: string): Observable<any> {
     return this.http.patch(`${this.baseUrl}/purchases/${id}/status`, { status }).pipe(
-      tap(() => this.preload.invalidatePrefix('products'))
+      tap(() => {
+        this.preload.invalidatePrefix('products');
+        this.preload.invalidatePrefix('ingredients');
+      })
     );
   }
 
