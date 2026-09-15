@@ -10,7 +10,7 @@ const routes: Routes = [
     path: '', canActivate: [AuthGuard], children: [
       { path: 'dashboard',  loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'inventory',  loadChildren: () => import('./features/inventory/inventory.module').then(m => m.InventoryModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
-      { path: 'pos',        loadChildren: () => import('./features/pos/pos.module').then(m => m.PosModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },
+      { path: 'pos',        loadChildren: () => import('./features/pos/pos.module').then(m => m.PosModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero', 'mesero'] } },
       { path: 'cash',       loadChildren: () => import('./features/cash/cash.module').then(m => m.CashModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },
       { path: 'reports',    loadChildren: () => import('./features/reports/reports.module').then(m => m.ReportsModule),    canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'alerts',     loadChildren: () => import('./features/alerts/alerts.module').then(m => m.AlertsModule),      canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },

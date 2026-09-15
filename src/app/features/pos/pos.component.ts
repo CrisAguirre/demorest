@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
+import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -32,7 +33,11 @@ import Swal from 'sweetalert2';
 
       <!-- Panel Carrito -->
       <div class="pos-cart neon-card-violet" style="animation:none">
-        <h3 style="margin-bottom:1rem">🛒 Venta Actual</h3>
+        <h3 style="margin-bottom:1rem">
+          🛒 Venta Actual
+          <span *ngIf="selectedTable === 0" class="badge badge-gold" style="float: right;">🛍️ Para llevar</span>
+          <span *ngIf="selectedTable !== null && selectedTable !== 0" class="badge badge-cyan" style="float: right;">Mesa {{ selectedTable }}</span>
+        </h3>
         <div class="cart-items">
           <div class="cart-item" *ngFor="let item of cart; let i = index">
             <div class="cart-item-info">
@@ -55,8 +60,8 @@ import Swal from 'sweetalert2';
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
             <select class="form-input" [(ngModel)]="selectedTable" style="flex:1">
               <option [ngValue]="null">🪑 Sin mesa</option>
-              <option *ngFor="let t of tables" [ngValue]="t.number" [disabled]="t.number !== selectedTable && t.isOccupied">
-                Mesa {{ t.number }} {{ t.isOccupied ? '(Ocupada)' : '' }}
+              <option *ngFor="let t of tables" [ngValue]="t.number" [disabled]="t.number !== selectedTable && (t.status === 'ocupada' || t.isOccupied)">
+                {{ t.number === 0 ? '🛍️ Para llevar' : 'Mesa ' + t.number }} {{ (t.status === 'ocupada' || t.isOccupied) ? '(Ocupada)' : '' }}
               </option>
             </select>
           </div>
@@ -126,6 +131,7 @@ import Swal from 'sweetalert2';
       font-family: 'Outfit'; font-size: 1.5rem;
       color: var(--brand-gold);
     }
+    .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
     @media (max-width: 768px) {
       .pos-layout { grid-template-columns: 1fr; }
       .pos-cart { position: relative; top: 0; }
@@ -156,7 +162,10 @@ export class PosComponent implements OnInit {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
   }
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.api.getDishes().subscribe({
@@ -167,6 +176,12 @@ export class PosComponent implements OnInit {
     });
     this.api.getTables().subscribe({
       next: (res: any) => this.tables = res
+    });
+
+    this.route.queryParams.subscribe(params => {
+      if (params['table'] !== undefined) {
+        this.selectedTable = parseInt(params['table'], 10);
+      }
     });
   }
 
@@ -226,7 +241,9 @@ export class PosComponent implements OnInit {
       items: this.cart.map(i => ({ product: i.product, quantity: i.quantity })),
       paymentMethod: this.paymentMethod
     };
-    if (this.selectedTable) payload.tableNumber = this.selectedTable;
+    if (this.selectedTable !== null) {
+      payload.tableNumber = this.selectedTable;
+    }
     this.api.createSale(payload).subscribe({
       next: () => {
         this.processing = false;

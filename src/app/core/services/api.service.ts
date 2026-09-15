@@ -621,6 +621,24 @@ export class ApiService {
     return this.http.patch(`${this.baseUrl}/delivery/${id}/cancel`, {});
   }
 
+  // ── Reservations ───────────────────────────────────────────────────────
+
+  createReservation(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reservations`, data);
+  }
+  
+  getReservations(params?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/reservations`, { params });
+  }
+  
+  cancelReservation(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/reservations/${id}/cancel`, {});
+  }
+  
+  completeReservation(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/reservations/${id}/complete`, {});
+  }
+
   clearCache(): void {
     this.preload.clear();
     localStorage.clear();
