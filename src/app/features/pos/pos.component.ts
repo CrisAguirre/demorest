@@ -268,12 +268,15 @@ export class PosComponent implements OnInit {
     
     const t = this.getSelectedTableObj();
     if (t && (t.status === 'ocupada' || t.isOccupied) && t.currentSale) {
+      // Snapshot del carrito para la comanda antes de limpiarlo
+      const commandaItems = [...this.cart];
+      const tableNum = this.selectedTable;
       this.api.addItemsToSale(t.currentSale, payload).subscribe({
         next: () => {
           this.processing = false;
-          Swal.fire({ icon: 'success', title: '✅ Ítems Agregados', text: `Se han añadido los productos a la Mesa ${this.selectedTable}`, confirmButtonColor: '#D4AF37' });
           this.cart = [];
           this.ngOnInit();
+          this.offerPrintComanda(commandaItems, tableNum, 'adicional');
         },
         error: (err: any) => {
           this.processing = false;
@@ -281,14 +284,15 @@ export class PosComponent implements OnInit {
         }
       });
     } else {
+      const commandaItems = [...this.cart];
+      const tableNum = this.selectedTable;
       this.api.createSale(payload).subscribe({
         next: () => {
           this.processing = false;
           const isPostPago = this.settings?.paymentMode === 'post-pago' && this.selectedTable;
-          const msg = isPostPago ? 'Venta guardada y enviada a cocina.' : `Total cobrado: $${this.total.toLocaleString('es-CO')}`;
-          Swal.fire({ icon: 'success', title: isPostPago ? '✅ Orden Creada' : '✅ Venta Registrada', text: msg, confirmButtonColor: '#D4AF37' });
           this.cart = [];
-          this.ngOnInit(); // Recargar productos con stock actualizado
+          this.ngOnInit();
+          this.offerPrintComanda(commandaItems, tableNum, isPostPago ? 'cocina' : 'venta');
         },
         error: (err: any) => {
           this.processing = false;
@@ -327,5 +331,104 @@ export class PosComponent implements OnInit {
         });
       }
     });
+  }
+
+  offerPrintComanda(items: any[], tableNum: number | null, type: 'venta' | 'cocina' | 'adicional'): void {
+    const titles: Record<string, string> = {
+      'venta': '✅ Venta Registrada',
+      'cocina': '✅ Orden Enviada a Cocina',
+      'adicional': '✅ Ítems Agregados a la Mesa'
+    };
+    const texts: Record<string, string> = {
+      'venta': `Total cobrado: $${items.reduce((s, i) => s + i.subtotal, 0).toLocaleString('es-CO')}`,
+      'cocina': 'El pedido fue enviado a preparación.',
+      'adicional': `Se añadieron ${items.length} ítem(s) a la Mesa ${tableNum}.`
+    };
+
+    Swal.fire({
+      icon: 'success',
+      title: titles[type] || '✅ Listo',
+      text: texts[type] || '',
+      confirmButtonColor: '#D4AF37',
+      confirmButtonText: '🖨️ Imprimir Comanda',
+      showDenyButton: true,
+      denyButtonText: 'Cerrar',
+      denyButtonColor: '#6c757d',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.printComanda(items, tableNum, type);
+      }
+    });
+  }
+
+  printComanda(items: any[], tableNum: number | null, type: string): void {
+    const now = new Date();
+    const fecha = now.toLocaleDateString('es-CO');
+    const hora = now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+    const mesaLabel = tableNum === 0 ? 'Para llevar' : tableNum ? `Mesa ${tableNum}` : 'Mostrador';
+    const tipoLabel = type === 'adicional' ? 'ADICIONAL' : type === 'cocina' ? 'PEDIDO' : 'VENTA';
+    const total = items.reduce((s, i) => s + i.subtotal, 0);
+
+    const lineas = items.map(i =>
+      `<tr>
+        <td style="padding:4px 2px;">${i.productName}</td>
+        <td style="text-align:center;padding:4px;">${i.quantity}</td>
+        <td style="text-align:right;padding:4px;">$${i.subtotal.toLocaleString('es-CO')}</td>
+      </tr>`
+    ).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comanda</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; font-size: 12px; width: 280px; padding: 8px; }
+    .center { text-align: center; }
+    .title { font-size: 15px; font-weight: bold; margin: 6px 0; }
+    .badge { font-size: 11px; border: 1px solid #000; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 4px 0; }
+    .divider { border-top: 1px dashed #000; margin: 6px 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th { border-bottom: 1px solid #000; padding: 3px 2px; font-size: 11px; text-align: left; }
+    .total-row td { border-top: 1px dashed #000; font-weight: bold; padding-top: 6px; padding-bottom: 4px; }
+    .footer { margin-top: 8px; font-size: 10px; color: #555; }
+    @media print { body { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="title">🍲 COMANDA</div>
+    <div class="badge">${tipoLabel}</div>
+    <div style="margin-top:4px;"><strong>${mesaLabel}</strong></div>
+    <div style="font-size:10px;color:#555;">${fecha} — ${hora}</div>
+  </div>
+  <div class="divider"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th style="text-align:center;">Cant.</th>
+        <th style="text-align:right;">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>${lineas}</tbody>
+    ${type !== 'cocina' ? `<tfoot><tr class="total-row">
+      <td colspan="2">TOTAL</td>
+      <td style="text-align:right;">$${total.toLocaleString('es-CO')}</td>
+    </tr></tfoot>` : ''}
+  </table>
+  <div class="divider"></div>
+  <div class="footer center">Sistema La Soupe · Generado automáticamente</div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=350,height=600');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 400);
+    }
   }
 }
