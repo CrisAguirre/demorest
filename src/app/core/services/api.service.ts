@@ -146,6 +146,21 @@ export class ApiService {
     );
   }
 
+  addItemsToSale(id: string, data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/sales/${id}/add-items`, data).pipe(
+      tap(() => {
+        this.preload.invalidatePrefix('products');
+        this.preload.invalidatePrefix('sales-summary');
+        this.preload.invalidatePrefix('top-products');
+        this.preload.invalidatePrefix('alerts');
+        this.preload.invalidate('current-cash');
+        this.preload.invalidatePrefix('finance');
+        this.preload.invalidate(`sale:${id}`);
+        this.preload.invalidatePrefix('sales');
+      })
+    );
+  }
+
   getSales(params?: any): Observable<any> {
     const k = this.key('sales', params);
     return this.cachedGet(k, this.http.get(`${this.baseUrl}/sales`, { params }), TTL.sales);

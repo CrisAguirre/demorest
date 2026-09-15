@@ -60,7 +60,7 @@ import Swal from 'sweetalert2';
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
             <select class="form-input" [(ngModel)]="selectedTable" style="flex:1">
               <option [ngValue]="null">🪑 Sin mesa</option>
-              <option *ngFor="let t of tables" [ngValue]="t.number" [disabled]="t.number !== selectedTable && (t.status === 'ocupada' || t.isOccupied)">
+              <option *ngFor="let t of tables" [ngValue]="t.number">
                 {{ t.number === 0 ? '🛍️ Para llevar' : 'Mesa ' + t.number }} {{ (t.status === 'ocupada' || t.isOccupied) ? '(Ocupada)' : '' }}
               </option>
             </select>
@@ -79,7 +79,7 @@ import Swal from 'sweetalert2';
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
             <button class="btn-danger" style="flex:1" (click)="clearCart()">🗑️ Limpiar</button>
             <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing">
-              {{ processing ? '⏳' : '✅' }} Cobrar
+              {{ processing ? '⏳' : (isTableOccupied() ? '➕ Agregar a Mesa' : '✅ Cobrar') }}
             </button>
           </div>
         </div>
@@ -160,6 +160,15 @@ export class PosComponent implements OnInit {
 
   get total(): number {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
+  }
+
+  getSelectedTableObj(): any {
+    return this.tables.find(t => t.number === this.selectedTable);
+  }
+
+  isTableOccupied(): boolean {
+    const t = this.getSelectedTableObj();
+    return t ? (t.status === 'ocupada' || t.isOccupied) : false;
   }
 
   constructor(
@@ -244,17 +253,34 @@ export class PosComponent implements OnInit {
     if (this.selectedTable !== null) {
       payload.tableNumber = this.selectedTable;
     }
-    this.api.createSale(payload).subscribe({
-      next: () => {
-        this.processing = false;
-        Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#D4AF37' });
-        this.cart = [];
-        this.ngOnInit(); // Recargar productos con stock actualizado
-      },
-      error: (err: any) => {
-        this.processing = false;
-        Swal.fire('❌ Error', err.error?.message || 'Error al procesar venta', 'error');
-      }
-    });
+    
+    const t = this.getSelectedTableObj();
+    if (t && (t.status === 'ocupada' || t.isOccupied) && t.currentSale) {
+      this.api.addItemsToSale(t.currentSale, payload).subscribe({
+        next: () => {
+          this.processing = false;
+          Swal.fire({ icon: 'success', title: '✅ Ítems Agregados', text: `Se han añadido los productos a la Mesa ${this.selectedTable}`, confirmButtonColor: '#D4AF37' });
+          this.cart = [];
+          this.ngOnInit();
+        },
+        error: (err: any) => {
+          this.processing = false;
+          Swal.fire('❌ Error', err.error?.message || 'Error al agregar ítems', 'error');
+        }
+      });
+    } else {
+      this.api.createSale(payload).subscribe({
+        next: () => {
+          this.processing = false;
+          Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#D4AF37' });
+          this.cart = [];
+          this.ngOnInit(); // Recargar productos con stock actualizado
+        },
+        error: (err: any) => {
+          this.processing = false;
+          Swal.fire('❌ Error', err.error?.message || 'Error al procesar venta', 'error');
+        }
+      });
+    }
   }
 }
