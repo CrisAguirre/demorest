@@ -156,6 +156,7 @@ export class SidebarComponent {
         // Operaciones diarias
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
+        { icon: '📅', label: 'Eventos y Catering', route: '/events' },
         {
           icon: '📦', label: 'Inventario', expanded: false,
           subItems: [

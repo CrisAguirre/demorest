@@ -671,6 +671,34 @@ export class ApiService {
     return this.http.patch(`${this.baseUrl}/reservations/${id}/complete`, {});
   }
 
+  // ── Events & Catering ──────────────────────────────────────────────────
+
+  getEvents(params?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events`, { params });
+  }
+
+  getEvent(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/${id}`);
+  }
+
+  createEvent(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events`, data);
+  }
+
+  updateEvent(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/events/${id}`, data);
+  }
+
+  deleteEvent(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/events/${id}`);
+  }
+
+  addEventPayment(id: string, data: { amount: number; method: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/${id}/payment`, data).pipe(
+      tap(() => this.preload.invalidate('current-cash'))
+    );
+  }
+
   clearCache(): void {
     this.preload.clear();
     localStorage.clear();
