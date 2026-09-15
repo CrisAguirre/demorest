@@ -14,15 +14,30 @@ import { AuthService } from '../../../core/services/auth.service';
           <!-- Separador de sección -->
           <div class="section-divider" *ngIf="item.divider && !collapsed">{{ item.divider }}</div>
           
-          <!-- Enlace Interno -->
-          <a *ngIf="!item.divider && !item.externalUrl" [routerLink]="item.route" routerLinkActive="active"
+          <!-- Enlace Normal -->
+          <a *ngIf="!item.divider && !item.externalUrl && !item.subItems" [routerLink]="item.route" routerLinkActive="active"
              class="nav-item" [title]="item.label">
             <span class="nav-icon">{{ item.icon }}</span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
           </a>
 
+          <!-- Enlace con Submenú -->
+          <div *ngIf="!item.divider && item.subItems" class="nav-item-group">
+            <div class="nav-item" (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [title]="item.label">
+              <span class="nav-icon">{{ item.icon }}</span>
+              <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
+              <span class="nav-arrow" *ngIf="!collapsed" [class.rotated]="item.expanded">▼</span>
+            </div>
+            <div class="nav-subitems" *ngIf="item.expanded && !collapsed">
+              <a *ngFor="let sub of item.subItems" [routerLink]="sub.route" routerLinkActive="active" class="nav-subitem">
+                <span class="nav-icon" style="font-size: 0.95rem;">{{ sub.icon }}</span>
+                <span class="nav-label">{{ sub.label }}</span>
+              </a>
+            </div>
+          </div>
+
           <!-- Enlace Externo -->
-          <a *ngIf="!item.divider && item.externalUrl" [href]="item.externalUrl" target="_blank"
+          <a *ngIf="!item.divider && item.externalUrl && !item.subItems" [href]="item.externalUrl" target="_blank"
              class="nav-item" [title]="item.label">
             <span class="nav-icon">{{ item.icon }}</span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
@@ -61,6 +76,26 @@ import { AuthService } from '../../../core/services/auth.service';
       border-radius: 8px; font-size: 0.85rem; font-weight: 500;
       color: var(--text-secondary); transition: all 0.15s;
       white-space: nowrap; overflow: hidden;
+      user-select: none;
+    }
+    .nav-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.2s; }
+    .nav-arrow.rotated { transform: rotate(180deg); }
+    .nav-subitems {
+      display: flex; flex-direction: column; gap: 2px;
+      margin: 0.2rem 0.5rem 0.2rem 2.5rem;
+      border-left: 1px solid rgba(212,175,55,0.2);
+      padding-left: 0.5rem;
+    }
+    .nav-subitem {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.8rem;
+      color: var(--text-secondary); transition: all 0.15s;
+      text-decoration: none;
+    }
+    .nav-subitem:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
+    .nav-subitem.active {
+      color: var(--brand-gold); font-weight: 600;
+      background: rgba(212,175,55,0.05);
     }
     .nav-item:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
     .nav-item.active {
@@ -84,7 +119,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class SidebarComponent {
   collapsed = false;
-  menuItems: { icon?: string; label?: string; route?: string; divider?: string; externalUrl?: string }[] = [];
+  menuItems: { icon?: string; label?: string; route?: string; divider?: string; externalUrl?: string; subItems?: any[]; expanded?: boolean }[] = [];
 
   constructor(private auth: AuthService) {
     const role = this.auth.currentUser?.role;
@@ -121,10 +156,14 @@ export class SidebarComponent {
         // Operaciones diarias
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { icon: '🧅', label: 'Ingredientes',    route: '/ingredients' },
+        {
+          icon: '📦', label: 'Inventario', expanded: false,
+          subItems: [
+            { icon: '🧅', label: 'Insumos', route: '/ingredients' },
+            { icon: '🛍️', label: 'Productos', route: '/inventory' }
+          ]
+        },
         { icon: '🍲', label: 'Platos',          route: '/dishes' },
-        { icon: '📂', label: 'Categorías',      route: '/categories' },
-        { icon: '📦', label: 'Productos',       route: '/inventory' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         // Compras y proveedores
         { divider: 'Compras' },
@@ -144,7 +183,13 @@ export class SidebarComponent {
         { divider: 'Sistema' },
         { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },
         { icon: '🌍', label: 'Landing',         externalUrl: 'https://www.restmarieantoinette.com/' },
-        { icon: '⚙️', label: 'Configuración',    route: '/settings' }
+        { 
+          icon: '⚙️', label: 'Configuración', expanded: false,
+          subItems: [
+            { icon: '⚙️', label: 'General', route: '/settings' },
+            { icon: '📂', label: 'Categorías', route: '/categories' }
+          ]
+        }
       ];
     }
   }
