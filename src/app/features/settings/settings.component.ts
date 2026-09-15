@@ -30,6 +30,16 @@ import Swal from 'sweetalert2';
           <label class="form-label">WhatsApp (con código país: 573...)</label>
           <input class="form-input" [(ngModel)]="whatsappNumber" placeholder="573137733408">
         </div>
+        <div class="form-group" style="padding-top: 1rem; border-top: 1px solid var(--bg-input);">
+          <label class="form-label" style="color: var(--brand-gold);">Modelo de Operación (Ventas)</label>
+          <select class="form-input" [(ngModel)]="paymentMode">
+            <option value="pre-pago">⚡ Fast-Food (Cobro anticipado)</option>
+            <option value="post-pago">🍽️ Restaurante (Cuentas abiertas / Cobro al final)</option>
+          </select>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            Determina si el cobro de la mesa se exige de inmediato o si queda pendiente de pago.
+          </p>
+        </div>
         <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
       </div>
       <div>
@@ -122,7 +132,7 @@ export class SettingsComponent implements OnInit {
   isCliente = false;
 
   // Admin settings
-  storeName = ''; phone = ''; address = ''; whatsappNumber = '';
+  storeName = ''; phone = ''; address = ''; whatsappNumber = ''; paymentMode = 'pre-pago';
   currentLogo = '';
   selectedFile: File | null = null;
   smtpHost = ''; smtpPort = 587; smtpSecure = false;
@@ -141,6 +151,7 @@ export class SettingsComponent implements OnInit {
         next: (s: any) => {
           this.storeName = s.storeName; this.phone = s.phone;
           this.address = s.address; this.whatsappNumber = s.whatsappNumber;
+          this.paymentMode = s.paymentMode || 'pre-pago';
           this.currentLogo = s.logoUrl;
           if (s.email) {
             this.smtpHost = s.email.host || '';
@@ -172,6 +183,7 @@ export class SettingsComponent implements OnInit {
     formData.append('phone', this.phone);
     formData.append('address', this.address);
     formData.append('whatsappNumber', this.whatsappNumber);
+    formData.append('paymentMode', this.paymentMode);
     formData.append('email', JSON.stringify({
       host: this.smtpHost,
       port: this.smtpPort,

@@ -56,7 +56,7 @@ import Swal from 'sweetalert2';
             Agregue productos para empezar
           </div>
         </div>
-        <div class="cart-footer" *ngIf="cart.length > 0">
+        <div class="cart-footer">
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
             <select class="form-input" [(ngModel)]="selectedTable" style="flex:1">
               <option [ngValue]="null">🪑 Sin mesa</option>
@@ -76,10 +76,18 @@ import Swal from 'sweetalert2';
               <option value="mixto">🔄 Mixto</option>
             </select>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
-            <button class="btn-danger" style="flex:1" (click)="clearCart()">🗑️ Limpiar</button>
-            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing">
-              {{ processing ? '⏳' : (isTableOccupied() ? '➕ Agregar a Mesa' : '✅ Cobrar') }}
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied()">
+            <button class="btn-warning" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0">
+              💵 Cobrar Cuenta
+            </button>
+            <button class="btn-success" style="flex:1" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+              ➕ Agregar a Mesa
+            </button>
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="!isTableOccupied()">
+            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
+            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+              {{ processing ? '⏳' : (settings?.paymentMode === 'post-pago' && selectedTable ? '✅ Enviar a Cocina' : '✅ Cobrar') }}
             </button>
           </div>
         </div>
@@ -157,6 +165,7 @@ export class PosComponent implements OnInit {
   processing = false;
   tables: any[] = [];
   selectedTable: number | null = null;
+  settings: any = null;
 
   get total(): number {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
@@ -185,6 +194,9 @@ export class PosComponent implements OnInit {
     });
     this.api.getTables().subscribe({
       next: (res: any) => this.tables = res
+    });
+    this.api.getSettings().subscribe({
+      next: (res: any) => this.settings = res
     });
 
     this.route.queryParams.subscribe(params => {
@@ -272,7 +284,9 @@ export class PosComponent implements OnInit {
       this.api.createSale(payload).subscribe({
         next: () => {
           this.processing = false;
-          Swal.fire({ icon: 'success', title: '✅ Venta Registrada', text: `Total: $${this.total.toLocaleString('es-CO')}`, confirmButtonColor: '#D4AF37' });
+          const isPostPago = this.settings?.paymentMode === 'post-pago' && this.selectedTable;
+          const msg = isPostPago ? 'Venta guardada y enviada a cocina.' : `Total cobrado: $${this.total.toLocaleString('es-CO')}`;
+          Swal.fire({ icon: 'success', title: isPostPago ? '✅ Orden Creada' : '✅ Venta Registrada', text: msg, confirmButtonColor: '#D4AF37' });
           this.cart = [];
           this.ngOnInit(); // Recargar productos con stock actualizado
         },
@@ -282,5 +296,36 @@ export class PosComponent implements OnInit {
         }
       });
     }
+  }
+
+  payTableSale(): void {
+    const t = this.getSelectedTableObj();
+    if (!t || !t.currentSale) return;
+
+    Swal.fire({
+      title: `¿Cobrar Mesa ${t.number}?`,
+      text: "Se marcará la venta como pagada y se liberará la mesa.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#D4AF37',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cobrar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.processing = true;
+        this.api.paySale(t.currentSale, { paymentMethod: this.paymentMethod }).subscribe({
+          next: () => {
+            this.processing = false;
+            Swal.fire('✅ Cuenta Pagada', 'La mesa ha sido liberada.', 'success');
+            this.selectedTable = null;
+            this.ngOnInit();
+          },
+          error: (err: any) => {
+            this.processing = false;
+            Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
+          }
+        });
+      }
+    });
   }
 }
