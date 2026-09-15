@@ -111,7 +111,6 @@ export class SidebarComponent {
       this.menuItems = [
         { divider: 'Operaciones' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         { divider: 'Gestión' },
         { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
@@ -126,7 +125,6 @@ export class SidebarComponent {
         { icon: '🍲', label: 'Platos',          route: '/dishes' },
         { icon: '📂', label: 'Categorías',      route: '/categories' },
         { icon: '📦', label: 'Productos',       route: '/inventory' },
-        { icon: '🛒', label: 'Punto de Venta',  route: '/pos' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
         // Compras y proveedores
         { divider: 'Compras' },

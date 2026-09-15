@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -8,6 +9,31 @@ import Swal from 'sweetalert2';
   template: `
     <div class="page-header">
       <h1>👋 Bienvenido, {{ authService.currentUser?.name?.split(' ')?.[0] || '' }}</h1>
+    </div>
+
+    <!-- Mesas Arriba -->
+    <div class="neon-card mb-3">
+      <h3 style="margin-bottom:1rem">🪑 Estado de Mesas</h3>
+      <div class="tables-grid">
+         <div *ngFor="let t of tables" 
+              class="table-item" 
+              [class.occupied]="t.status === 'ocupada'"
+              [class.reserved]="t.status === 'reservada'"
+              [class.takeout]="t.number === 0"
+              (click)="onTableClick(t)">
+           <div class="table-number" *ngIf="t.number !== 0">{{ t.number }}</div>
+           <div class="table-number" *ngIf="t.number === 0">🛍️</div>
+           <div class="table-status">{{ t.number === 0 ? 'Para llevar' : t.status }}</div>
+           <div class="table-order" *ngIf="t.status === 'ocupada' && t.currentSale">
+             #{{ t.currentSale?._id?.toString()?.slice(-6)?.toUpperCase() }}
+           </div>
+           <div class="table-reservation-info" *ngIf="t.status === 'reservada' && t.currentReservation">
+             {{ t.currentReservation?.customerName }}
+             <br>
+             {{ t.currentReservation?.date | date:'shortTime' }}
+           </div>
+         </div>
+      </div>
     </div>
 
     <div class="grid-4 mb-3">
@@ -52,24 +78,9 @@ import Swal from 'sweetalert2';
         </p>
       </div>
     </div>
-    
-    <div class="neon-card mt-3">
-      <h3 style="margin-bottom:1rem">🪑 Estado de Mesas</h3>
-      <div class="tables-grid">
-         <div *ngFor="let t of tables" 
-              class="table-item" 
-              [class.occupied]="t.isOccupied"
-              (click)="freeTable(t)">
-           <div class="table-number">{{ t.number }}</div>
-           <div class="table-status">{{ t.isOccupied ? 'Ocupada' : 'Libre' }}</div>
-           <div class="table-order" *ngIf="t.isOccupied && t.currentSale">
-             #{{ t.currentSale?._id?.toString()?.slice(-6)?.toUpperCase() }}
-           </div>
-         </div>
-      </div>
-    </div>
   `,
   styles: [`
+    .mb-3 { margin-bottom: 1.5rem; }
     .top-product-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.6rem 0; border-bottom: 1px solid var(--bg-input);
@@ -82,7 +93,7 @@ import Swal from 'sweetalert2';
       font-size: 0.75rem; font-weight: 700;
     }
     .top-name { flex: 1; font-size: 0.875rem; font-weight: 500; }
-    .mt-3 { margin-top: 1.5rem; }
+    
     .tables-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -97,6 +108,11 @@ import Swal from 'sweetalert2';
       cursor: pointer;
       transition: all 0.2s;
       color: #2E8B57;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
     }
     .table-item:hover {
       transform: translateY(-3px);
@@ -106,6 +122,16 @@ import Swal from 'sweetalert2';
       border-color: #D32F2F; /* Rojo para Ocupada */
       background: rgba(211, 47, 47, 0.05);
       color: #D32F2F;
+    }
+    .table-item.reserved {
+      border-color: #FF8F00; /* Ámbar/Naranja para Reservada */
+      background: rgba(255, 143, 0, 0.05);
+      color: #FF8F00;
+    }
+    .table-item.takeout {
+      border-color: var(--brand-gold);
+      background: rgba(212, 175, 55, 0.05);
+      color: var(--brand-gold);
     }
     .table-number {
       font-size: 1.25rem;
@@ -122,6 +148,12 @@ import Swal from 'sweetalert2';
       margin-top: 0.2rem;
       opacity: 0.7;
       font-family: monospace;
+    }
+    .table-reservation-info {
+      font-size: 0.65rem;
+      margin-top: 0.4rem;
+      font-weight: 500;
+      line-height: 1.2;
     }
     @media (max-width: 600px) {
       .tables-grid { grid-template-columns: repeat(2, 1fr); }
@@ -146,7 +178,11 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  constructor(public authService: AuthService, private api: ApiService) {}
+  constructor(
+    public authService: AuthService, 
+    private api: ApiService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadStats();
@@ -159,24 +195,165 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  freeTable(table: any): void {
-    if (!table.isOccupied) return;
+  onTableClick(table: any): void {
+    if (table.status === 'libre') {
+      Swal.fire({
+        title: table.number === 0 ? 'Pedido para llevar' : \`Mesa \${table.number} - Libre\`,
+        text: '¿Qué desea hacer?',
+        icon: 'info',
+        showCancelButton: true,
+        showDenyButton: table.number !== 0,
+        confirmButtonColor: '#2E8B57',
+        denyButtonColor: '#FF8F00',
+        confirmButtonText: '🛒 Pedido',
+        denyButtonText: '📅 Reservar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Pedido
+          this.router.navigate(['/pos'], { queryParams: { table: table.number } });
+        } else if (result.isDenied && table.number !== 0) {
+          // Reservar
+          this.showReservationForm(table);
+        }
+      });
+    } else if (table.status === 'ocupada') {
+      Swal.fire({
+        title: \`¿Liberar \${table.number === 0 ? 'Para llevar' : 'Mesa ' + table.number}?\`,
+        text: 'La mesa será marcada como libre',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#D4AF37',
+        confirmButtonText: 'Sí, liberar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.api.freeTable(table._id).subscribe({
+            next: () => {
+              this.loadTables();
+              Swal.fire({ icon: 'success', title: 'Mesa liberada', timer: 1500, showConfirmButton: false });
+            }
+          });
+        }
+      });
+    } else if (table.status === 'reservada') {
+      const resData = table.currentReservation;
+      Swal.fire({
+        title: \`Mesa \${table.number} - Reservada\`,
+        html: \`
+          <div style="text-align: left; padding: 10px;">
+            <p><strong>Cliente:</strong> \${resData?.customerName || 'N/A'}</p>
+            <p><strong>Personas:</strong> \${resData?.numberOfPeople || 'N/A'}</p>
+            <p><strong>Fecha/Hora:</strong> \${resData?.date ? new Date(resData.date).toLocaleString('es-CO') : 'N/A'}</p>
+            \${resData?.notes ? \`<p><strong>Notas:</strong> \${resData.notes}</p>\` : ''}
+          </div>
+          <p>¿Qué desea hacer?</p>
+        \`,
+        icon: 'info',
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonColor: '#2E8B57',
+        denyButtonColor: '#D32F2F',
+        confirmButtonText: '🛒 Iniciar Pedido',
+        denyButtonText: '❌ Cancelar Reserva',
+        cancelButtonText: 'Cerrar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Iniciar pedido = Completar reserva y navegar
+          if (resData?._id) {
+            this.api.completeReservation(resData._id).subscribe({
+              next: () => {
+                this.router.navigate(['/pos'], { queryParams: { table: table.number } });
+              }
+            });
+          } else {
+             this.router.navigate(['/pos'], { queryParams: { table: table.number } });
+          }
+        } else if (result.isDenied) {
+          if (resData?._id) {
+            Swal.fire({
+              title: '¿Confirmar cancelación?',
+              text: 'La reserva será cancelada y la mesa quedará libre.',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#D32F2F',
+              confirmButtonText: 'Sí, cancelar reserva'
+            }).then((cancelResult) => {
+              if (cancelResult.isConfirmed) {
+                this.api.cancelReservation(resData._id).subscribe({
+                  next: () => {
+                    this.loadTables();
+                    Swal.fire({ icon: 'success', title: 'Reserva cancelada', timer: 1500, showConfirmButton: false });
+                  }
+                });
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+
+  showReservationForm(table: any): void {
+    const now = new Date();
+    // formatear a YYYY-MM-DDThh:mm para el input datetime-local
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const minDateTime = now.toISOString().slice(0, 16);
+
     Swal.fire({
-      title: `¿Liberar Mesa ${table.number}?`,
-      text: 'La mesa será marcada como libre',
-      icon: 'question',
+      title: \`Reservar Mesa \${table.number}\`,
+      html: \`
+        <div style="display:flex; flex-direction:column; gap: 10px; text-align: left;">
+          <div>
+            <label style="font-weight:600; font-size: 0.85rem;">Nombre del Cliente *</label>
+            <input type="text" id="res-name" class="swal2-input" style="margin:0; width:100%; box-sizing:border-box;" placeholder="Ej. Juan Pérez">
+          </div>
+          <div>
+            <label style="font-weight:600; font-size: 0.85rem;">Número de Personas *</label>
+            <input type="number" id="res-people" class="swal2-input" style="margin:0; width:100%; box-sizing:border-box;" min="1" value="2">
+          </div>
+          <div>
+            <label style="font-weight:600; font-size: 0.85rem;">Fecha y Hora *</label>
+            <input type="datetime-local" id="res-date" class="swal2-input" style="margin:0; width:100%; box-sizing:border-box;" min="\${minDateTime}" value="\${minDateTime}">
+          </div>
+          <div>
+            <label style="font-weight:600; font-size: 0.85rem;">Anotaciones (Opcional)</label>
+            <textarea id="res-notes" class="swal2-textarea" style="margin:0; width:100%; box-sizing:border-box;" rows="2" placeholder="Cumpleaños, alergias, etc."></textarea>
+          </div>
+        </div>
+      \`,
+      focusConfirm: false,
       showCancelButton: true,
-      confirmButtonColor: '#D4AF37',
-      confirmButtonText: 'Sí, liberar',
-      cancelButtonText: 'Cancelar'
-    }).then((result: any) => {
+      confirmButtonText: 'Guardar Reserva',
+      confirmButtonColor: '#FF8F00',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const name = (document.getElementById('res-name') as HTMLInputElement).value;
+        const people = parseInt((document.getElementById('res-people') as HTMLInputElement).value, 10);
+        const dateStr = (document.getElementById('res-date') as HTMLInputElement).value;
+        const notes = (document.getElementById('res-notes') as HTMLTextAreaElement).value;
+
+        if (!name) return Swal.showValidationMessage('El nombre es obligatorio');
+        if (!people || people < 1) return Swal.showValidationMessage('El número de personas debe ser mayor a 0');
+        if (!dateStr) return Swal.showValidationMessage('La fecha es obligatoria');
+
+        return {
+          table: table._id,
+          customerName: name,
+          numberOfPeople: people,
+          date: new Date(dateStr),
+          notes: notes
+        };
+      }
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.api.freeTable(table._id).subscribe({
+        this.api.createReservation(result.value).subscribe({
           next: () => {
-            table.isOccupied = false;
-            table.currentSale = null;
-            table.occupiedAt = null;
-            Swal.fire({ icon: 'success', title: 'Mesa liberada', timer: 1500, showConfirmButton: false });
+            this.loadTables();
+            Swal.fire({ icon: 'success', title: 'Mesa reservada', timer: 1500, showConfirmButton: false });
+          },
+          error: (err: any) => {
+            Swal.fire('❌ Error', err.error?.message || 'Error al reservar', 'error');
           }
         });
       }
