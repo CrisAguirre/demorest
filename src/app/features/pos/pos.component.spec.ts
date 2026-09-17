@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { PosComponent } from './pos.component';
 import { ApiService } from '../../core/services/api.service';
@@ -17,23 +18,38 @@ describe('PosComponent', () => {
   ];
 
   const mockTables = [
-    { number: 1, isOccupied: false },
-    { number: 2, isOccupied: true },
+    { _id: 't1', number: 1, status: 'libre', isOccupied: false, currentSale: null },
+    { _id: 't2', number: 2, status: 'ocupada', isOccupied: true, currentSale: { _id: 's1', total: 5000 } },
   ];
+
+  const mockSale = {
+    _id: 's1',
+    total: 5000,
+    items: [
+      { productName: 'Pizza', quantity: 1, unitPrice: 15000, subtotal: 15000, esAdicional: false },
+      { productName: 'Jugo', quantity: 1, unitPrice: 5000, subtotal: 5000, esAdicional: true }
+    ],
+    dishItems: [{ dishName: 'Sopa', quantity: 2, unitPrice: 10000, subtotal: 20000 }],
+  };
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getDishes', 'getTables', 'createSale'
+      'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale'
     ]);
     api.getDishes.and.returnValue(of(mockDishes));
     api.getTables.and.returnValue(of(mockTables));
+    api.getSettings.and.returnValue(of({ paymentMode: 'post-pago' }));
+    api.getSale.and.returnValue(of(mockSale));
     api.createSale.and.returnValue(of({ _id: 's1' }));
+    api.addItemsToSale.and.returnValue(of({ _id: 's1' }));
+    api.paySale.and.returnValue(of({ _id: 's1', items: [], dishItems: [] }));
 
     await TestBed.configureTestingModule({
       declarations: [PosComponent],
       imports: [CommonModule, FormsModule],
       providers: [
-        { provide: ApiService, useValue: api }
+        { provide: ApiService, useValue: api },
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } }
       ]
     }).compileComponents();
 
@@ -174,6 +190,55 @@ describe('PosComponent', () => {
       expect(component.normalizeString('Café')).toBe('cafe');
       expect(component.normalizeString('Jalapeño')).toBe('jalapeno');
       expect(component.normalizeString('')).toBe('');
+    });
+  });
+
+  describe('adicional flow', () => {
+    it('should default to venta tab with no sale detail', () => {
+      expect(component.activeTab).toBe('venta');
+      expect(component.ventaActual).toBeNull();
+    });
+
+    it('should load venta detail when an occupied table is selected', () => {
+      component.selectedTable = 2;
+      component.onTableChange();
+      expect(component.activeTab).toBe('venta');
+      expect(api.getSale).toHaveBeenCalledWith('s1');
+      expect(component.ventaActual._id).toBe('s1');
+    });
+
+    it('should combine items and dishItems in ventaItems', () => {
+      component.ventaActual = mockSale;
+      expect(component.ventaItems.length).toBe(3);
+      expect(component.ventaItems[1].productName).toBe('Jugo');
+      expect(component.ventaTotal).toBe(5000);
+    });
+
+    it('should discriminate iniciales vs adicionales', () => {
+      component.ventaActual = mockSale;
+      expect(component.ventaInicial.length).toBe(2);
+      expect(component.ventaAdicionales.length).toBe(1);
+      expect(component.ventaAdicionales[0].productName).toBe('Jugo');
+    });
+
+    it('should call addItemsToSale with sale id and switch back to venta tab', () => {
+      component.selectedTable = 2;
+      component.ventaActual = mockSale;
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
+      ];
+      component.activeTab = 'adicional';
+      spyOn(component, 'offerPrintComanda');
+      component.finalizeSale();
+
+      expect(api.addItemsToSale).toHaveBeenCalledWith('s1', {
+        items: [{ product: 'd1', quantity: 1 }],
+        paymentMethod: 'efectivo',
+        tableNumber: 2
+      });
+      expect(component.cart.length).toBe(0);
+      expect(component.activeTab).toBe('venta');
+      expect(component.offerPrintComanda).toHaveBeenCalled();
     });
   });
 });

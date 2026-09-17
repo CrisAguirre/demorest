@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { ApiService } from '@core/services/api.service';
@@ -11,25 +12,30 @@ describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let api: jasmine.SpyObj<ApiService>;
   let auth: jasmine.SpyObj<AuthService>;
+  let navigateSpy: jasmine.Spy;
 
   function makeMockTables() {
     return [
-      { _id: 't1', number: 1, isOccupied: false, currentSale: null },
-      { _id: 't2', number: 2, isOccupied: true, currentSale: { _id: '662e1a1b2c3d4e5f6a7b8c9d' } },
-      { _id: 't3', number: 3, isOccupied: true, currentSale: { _id: '772e1a1b2c3d4e5f6a7b8c9e' } },
-      { _id: 't4', number: 4, isOccupied: false, currentSale: null }
+      { _id: 't1', number: 1, status: 'libre', isOccupied: false, currentSale: null },
+      { _id: 't2', number: 2, status: 'ocupada', isOccupied: true, currentSale: { _id: '662e1a1b2c3d4e5f6a7b8c9d' } },
+      { _id: 't3', number: 3, status: 'ocupada', isOccupied: true, currentSale: { _id: '772e1a1b2c3d4e5f6a7b8c9e' } },
+      { _id: 't4', number: 4, status: 'libre', isOccupied: false, currentSale: null }
     ];
   }
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getTables', 'getSalesSummary', 'getProducts', 'getAlerts', 'getTopProducts', 'freeTable'
+      'getTables', 'getSalesSummary', 'getProducts', 'getAlerts', 'getTopProducts',
+      'getAllDeliveries', 'freeTable'
     ]);
     api.getTables.and.callFake(() => of(makeMockTables()));
     api.getSalesSummary.and.returnValue(of({ totalRevenue: 50000, totalTransactions: 5 }));
     api.getProducts.and.returnValue(of({ total: 10 }));
     api.getAlerts.and.returnValue(of({ unread: 3 }));
     api.getTopProducts.and.returnValue(of([{ name: 'Burger', totalQuantity: 20 }]));
+    api.getAllDeliveries.and.returnValue(of([]));
+
+    navigateSpy = jasmine.createSpy('navigate');
 
     auth = jasmine.createSpyObj('AuthService', [], {
       currentUser: { name: 'Admin User', role: 'admin' }
@@ -39,7 +45,8 @@ describe('DashboardComponent', () => {
       declarations: [DashboardComponent],
       providers: [
         { provide: ApiService, useValue: api },
-        { provide: AuthService, useValue: auth }
+        { provide: AuthService, useValue: auth },
+        { provide: Router, useValue: { navigate: navigateSpy } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
@@ -58,26 +65,27 @@ describe('DashboardComponent', () => {
     expect(component.tables.length).toBe(4);
   });
 
-  it('should call freeTable when occupied table is clicked and confirmed', async () => {
+  it('should navigate to pos when free table pedido is confirmed', async () => {
+    spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
+    component.onTableClick(component.tables[0]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(navigateSpy).toHaveBeenCalledWith(['/pos'], { queryParams: { table: 1 } });
+  });
+
+  it('should call freeTable when occupied table click is confirmed', async () => {
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
     api.freeTable.and.returnValue(of({}));
 
-    const table = component.tables[1];
-    await component.freeTable(table);
+    component.onTableClick(component.tables[1]);
+    await new Promise(resolve => setTimeout(resolve, 0));
     expect(api.freeTable).toHaveBeenCalledWith('t2');
-    expect(table.isOccupied).toBe(false);
-    expect(table.currentSale).toBeNull();
-  });
-
-  it('should NOT call freeTable when table is already free', () => {
-    component.freeTable(component.tables[0]);
-    expect(api.freeTable).not.toHaveBeenCalled();
   });
 
   it('should NOT call freeTable when Swal is cancelled', async () => {
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: false } as any));
 
-    await component.freeTable(component.tables[1]);
+    component.onTableClick(component.tables[1]);
+    await new Promise(resolve => setTimeout(resolve, 0));
     expect(api.freeTable).not.toHaveBeenCalled();
   });
 
