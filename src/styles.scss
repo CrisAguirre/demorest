@@ -226,6 +226,13 @@ input, select, textarea { font-family: inherit; }
   color: #fff;
 }
 
+.btn-info {
+  @extend .btn;
+
+  background: linear-gradient(135deg, #0288D1, #01579B);
+  color: #fff;
+}
+
 .btn-outline {
   @extend .btn;
 

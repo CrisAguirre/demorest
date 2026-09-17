@@ -35,10 +35,43 @@ import Swal from 'sweetalert2';
       <div class="pos-cart neon-card-violet" style="animation:none">
         <h3 style="margin-bottom:1rem">
           🛒 Venta Actual
+          <span *ngIf="isTableOccupied()" class="tabs-inline">
+            <button class="tab-btn" [class.active]="activeTab === 'venta'" (click)="activeTab = 'venta'">🧾 Venta</button>
+            <button class="tab-btn" [class.active]="activeTab === 'adicional'" (click)="activeTab = 'adicional'">➕ Adicional</button>
+          </span>
           <span *ngIf="selectedTable === 0" class="badge badge-gold" style="float: right;">🛍️ Para llevar</span>
           <span *ngIf="selectedTable !== null && selectedTable !== 0" class="badge badge-cyan" style="float: right;">Mesa {{ selectedTable }}</span>
         </h3>
-        <div class="cart-items">
+        <!-- Venta actual de la mesa ocupada (solo lectura, discrimina adicionales) -->
+        <div class="cart-items" *ngIf="isTableOccupied() && activeTab === 'venta'">
+          <div class="cart-item" *ngFor="let item of ventaInicial">
+            <div class="cart-item-info">
+              <span class="cart-item-name">{{ item.productName }}</span>
+              <span class="cart-item-price">\${{ item.unitPrice | number:'1.0-0' }} c/u</span>
+            </div>
+            <div class="cart-item-controls">
+              <span class="qty-display">× {{ item.quantity }}</span>
+              <span class="cart-item-subtotal">\${{ item.subtotal | number:'1.0-0' }}</span>
+            </div>
+          </div>
+          <div *ngIf="ventaAdicionales.length > 0" class="section-subtitle">➕ Adicionales</div>
+          <div class="cart-item adicional-item" *ngFor="let item of ventaAdicionales">
+            <div class="cart-item-info">
+              <span class="cart-item-name">{{ item.productName }}</span>
+              <span class="cart-item-price">\${{ item.unitPrice | number:'1.0-0' }} c/u</span>
+            </div>
+            <div class="cart-item-controls">
+              <span class="qty-display">× {{ item.quantity }}</span>
+              <span class="cart-item-subtotal">\${{ item.subtotal | number:'1.0-0' }}</span>
+            </div>
+          </div>
+          <div *ngIf="ventaItems.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
+            Sin ítems registrados en la venta
+          </div>
+        </div>
+        <!-- Carrito editable: venta nueva o pestaña Adicional -->
+        <div class="cart-items" *ngIf="!isTableOccupied() || activeTab === 'adicional'">
+          <div *ngIf="isTableOccupied()" class="adicional-hint">➕ Productos adicionales a la compra inicial (solo se comanda lo nuevo)</div>
           <div class="cart-item" *ngFor="let item of cart; let i = index">
             <div class="cart-item-info">
               <span class="cart-item-name">{{ item.productName }}</span>
@@ -53,21 +86,42 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div *ngIf="cart.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
-            Agregue productos para empezar
+            {{ isTableOccupied() ? 'Agregue productos adicionales' : 'Agregue productos para empezar' }}
           </div>
         </div>
         <div class="cart-footer">
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
-            <select class="form-input" [(ngModel)]="selectedTable" style="flex:1">
+            <select class="form-input" [(ngModel)]="selectedTable" (ngModelChange)="onTableChange()" style="flex:1">
               <option [ngValue]="null">🪑 Sin mesa</option>
               <option *ngFor="let t of tables" [ngValue]="t.number">
                 {{ t.number === 0 ? '🛍️ Para llevar' : 'Mesa ' + t.number }} {{ (t.status === 'ocupada' || t.isOccupied) ? '(Ocupada)' : '' }}
               </option>
             </select>
           </div>
-          <div class="cart-total">
-            <span>TOTAL</span>
-            <span class="total-amount">\${{ total | number:'1.0-0' }}</span>
+          <div class="cart-total" style="flex-direction: column; align-items: stretch; gap: 0.25rem;">
+            <div style="display:flex; justify-content: space-between; align-items: center;" *ngIf="isTableOccupied() && activeTab === 'venta'">
+              <span>VENTA ACTUAL</span>
+              <span class="total-amount">\${{ ventaTotal | number:'1.0-0' }}</span>
+            </div>
+            <div *ngIf="isTableOccupied() && activeTab === 'venta' && cart.length > 0" class="pending-hint">
+              ⚠️ Tiene {{ cart.length }} producto(s) pendiente(s) en Adicional
+            </div>
+            <div style="display:flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);" *ngIf="isTableOccupied() && activeTab === 'adicional'">
+              <span>Consumo Actual</span>
+              <span>\${{ ventaTotal | number:'1.0-0' }}</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);" *ngIf="isTableOccupied() && activeTab === 'adicional' && cart.length > 0">
+              <span>Adicional</span>
+              <span>\${{ total | number:'1.0-0' }}</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;" *ngIf="isTableOccupied() && activeTab === 'adicional'">
+              <span>TOTAL ACUMULADO</span>
+              <span class="total-amount">\${{ (ventaTotal + total) | number:'1.0-0' }}</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; align-items: center;" *ngIf="!isTableOccupied()">
+              <span>TOTAL</span>
+              <span class="total-amount">\${{ total | number:'1.0-0' }}</span>
+            </div>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
             <select class="form-input" [(ngModel)]="paymentMethod" style="flex:1">
@@ -76,17 +130,21 @@ import Swal from 'sweetalert2';
               <option value="mixto">🔄 Mixto</option>
             </select>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied()">
-            <button class="btn-warning" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0">
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'venta'">
+            <button class="btn-warning" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Adicional, agréguelos primero">
               💵 Cobrar Cuenta
             </button>
-            <button class="btn-success" style="flex:1" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
-              ➕ Agregar a Mesa
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'adicional'">
+            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
+            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+              {{ processing ? '⏳' : '➕ Agregar y Comandar' }}
             </button>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="!isTableOccupied()">
             <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+            <button class="btn-info" style="flex:1" (click)="printCurrentComanda()" [disabled]="cart.length === 0">🖨️ Comanda</button>
+            <button class="btn-success" style="flex:1.5" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
               {{ processing ? '⏳' : (settings?.paymentMode === 'post-pago' && selectedTable ? '✅ Enviar a Cocina' : '✅ Cobrar') }}
             </button>
           </div>
@@ -140,6 +198,27 @@ import Swal from 'sweetalert2';
       color: var(--brand-gold);
     }
     .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
+    .tabs-inline { display: inline-flex; gap: 0.25rem; margin-left: 0.5rem; vertical-align: middle; }
+    .tab-btn {
+      padding: 0.2rem 0.6rem; border-radius: 20px; border: 1px solid var(--bg-input);
+      background: #fff; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .tab-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
+    .adicional-hint {
+      font-size: 0.75rem; color: var(--brand-gold); font-weight: 600;
+      background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--brand-gold);
+      border-radius: 8px; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; text-align: center;
+    }
+    .pending-hint {
+      font-size: 0.75rem; color: #b26a00; font-weight: 600; text-align: center;
+      background: rgba(255, 143, 0, 0.12); border-radius: 8px; padding: 0.4rem 0.6rem;
+    }
+    .section-subtitle {
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--brand-gold); background: rgba(212, 175, 55, 0.12);
+      border-radius: 8px; padding: 0.35rem 0.6rem; margin: 0.5rem 0 0.25rem; text-align: center;
+    }
+    .adicional-item { background: rgba(212, 175, 55, 0.05); border-radius: 8px; padding-left: 0.5rem; padding-right: 0.5rem; }
     @media (max-width: 768px) {
       .pos-layout { grid-template-columns: 1fr; }
       .pos-cart { position: relative; top: 0; }
@@ -166,9 +245,40 @@ export class PosComponent implements OnInit {
   tables: any[] = [];
   selectedTable: number | null = null;
   settings: any = null;
+  activeTab: 'venta' | 'adicional' = 'venta';
+  ventaActual: any = null;
 
   get total(): number {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
+  }
+
+  get ventaTotal(): number {
+    return this.ventaActual?.total ?? this.getSelectedTableObj()?.currentSale?.total ?? 0;
+  }
+
+  get ventaItems(): any[] {
+    const items: any[] = [];
+    if (this.ventaActual?.items) {
+      this.ventaActual.items.forEach((i: any) => items.push({
+        productName: i.productName, quantity: i.quantity, unitPrice: i.unitPrice,
+        subtotal: i.subtotal, esAdicional: !!i.esAdicional
+      }));
+    }
+    if (this.ventaActual?.dishItems) {
+      this.ventaActual.dishItems.forEach((i: any) => items.push({
+        productName: i.dishName, quantity: i.quantity, unitPrice: i.unitPrice,
+        subtotal: i.subtotal, esAdicional: !!i.esAdicional
+      }));
+    }
+    return items;
+  }
+
+  get ventaInicial(): any[] {
+    return this.ventaItems.filter(i => !i.esAdicional);
+  }
+
+  get ventaAdicionales(): any[] {
+    return this.ventaItems.filter(i => i.esAdicional);
   }
 
   getSelectedTableObj(): any {
@@ -193,7 +303,7 @@ export class PosComponent implements OnInit {
       }
     });
     this.api.getTables().subscribe({
-      next: (res: any) => this.tables = res
+      next: (res: any) => { this.tables = res; this.loadVentaActual(); }
     });
     this.api.getSettings().subscribe({
       next: (res: any) => this.settings = res
@@ -202,8 +312,28 @@ export class PosComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['table'] !== undefined) {
         this.selectedTable = parseInt(params['table'], 10);
+        this.onTableChange();
       }
     });
+  }
+
+  onTableChange(): void {
+    this.activeTab = 'venta';
+    this.loadVentaActual();
+  }
+
+  loadVentaActual(): void {
+    const t = this.getSelectedTableObj();
+    const saleRef = t?.currentSale;
+    const saleId = saleRef?._id || saleRef;
+    if (t && (t.status === 'ocupada' || t.isOccupied) && saleId && typeof saleId === 'string') {
+      this.api.getSale(saleId).subscribe({
+        next: (res: any) => { this.ventaActual = res; },
+        error: () => { this.ventaActual = null; }
+      });
+    } else {
+      this.ventaActual = null;
+    }
   }
 
   @HostListener('document:click')
@@ -256,6 +386,12 @@ export class PosComponent implements OnInit {
   removeItem(index: number): void { this.cart.splice(index, 1); }
   clearCart(): void { this.cart = []; }
 
+  printCurrentComanda(): void {
+    if (this.cart.length > 0) {
+      this.printComanda(this.cart, this.selectedTable, this.isTableOccupied() ? 'adicional' : 'cocina');
+    }
+  }
+
   finalizeSale(): void {
     this.processing = true;
     const payload: any = {
@@ -268,14 +404,17 @@ export class PosComponent implements OnInit {
     
     const t = this.getSelectedTableObj();
     if (t && (t.status === 'ocupada' || t.isOccupied) && t.currentSale) {
-      // Snapshot del carrito para la comanda antes de limpiarlo
+      // Snapshot del carrito para la comanda antes de limpiarlo (solo productos nuevos)
       const commandaItems = [...this.cart];
       const tableNum = this.selectedTable;
-      this.api.addItemsToSale(t.currentSale, payload).subscribe({
+      const saleId = (t.currentSale as any)?._id || t.currentSale;
+      this.api.addItemsToSale(saleId, payload).subscribe({
         next: () => {
           this.processing = false;
           this.cart = [];
+          this.activeTab = 'venta';
           this.ngOnInit();
+          this.loadVentaActual();
           this.offerPrintComanda(commandaItems, tableNum, 'adicional');
         },
         error: (err: any) => {
@@ -317,12 +456,22 @@ export class PosComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.processing = true;
-        this.api.paySale(t.currentSale, { paymentMethod: this.paymentMethod }).subscribe({
-          next: () => {
+        const saleId = t.currentSale._id || t.currentSale;
+        this.api.paySale(saleId, { paymentMethod: this.paymentMethod }).subscribe({
+          next: (res: any) => {
             this.processing = false;
-            Swal.fire('✅ Cuenta Pagada', 'La mesa ha sido liberada.', 'success');
             this.selectedTable = null;
+            this.activeTab = 'venta';
+            this.ventaActual = null;
             this.ngOnInit();
+            
+            const allItems: any[] = [];
+            if (res.items) res.items.forEach((i: any) => allItems.push({ ...i }));
+            if (res.dishItems) res.dishItems.forEach((i: any) => {
+               allItems.push({ productName: i.dishName, quantity: i.quantity, subtotal: i.subtotal, esAdicional: !!i.esAdicional });
+            });
+
+            this.offerPrintComanda(allItems, t.number, 'venta');
           },
           error: (err: any) => {
             this.processing = false;
@@ -342,7 +491,7 @@ export class PosComponent implements OnInit {
     const texts: Record<string, string> = {
       'venta': `Total cobrado: $${items.reduce((s, i) => s + i.subtotal, 0).toLocaleString('es-CO')}`,
       'cocina': 'El pedido fue enviado a preparación.',
-      'adicional': `Se añadieron ${items.length} ítem(s) a la Mesa ${tableNum}.`
+      'adicional': `Se añadieron ${items.length} ítem(s) a la Mesa ${tableNum}. Solo se comanda lo nuevo.`
     };
 
     Swal.fire({
@@ -350,7 +499,7 @@ export class PosComponent implements OnInit {
       title: titles[type] || '✅ Listo',
       text: texts[type] || '',
       confirmButtonColor: '#D4AF37',
-      confirmButtonText: '🖨️ Imprimir Comanda',
+      confirmButtonText: type === 'venta' ? '🖨️ Imprimir Factura' : '🖨️ Imprimir Comanda',
       showDenyButton: true,
       denyButtonText: 'Cerrar',
       denyButtonColor: '#6c757d',
@@ -368,14 +517,22 @@ export class PosComponent implements OnInit {
     const mesaLabel = tableNum === 0 ? 'Para llevar' : tableNum ? `Mesa ${tableNum}` : 'Mostrador';
     const tipoLabel = type === 'adicional' ? 'ADICIONAL' : type === 'cocina' ? 'PEDIDO' : 'VENTA';
     const total = items.reduce((s, i) => s + i.subtotal, 0);
+    const baseItems = items.filter(i => !i.esAdicional);
+    const adItems = items.filter(i => i.esAdicional);
+    const showSections = type === 'venta' && adItems.length > 0;
 
-    const lineas = items.map(i =>
+    const row = (i: any) =>
       `<tr>
         <td style="padding:4px 2px;">${i.productName}</td>
         <td style="text-align:center;padding:4px;">${i.quantity}</td>
         <td style="text-align:right;padding:4px;">$${i.subtotal.toLocaleString('es-CO')}</td>
-      </tr>`
-    ).join('');
+      </tr>`;
+    const sectionRow = (label: string) =>
+      `<tr><td colspan="3" style="text-align:center;font-weight:bold;padding:6px 2px 2px;letter-spacing:1px;">— ${label} —</td></tr>`;
+
+    const lineas = showSections
+      ? baseItems.map(row).join('') + sectionRow('ADICIONALES') + adItems.map(row).join('')
+      : items.map(row).join('');
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -398,8 +555,9 @@ export class PosComponent implements OnInit {
 </head>
 <body>
   <div class="center">
-    <div class="title">🍲 COMANDA</div>
+    <div class="title">${type === 'venta' ? '🧾 FACTURA' : '🍲 COMANDA'}</div>
     <div class="badge">${tipoLabel}</div>
+    ${type === 'adicional' ? '<div style="font-size:10px;margin-top:4px;">Productos adicionales a la compra inicial — solo lo nuevo</div>' : ''}
     <div style="margin-top:4px;"><strong>${mesaLabel}</strong></div>
     <div style="font-size:10px;color:#555;">${fecha} — ${hora}</div>
   </div>
