@@ -183,6 +183,36 @@ describe('PosComponent', () => {
       component.finalizeSale();
       expect(component.processing).toBeFalse();
     });
+
+    it('should include tableNumber when opening a free table', () => {
+      component.selectedTable = 1;
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 2, unitPrice: 1000, subtotal: 2000 },
+      ];
+      component.finalizeSale();
+
+      expect(api.createSale).toHaveBeenCalledWith({
+        items: [{ product: 'd1', quantity: 2 }],
+        paymentMethod: 'efectivo',
+        tableNumber: 1
+      });
+    });
+  });
+
+  describe('esAperturaMesa', () => {    it('should be true for a free table in post-pago', () => {
+      component.selectedTable = 1;
+      expect(component.esAperturaMesa).toBeTrue();
+    });
+
+    it('should be false without a table', () => {
+      component.selectedTable = null;
+      expect(component.esAperturaMesa).toBeFalse();
+    });
+
+    it('should be false when the table is occupied', () => {
+      component.selectedTable = 2;
+      expect(component.esAperturaMesa).toBeFalse();
+    });
   });
 
   describe('normalizeString', () => {
@@ -193,7 +223,7 @@ describe('PosComponent', () => {
     });
   });
 
-  describe('adicional flow', () => {
+  describe('agregar flow (tandas)', () => {
     it('should default to venta tab with no sale detail', () => {
       expect(component.activeTab).toBe('venta');
       expect(component.ventaActual).toBeNull();
@@ -214,20 +244,13 @@ describe('PosComponent', () => {
       expect(component.ventaTotal).toBe(5000);
     });
 
-    it('should discriminate iniciales vs adicionales', () => {
-      component.ventaActual = mockSale;
-      expect(component.ventaInicial.length).toBe(2);
-      expect(component.ventaAdicionales.length).toBe(1);
-      expect(component.ventaAdicionales[0].productName).toBe('Jugo');
-    });
-
     it('should call addItemsToSale with sale id and switch back to venta tab', () => {
       component.selectedTable = 2;
       component.ventaActual = mockSale;
       component.cart = [
         { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
       ];
-      component.activeTab = 'adicional';
+      component.activeTab = 'agregar';
       spyOn(component, 'offerPrintComanda');
       component.finalizeSale();
 
@@ -239,6 +262,50 @@ describe('PosComponent', () => {
       expect(component.cart.length).toBe(0);
       expect(component.activeTab).toBe('venta');
       expect(component.offerPrintComanda).toHaveBeenCalled();
+    });
+
+    it('should print only unprinted delta, never repeating', () => {
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 2, unitPrice: 1000, subtotal: 2000, impresoQty: 2 },
+        { product: 'd2', productName: 'P2', quantity: 3, unitPrice: 500, subtotal: 1500, impresoQty: 1 },
+      ];
+      spyOn(component, 'printComanda');
+      component.printCurrentComanda();
+
+      expect(component.printComanda).toHaveBeenCalledWith(
+        [{ product: 'd2', productName: 'P2', quantity: 2, unitPrice: 500, subtotal: 1000, impresoQty: 1 }],
+        component.selectedTable,
+        'cocina'
+      );
+      expect(component.cart[0].impresoQty).toBe(2);
+      expect(component.cart[1].impresoQty).toBe(3);
+    });
+
+    it('should warn when everything was already printed', () => {
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000, impresoQty: 1 },
+      ];
+      spyOn(component, 'printComanda');
+      component.printCurrentComanda();
+
+      expect(component.printComanda).not.toHaveBeenCalled();
+    });
+
+    it('should offer print with only new items after adding a tanda', () => {
+      component.selectedTable = 2;
+      component.ventaActual = mockSale;
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 2, unitPrice: 1000, subtotal: 2000, impresoQty: 2 },
+        { product: 'd2', productName: 'P2', quantity: 1, unitPrice: 500, subtotal: 500, impresoQty: 0 },
+      ];
+      spyOn(component, 'offerPrintComanda');
+      component.finalizeSale();
+
+      expect(component.offerPrintComanda).toHaveBeenCalledWith(
+        [{ product: 'd2', productName: 'P2', quantity: 1, unitPrice: 500, subtotal: 500, impresoQty: 0 }],
+        2,
+        'adicional'
+      );
     });
   });
 });
