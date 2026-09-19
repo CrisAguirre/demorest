@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { PosComponent } from './pos.component';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 
 describe('PosComponent', () => {
   let component: PosComponent;
@@ -34,7 +35,7 @@ describe('PosComponent', () => {
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale'
+      'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale', 'cancelSale'
     ]);
     api.getDishes.and.returnValue(of(mockDishes));
     api.getTables.and.returnValue(of(mockTables));
@@ -43,13 +44,15 @@ describe('PosComponent', () => {
     api.createSale.and.returnValue(of({ _id: 's1' }));
     api.addItemsToSale.and.returnValue(of({ _id: 's1' }));
     api.paySale.and.returnValue(of({ _id: 's1', items: [], dishItems: [] }));
+    api.cancelSale.and.returnValue(of({ _id: 's1', status: 'cancelada' }));
 
     await TestBed.configureTestingModule({
       declarations: [PosComponent],
       imports: [CommonModule, FormsModule],
       providers: [
         { provide: ApiService, useValue: api },
-        { provide: ActivatedRoute, useValue: { queryParams: of({}) } }
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
+        { provide: AuthService, useValue: { currentUser: { role: 'admin', name: 'Admin' } } }
       ]
     }).compileComponents();
 
@@ -215,8 +218,7 @@ describe('PosComponent', () => {
     });
   });
 
-  describe('normalizeString', () => {
-    it('should remove accents and lowercase', () => {
+  describe('normalizeString', () => {    it('should remove accents and lowercase', () => {
       expect(component.normalizeString('Café')).toBe('cafe');
       expect(component.normalizeString('Jalapeño')).toBe('jalapeno');
       expect(component.normalizeString('')).toBe('');
@@ -306,6 +308,40 @@ describe('PosComponent', () => {
         2,
         'adicional'
       );
+    });
+  });
+
+  describe('cancelTableSale', () => {
+    it('should allow admin to cancel', () => {
+      expect(component.puedeAnular()).toBeTrue();
+    });
+
+    it('should call cancelSale with reason and reset state', async () => {
+      const Swal = await import('sweetalert2');
+      spyOn(Swal.default, 'fire').and.callFake((opts: any) => {
+        if (opts && opts.input) return Promise.resolve({ isConfirmed: true, value: 'cliente se fue' } as any);
+        return Promise.resolve({} as any);
+      });
+      component.selectedTable = 2;
+      component.ventaActual = mockSale;
+      component.cart = [{ product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 }];
+      component.cancelTableSale();
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(api.cancelSale).toHaveBeenCalledWith('s1', { reason: 'cliente se fue' });
+      expect(component.selectedTable).toBeNull();
+      expect(component.ventaActual).toBeNull();
+      expect(component.cart.length).toBe(0);
+    });
+
+    it('should do nothing without a selected occupied table', async () => {
+      const Swal = await import('sweetalert2');
+      spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({} as any));
+      component.selectedTable = null;
+      component.cancelTableSale();
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(api.cancelSale).not.toHaveBeenCalled();
     });
   });
 });

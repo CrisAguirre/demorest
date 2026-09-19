@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
+import { AuthService } from '@core/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -120,8 +121,11 @@ import Swal from 'sweetalert2';
             </select>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'venta'">
-            <button class="btn-warning" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Agregar, agréguelos primero">
+            <button class="btn-warning" style="flex:2" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Agregar, agréguelos primero">
               💵 Cobrar Cuenta
+            </button>
+            <button class="btn-danger" style="flex:1" (click)="cancelTableSale()" [disabled]="processing" *ngIf="puedeAnular()" title="Anula la venta y libera la mesa (requiere motivo)">
+              ❌ Anular
             </button>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'agregar'">
@@ -304,8 +308,14 @@ export class PosComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public authService: AuthService
   ) {}
+
+  puedeAnular(): boolean {
+    const role = this.authService?.currentUser?.role;
+    return role === 'admin' || role === 'cajero';
+  }
 
   ngOnInit(): void {
     this.api.getDishes().subscribe({
@@ -499,6 +509,47 @@ export class PosComponent implements OnInit {
           error: (err: any) => {
             this.processing = false;
             Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  cancelTableSale(): void {
+    const t = this.getSelectedTableObj();
+    const saleRef = t?.currentSale;
+    const saleId = saleRef?._id || saleRef;
+    if (!t || !saleId || typeof saleId !== 'string') return;
+
+    Swal.fire({
+      title: `¿Anular venta de ${this.nombreMesa(t.number)}?`,
+      text: 'La venta quedará anulada y la mesa libre. El inventario no se afecta (se descuenta al cobrar).',
+      icon: 'warning',
+      input: 'text',
+      inputLabel: 'Motivo de anulación *',
+      inputPlaceholder: 'Ej. el cliente se retiró',
+      showCancelButton: true,
+      confirmButtonColor: '#D32F2F',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, anular',
+      cancelButtonText: 'Volver',
+      inputValidator: (v: string) => (!v || !v.trim() ? 'El motivo es obligatorio' : null)
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.processing = true;
+        this.api.cancelSale(saleId, { reason: result.value }).subscribe({
+          next: () => {
+            this.processing = false;
+            this.selectedTable = null;
+            this.activeTab = 'venta';
+            this.ventaActual = null;
+            this.cart = [];
+            this.ngOnInit();
+            Swal.fire({ icon: 'success', title: 'Venta anulada, mesa liberada', timer: 1800, showConfirmButton: false });
+          },
+          error: (err: any) => {
+            this.processing = false;
+            Swal.fire('❌ Error', err.error?.message || 'Error al anular la venta', 'error');
           }
         });
       }

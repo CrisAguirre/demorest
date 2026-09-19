@@ -164,7 +164,23 @@ export class ApiService {
   paySale(id: string, data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/sales/${id}/pay`, data).pipe(
       tap(() => {
+        this.preload.invalidatePrefix('products');
+        this.preload.invalidatePrefix('ingredients');
         this.preload.invalidatePrefix('sales-summary');
+        this.preload.invalidate('current-cash');
+        this.preload.invalidatePrefix('finance');
+        this.preload.invalidate(`sale:${id}`);
+        this.preload.invalidatePrefix('sales');
+        this.preload.invalidate('tables');
+      })
+    );
+  }
+
+  cancelSale(id: string, data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/sales/${id}/cancel`, data).pipe(
+      tap(() => {
+        this.preload.invalidatePrefix('sales-summary');
+        this.preload.invalidatePrefix('top-products');
         this.preload.invalidate('current-cash');
         this.preload.invalidatePrefix('finance');
         this.preload.invalidate(`sale:${id}`);
