@@ -164,4 +164,26 @@ describe('ApiService', () => {
       req.flush(new Blob(['%PDF'], { type: 'application/pdf' }));
     });
   });
+
+  describe('Sales pay/cancel', () => {
+    it('paySale should call POST /sales/:id/pay', () => {
+      service.paySale('s1', { paymentMethod: 'efectivo' }).subscribe(res => {
+        expect(res).toEqual({ _id: 's1', status: 'pagada' });
+      });
+      const req = httpMock.expectOne(`${environment.apiUrl}/sales/s1/pay`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ paymentMethod: 'efectivo' });
+      req.flush({ _id: 's1', status: 'pagada' });
+    });
+
+    it('cancelSale should call POST /sales/:id/cancel', () => {
+      service.cancelSale('s1', { reason: 'cliente se fue' }).subscribe(res => {
+        expect(res).toEqual({ _id: 's1', status: 'cancelada' });
+      });
+      const req = httpMock.expectOne(`${environment.apiUrl}/sales/s1/cancel`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ reason: 'cliente se fue' });
+      req.flush({ _id: 's1', status: 'cancelada' });
+    });
+  });
 });

@@ -126,6 +126,7 @@ export class SidebarComponent {
 
     if (role === 'cliente') {
       this.menuItems = [
+        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
         { icon: '📊', label: 'Mis Compras',    route: '/dashboard' },
         { icon: '🛵', label: 'Domicilios',     route: '/domicilios' },
         { icon: '🌍', label: 'Landing',        externalUrl: 'https://www.restmarieantoinette.com/' },
@@ -134,19 +135,23 @@ export class SidebarComponent {
     } else if (role === 'cocinero') {
       this.menuItems = [
         { divider: 'Cocina' },
+        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
         { icon: '👨‍🍳', label: 'Cocina',         route: '/kitchen' },
         { icon: '🛵', label: 'Domicilios',      route: '/domicilios' }
       ];
     } else if (role === 'mesero') {
       this.menuItems = [
+        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
+        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' }
       ];
     } else if (role === 'cajero') {
       this.menuItems = [
         { divider: 'Operaciones' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
+        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
+        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
         { divider: 'Gestión' },
         { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
         { icon: '🔔', label: 'Alertas',         route: '/alerts' }
@@ -155,7 +160,7 @@ export class SidebarComponent {
       this.menuItems = [
         // Operaciones diarias
         { divider: 'Operaciones' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
+        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
         { icon: '📅', label: 'Eventos y Catering', route: '/events' },
         {
           icon: '📦', label: 'Inventario', expanded: false,
@@ -166,6 +171,7 @@ export class SidebarComponent {
         },
         { icon: '🍲', label: 'Platos',          route: '/dishes' },
         { icon: '💰', label: 'Caja',            route: '/cash' },
+        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
         // Compras y proveedores
         { divider: 'Compras' },
         { icon: '🏭', label: 'Proveedores',     route: '/suppliers' },
