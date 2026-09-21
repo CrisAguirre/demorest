@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { PosComponent } from './pos.component';
 import { ApiService } from '../../core/services/api.service';
@@ -34,6 +34,7 @@ describe('PosComponent', () => {
   };
 
   beforeEach(async () => {
+    localStorage.clear();
     api = jasmine.createSpyObj('ApiService', [
       'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale', 'cancelSale'
     ]);
@@ -52,6 +53,7 @@ describe('PosComponent', () => {
       providers: [
         { provide: ApiService, useValue: api },
         { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
+        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
         { provide: AuthService, useValue: { currentUser: { role: 'admin', name: 'Admin' } } }
       ]
     }).compileComponents();
@@ -311,8 +313,7 @@ describe('PosComponent', () => {
     });
   });
 
-  describe('cancelTableSale', () => {
-    it('should allow admin to cancel', () => {
+  describe('cancelTableSale', () => {    it('should allow admin to cancel', () => {
       expect(component.puedeAnular()).toBeTrue();
     });
 
@@ -342,6 +343,37 @@ describe('PosComponent', () => {
       await new Promise(resolve => setTimeout(resolve, 0));
 
       expect(api.cancelSale).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('borradores por mesa', () => {
+    it('should keep independent carts per table when switching', () => {
+      component.selectedTable = 1;
+      component.onTableChange();
+      component.addToCart(mockDishes[0]);
+
+      component.selectedTable = 2;
+      component.onTableChange();
+      expect(component.cart.length).toBe(0);
+
+      component.selectedTable = 1;
+      component.onTableChange();
+      expect(component.cart.length).toBe(1);
+      expect(component.cart[0].productName).toBe('Pizza');
+    });
+
+    it('should persist drafts to localStorage', () => {
+      component.selectedTable = 1;
+      component.onTableChange();
+      component.addToCart(mockDishes[0]);
+      const raw = localStorage.getItem('pos-borradores');
+      expect(raw).toContain('Pizza');
+    });
+
+    it('should navigate back to mesas', () => {
+      const router = TestBed.inject(Router);
+      component.volverMesas();
+      expect(router.navigate).toHaveBeenCalledWith(['/mesas']);
     });
   });
 });

@@ -1,12 +1,20 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pos',
   template: `
+    <div class="pos-toolbar">
+      <button class="btn-outline btn-sm" (click)="volverMesas()">← Mesas</button>
+      <span class="pos-context" *ngIf="selectedTable !== null">
+        {{ selectedTable === 0 ? '🛍️ Para llevar' : '🪑 Mesa ' + selectedTable }}
+        <span *ngIf="isTableOccupied()" class="badge badge-cyan">Ocupada</span>
+        <span *ngIf="borradorActual() > 0" class="badge badge-gold">{{ borradorActual() }} sin comandar</span>
+      </span>
+    </div>
     <div class="pos-layout">
       <!-- Panel Productos -->
       <div class="pos-products">
@@ -152,6 +160,8 @@ import Swal from 'sweetalert2';
     </div>
   `,
   styles: [`
+    .pos-toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .pos-context { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
     .pos-layout { display: grid; grid-template-columns: 1fr 360px; gap: 1rem; min-height: calc(100vh - 100px); }
     .pos-search { margin-bottom: 0.75rem; }
     .pos-categories {
@@ -304,11 +314,13 @@ export class PosComponent implements OnInit {
 
   marcarComandado(items: any[]): void {
     items.forEach(i => { i.impresoQty = i.quantity; });
+    this.persistirBorradores();
   }
 
   constructor(
     private api: ApiService,
     private route: ActivatedRoute,
+    private router: Router,
     public authService: AuthService
   ) {}
 
@@ -317,7 +329,63 @@ export class PosComponent implements OnInit {
     return role === 'admin' || role === 'cajero';
   }
 
+  // —— Borradores independientes por mesa (trabajo en paralelo) ——————————
+  // Cada mesa conserva sus productos sin comandar al cambiar de mesa o recargar.
+  // Se limpian al cobrar, anular o liberar la mesa.
+  private readonly DRAFTS_KEY = 'pos-borradores';
+  borradores: Record<string, any[]> = {};
+  tabsMesa: Record<string, 'venta' | 'agregar'> = {};
+  private claveActual = 'mostrador';
+
+  private mesaKey(n: number | null): string {
+    return n === null || n === undefined ? 'mostrador' : String(n);
+  }
+
+  private cargarBorradores(): void {
+    try {
+      const raw = localStorage.getItem(this.DRAFTS_KEY);
+      if (raw) this.borradores = JSON.parse(raw) || {};
+    } catch { this.borradores = {}; }
+  }
+
+  private persistirBorradores(): void {
+    try {
+      localStorage.setItem(this.DRAFTS_KEY, JSON.stringify(this.borradores));
+    } catch { /* almacenamiento no disponible */ }
+  }
+
+  private limpiarBorradorMesa(): void {
+    delete this.borradores[this.claveActual];
+    delete this.tabsMesa[this.claveActual];
+    this.persistirBorradores();
+  }
+
+  aplicarMesa(): void {
+    // Guarda el borrador de la mesa anterior
+    this.borradores[this.claveActual] = this.cart;
+    this.tabsMesa[this.claveActual] = this.activeTab;
+    this.persistirBorradores();
+    // Carga el borrador de la mesa nueva
+    this.claveActual = this.mesaKey(this.selectedTable);
+    this.cart = this.borradores[this.claveActual] || [];
+    this.borradores[this.claveActual] = this.cart;
+    this.activeTab = this.tabsMesa[this.claveActual] || 'venta';
+    this.loadVentaActual();
+  }
+
+  borradorActual(): number {
+    return this.pendientesComanda.length;
+  }
+
+  volverMesas(): void {
+    this.borradores[this.claveActual] = this.cart;
+    this.tabsMesa[this.claveActual] = this.activeTab;
+    this.persistirBorradores();
+    this.router.navigate(['/mesas']);
+  }
+
   ngOnInit(): void {
+    this.cargarBorradores();
     this.api.getDishes().subscribe({
       next: (res: any) => { 
         this.products = res.filter((p: any) => p.isAvailable !== false); 
@@ -334,14 +402,13 @@ export class PosComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['table'] !== undefined) {
         this.selectedTable = parseInt(params['table'], 10);
-        this.onTableChange();
       }
+      this.aplicarMesa();
     });
   }
 
   onTableChange(): void {
-    this.activeTab = 'venta';
-    this.loadVentaActual();
+    this.aplicarMesa();
   }
 
   loadVentaActual(): void {
@@ -397,17 +464,19 @@ export class PosComponent implements OnInit {
         impresoQty: 0
       });
     }
+    this.persistirBorradores();
   }
 
   changeQty(index: number, delta: number): void {
     const item = this.cart[index];
     item.quantity += delta;
-    if (item.quantity <= 0) { this.cart.splice(index, 1); return; }
-    item.subtotal = item.quantity * item.unitPrice;
+    if (item.quantity <= 0) { this.cart.splice(index, 1); }
+    else { item.subtotal = item.quantity * item.unitPrice; }
+    this.persistirBorradores();
   }
 
-  removeItem(index: number): void { this.cart.splice(index, 1); }
-  clearCart(): void { this.cart = []; }
+  removeItem(index: number): void { this.cart.splice(index, 1); this.persistirBorradores(); }
+  clearCart(): void { this.cart = []; this.borradores[this.claveActual] = this.cart; this.persistirBorradores(); }
 
   printCurrentComanda(): void {
     const nuevos = this.soloNuevos(this.cart);
@@ -496,6 +565,7 @@ export class PosComponent implements OnInit {
             this.selectedTable = null;
             this.activeTab = 'venta';
             this.ventaActual = null;
+            this.limpiarBorradorMesa();
             this.ngOnInit();
             
             const allItems: any[] = [];
@@ -544,6 +614,7 @@ export class PosComponent implements OnInit {
             this.activeTab = 'venta';
             this.ventaActual = null;
             this.cart = [];
+            this.limpiarBorradorMesa();
             this.ngOnInit();
             Swal.fire({ icon: 'success', title: 'Venta anulada, mesa liberada', timer: 1800, showConfirmButton: false });
           },
