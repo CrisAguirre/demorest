@@ -9,6 +9,7 @@ const routes: Routes = [
   {
     path: '', canActivate: [AuthGuard], children: [
       { path: 'dashboard',  loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule) },
+      { path: 'mesas',      loadChildren: () => import('./features/mesas/mesas.module').then(m => m.MesasModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero', 'mesero', 'cocinero', 'cliente'] } },
       { path: 'inventory',  loadChildren: () => import('./features/inventory/inventory.module').then(m => m.InventoryModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'pos',        loadChildren: () => import('./features/pos/pos.module').then(m => m.PosModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero', 'mesero'] } },
       { path: 'cash',       loadChildren: () => import('./features/cash/cash.module').then(m => m.CashModule), canActivate: [RoleGuard], data: { roles: ['admin', 'cajero'] } },
@@ -27,7 +28,7 @@ const routes: Routes = [
       { path: 'categories', loadChildren: () => import('./features/categories/categories.module').then(m => m.CategoriesModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'expenses',   loadChildren: () => import('./features/expenses/expenses.module').then(m => m.ExpensesModule),    canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'finance',    loadChildren: () => import('./features/finance/finance.module').then(m => m.FinanceModule),       canActivate: [RoleGuard], data: { roles: ['admin'] } },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'mesas', pathMatch: 'full' }
     ]
   },
   { path: 'events', loadChildren: () => import('./features/events/events.module').then(m => m.EventsModule) },

@@ -340,7 +340,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router,
     public settings: SettingsService
   ) {
-    if (this.auth.isLoggedIn) this.router.navigate(['/dashboard']);
+    if (this.auth.isLoggedIn) this.router.navigate(['/mesas']);
   }
 
   ngOnInit(): void {
@@ -383,7 +383,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.auth.login(this.loginData.email, this.loginData.password).subscribe({
       next: () => {
         this.resetOverlay();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/mesas']);
       },
       error: (err) => {
         this.resetOverlay();
@@ -400,7 +400,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.auth.registerClient(this.registerData).subscribe({
       next: () => {
         this.resetOverlay();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/mesas']);
       },
       error: (err) => {
         this.resetOverlay();
