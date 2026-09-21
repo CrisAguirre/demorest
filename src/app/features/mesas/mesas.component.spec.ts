@@ -15,10 +15,10 @@ describe('MesasComponent', () => {
 
   function makeMockTables() {
     return [
-      { _id: 't1', number: 1, status: 'libre', isOccupied: false, currentSale: null },
-      { _id: 't2', number: 2, status: 'ocupada', isOccupied: true, currentSale: { _id: 's1', total: 25000 } },
-      { _id: 't3', number: 3, status: 'reservada', isOccupied: false, currentSale: null, currentReservation: { _id: 'r1', customerName: 'Juan' } },
-      { _id: 't0', number: 0, status: 'libre', isOccupied: false, currentSale: null }
+      { _id: 't1', number: 1, zona: 'Salón 1', status: 'libre', isOccupied: false, currentSale: null },
+      { _id: 't2', number: 2, zona: 'Salón 1', status: 'ocupada', isOccupied: true, currentSale: { _id: 's1', total: 25000 } },
+      { _id: 't3', number: 10, zona: 'Salón 2', status: 'reservada', isOccupied: false, currentSale: null, currentReservation: { _id: 'r1', customerName: 'Juan' } },
+      { _id: 't0', number: 0, zona: 'Para llevar', status: 'libre', isOccupied: false, currentSale: null }
     ];
   }
 
@@ -63,10 +63,17 @@ describe('MesasComponent', () => {
     expect(component.mesasFiltradas.length).toBe(2);
   });
 
-  it('should count tables by status', () => {
-    expect(component.libres).toBe(2);
+  it('should count only the 16 tables (takeout excluded)', () => {
+    expect(component.libres).toBe(1);
     expect(component.ocupadas).toBe(1);
     expect(component.reservadas).toBe(1);
+  });
+
+  it('should group tables by salon in order', () => {
+    const grupos = component.grupos;
+    expect(grupos.map(g => g.nombre)).toEqual(['Salón 1', 'Salón 2', 'Para llevar']);
+    expect(grupos[0].mesas.length).toBe(2);
+    expect(grupos[1].mesas[0].number).toBe(10);
   });
 
   it('should navigate to pos when free table pedido is confirmed', async () => {

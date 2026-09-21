@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
           {{ libres }} libres · {{ ocupadas }} ocupadas · {{ reservadas }} reservadas
         </p>
       </div>
-      <button class="btn-primary" routerLink="/pos">🛒 Ir al POS</button>
     </div>
 
     <div class="filter-bar">
@@ -23,9 +22,10 @@ import Swal from 'sweetalert2';
       <button class="filter-chip" [class.active]="filtro === 'reservada'" (click)="filtro = 'reservada'">🟠 Reservadas</button>
     </div>
 
-    <div class="neon-card">
+    <div class="neon-card" *ngFor="let g of grupos">
+      <h3 class="zona-title">{{ g.icono }} {{ g.nombre }} <span class="zona-count">({{ g.mesas.length }})</span></h3>
       <div class="tables-grid">
-        <div *ngFor="let t of mesasFiltradas"
+        <div *ngFor="let t of g.mesas"
              class="table-item"
              [class.occupied]="t.status === 'ocupada'"
              [class.reserved]="t.status === 'reservada'"
@@ -47,7 +47,9 @@ import Swal from 'sweetalert2';
           </div>
         </div>
       </div>
-      <p *ngIf="mesasFiltradas.length === 0" style="color:var(--text-muted);text-align:center;padding:2rem">
+    </div>
+    <div class="neon-card" *ngIf="grupos.length === 0">
+      <p style="color:var(--text-muted);text-align:center;padding:2rem">
         Sin mesas en este filtro
       </p>
     </div>
@@ -61,6 +63,9 @@ import Swal from 'sweetalert2';
       background: var(--bg-input); font-size: 0.8rem; cursor: pointer; color: var(--text-secondary);
     }
     .filter-chip.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
+    .zona-title { margin: 0 0 1rem; font-size: 1.05rem; }
+    .zona-count { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .neon-card { margin-bottom: 1.25rem; }
     .tables-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -151,9 +156,27 @@ export class MesasComponent implements OnInit {
     return this.tables.filter(t => t.status === this.filtro);
   }
 
-  get libres(): number { return this.tables.filter(t => t.status === 'libre').length; }
-  get ocupadas(): number { return this.tables.filter(t => t.status === 'ocupada').length; }
-  get reservadas(): number { return this.tables.filter(t => t.status === 'reservada').length; }
+  get grupos(): { nombre: string; icono: string; mesas: any[] }[] {
+    const orden = ['Salón 1', 'Salón 2', 'Para llevar'];
+    const iconos: Record<string, string> = { 'Salón 1': '🛋️', 'Salón 2': '🌿', 'Para llevar': '🛍️' };
+    const mapa = new Map<string, any[]>();
+    this.mesasFiltradas.forEach(t => {
+      const zona = t.zona || (t.number === 0 ? 'Para llevar' : 'Salón 1');
+      if (!mapa.has(zona)) mapa.set(zona, []);
+      mapa.get(zona)!.push(t);
+    });
+    const conocidos = orden.filter(z => mapa.has(z)).map(z => ({ nombre: z, icono: iconos[z], mesas: mapa.get(z)! }));
+    const extras = [...mapa.keys()].filter(z => !orden.includes(z)).map(z => ({ nombre: z, icono: '🪑', mesas: mapa.get(z)! }));
+    return [...conocidos, ...extras];
+  }
+
+  get mesas(): any[] {
+    return this.tables.filter(t => t.number !== 0);
+  }
+
+  get libres(): number { return this.mesas.filter(t => t.status === 'libre').length; }
+  get ocupadas(): number { return this.mesas.filter(t => t.status === 'ocupada').length; }
+  get reservadas(): number { return this.mesas.filter(t => t.status === 'reservada').length; }
 
   nombreMesa(table: any): string {
     return table.number === 0 ? 'Pedido para llevar' : `Mesa ${table.number}`;
