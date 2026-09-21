@@ -105,6 +105,7 @@ export interface Ingredient {
   _id: string;
   name: string;
   unit: string;
+  ubicacion?: string;
   stock: number;
   minStock: number;
   cost: number;

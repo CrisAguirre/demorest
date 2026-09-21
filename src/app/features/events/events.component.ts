@@ -54,62 +54,20 @@ import Swal from 'sweetalert2';
       </div>
     </div>
 
-    <!-- Panel lateral detalle del día (estilo Notion) -->
-    <div class="peek-overlay" *ngIf="showDay" (click)="cerrarDia()">
-      <div class="peek-panel" (click)="$event.stopPropagation()">
-        <div class="peek-header">
-          <div>
-            <div class="peek-title">{{ tituloDia() }}</div>
-            <div class="peek-subtitle">{{ eventosDia.length }} {{ eventosDia.length === 1 ? 'elemento' : 'elementos' }}</div>
-          </div>
-          <button class="close-btn" (click)="cerrarDia()">✕</button>
+    <!-- Modal selector: día con más de un evento -->
+    <div class="modal-overlay" *ngIf="showChooser" (click)="cerrarChooser()">
+      <div class="modal-content chooser-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>📅 {{ tituloChooser() }}</h2>
+          <button class="close-btn" (click)="cerrarChooser()">✕</button>
         </div>
-        <div class="peek-list">
-          <div *ngFor="let ev of eventosDia" class="peek-page">
-            <div class="peek-page-title">{{ ev.theme || ev.customerName }}</div>
-            <div *ngIf="ev.theme" class="peek-page-sub">{{ ev.customerName }}</div>
-            <div class="peek-props">
-              <div class="peek-prop">
-                <span class="prop-icon">🕐</span><span class="prop-label">Hora</span>
-                <span class="prop-value">{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</span>
-              </div>
-              <div class="peek-prop">
-                <span class="prop-icon">📌</span><span class="prop-label">Estado</span>
-                <span class="prop-pill" [ngClass]="'pill-' + ev.status">{{ estadoLabel(ev.status) }}</span>
-              </div>
-              <div class="peek-prop">
-                <span class="prop-icon">👥</span><span class="prop-label">Asistentes</span>
-                <span class="prop-value">{{ ev.numberOfAttendees || 0 }}</span>
-              </div>
-              <div class="peek-prop" *ngIf="ev.customerPhone">
-                <span class="prop-icon">📞</span><span class="prop-label">Teléfono</span>
-                <span class="prop-value">{{ ev.customerPhone }}</span>
-              </div>
-              <div class="peek-prop" *ngIf="ev.customerEmail">
-                <span class="prop-icon">✉️</span><span class="prop-label">Correo</span>
-                <span class="prop-value">{{ ev.customerEmail }}</span>
-              </div>
-              <div class="peek-prop">
-                <span class="prop-icon">💰</span><span class="prop-label">Costo</span>
-                <span class="prop-value">\${{ (ev.totalCost || 0).toLocaleString('es-CO') }}</span>
-              </div>
-              <div class="peek-prop">
-                <span class="prop-icon">💵</span><span class="prop-label">Abonado</span>
-                <span class="prop-value">\${{ getTotalPaid(ev).toLocaleString('es-CO') }} <span class="prop-muted">/ resta \${{ ((ev.totalCost || 0) - getTotalPaid(ev)).toLocaleString('es-CO') }}</span></span>
-              </div>
-            </div>
-            <div class="peek-body" *ngIf="ev.kitchenMenu || ev.barMenu || ev.otherMenu || ev.serviceNotes || ev.notes">
-              <div *ngIf="ev.kitchenMenu" class="peek-block"><div class="block-label">🍲 Menú cocina</div><div class="block-text">{{ ev.kitchenMenu }}</div></div>
-              <div *ngIf="ev.barMenu" class="peek-block"><div class="block-label">🍹 Menú bar</div><div class="block-text">{{ ev.barMenu }}</div></div>
-              <div *ngIf="ev.otherMenu" class="peek-block"><div class="block-label">🍽️ Otros</div><div class="block-text">{{ ev.otherMenu }}</div></div>
-              <div *ngIf="ev.serviceNotes" class="peek-block"><div class="block-label">📋 Consideraciones del servicio</div><div class="block-text">{{ ev.serviceNotes }}</div></div>
-              <div *ngIf="ev.notes" class="peek-block"><div class="block-label">📝 Notas</div><div class="block-text">{{ ev.notes }}</div></div>
-            </div>
-            <div class="peek-actions">
-              <button class="peek-btn" (click)="addPayment(ev)">💰 Abonar</button>
-              <button class="peek-btn" (click)="cerrarDia(); openForm(ev)">✏️ Editar</button>
-            </div>
-          </div>
+        <div class="chooser-list">
+          <p class="chooser-hint">Hay {{ eventosChooser.length }} en este día. ¿Cuál desea ver?</p>
+          <button *ngFor="let ev of eventosChooser" class="chooser-item" (click)="abrirBEO(ev)">
+            <span class="chooser-time">{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</span>
+            <span class="chooser-name">{{ ev.theme || ev.customerName }}</span>
+            <span class="prop-pill" [ngClass]="'pill-' + ev.status">{{ estadoLabel(ev.status) }}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -136,15 +94,20 @@ import Swal from 'sweetalert2';
               <input type="text" class="input-field" name="customerPhone" [(ngModel)]="form.customerPhone">
             </div>
           </div>
-          <div class="form-section">🕐 Inicio</div>
-          <div class="prop-row">
-            <span class="prop-icon">📅</span>
-            <input type="datetime-local" class="input-field prop-input" name="eventDate" [(ngModel)]="form.eventDate" required>
+          <div class="form-section">🕐 Cronograma</div>
+          <div class="grid-2">
+            <div class="prop-row">
+              <span class="prop-icon">🔧</span>
+              <input type="datetime-local" class="input-field prop-input" name="setupTime" [(ngModel)]="form.setupTime" title="Montaje">
+            </div>
+            <div class="prop-row">
+              <span class="prop-icon">▶️</span>
+              <input type="datetime-local" class="input-field prop-input" name="eventDate" [(ngModel)]="form.eventDate" required title="Inicio">
+            </div>
           </div>
-          <div class="form-section">🏁 Fin</div>
-          <div class="prop-row">
-            <span class="prop-icon">📅</span>
-            <input type="datetime-local" class="input-field prop-input" name="endDate" [(ngModel)]="form.endDate">
+          <div class="prop-row" style="margin-top:0.5rem">
+            <span class="prop-icon">🏁</span>
+            <input type="datetime-local" class="input-field prop-input" name="endDate" [(ngModel)]="form.endDate" title="Fin">
           </div>
           <div class="grid-2" style="margin-top:1rem">
             <div class="form-group">
@@ -176,9 +139,23 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div class="form-section">📋 Servicio</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Personal asignado</label>
+              <textarea class="input-field" name="staffAssigned" [(ngModel)]="form.staffAssigned" rows="2" placeholder="Ej. 2 meseros, 1 cocinero, capitán"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Montaje y equipos</label>
+              <textarea class="input-field" name="rentals" [(ngModel)]="form.rentals" rows="2" placeholder="Ej. carpa, sillas, sonido"></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>⚠️ Alergias y restricciones</label>
+            <textarea class="input-field" name="allergies" [(ngModel)]="form.allergies" rows="2" placeholder="Ej. maní, gluten, lactosa"></textarea>
+          </div>
           <div class="form-group">
             <label>Consideraciones del servicio</label>
-            <textarea class="input-field" name="serviceNotes" [(ngModel)]="form.serviceNotes" rows="2" placeholder="Ej. montaje, horarios, alergias, personal"></textarea>
+            <textarea class="input-field" name="serviceNotes" [(ngModel)]="form.serviceNotes" rows="2" placeholder="Ej. montaje, horarios, personal"></textarea>
           </div>
           <div class="form-group">
             <label>Anotaciones adicionales</label>
@@ -239,7 +216,7 @@ import Swal from 'sweetalert2';
     }
     .tab-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
     /* Calendario estilo Notion Calendar */
-    .notion-cal { background: transparent; }
+    .notion-cal { background: transparent; max-width: 980px; margin: 0 auto; }
     .cal-header { display: flex; align-items: center; gap: 0.25rem; margin-bottom: 0.5rem; }
     .cal-title { flex: 1; margin: 0; font-size: 1.1rem; font-weight: 600; text-transform: capitalize; color: var(--text-main); }
     .cal-nav {
@@ -260,8 +237,8 @@ import Swal from 'sweetalert2';
     }
     .cal-days { border-left: 1px solid var(--border); border-top: 1px solid var(--border); }
     .cal-day {
-      min-height: 104px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      background: transparent; padding: 0.3rem 0.35rem; cursor: pointer; overflow: hidden;
+      min-height: 72px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: transparent; padding: 0.25rem 0.3rem; cursor: pointer; overflow: hidden;
     }
     .cal-day:hover { background: rgba(0, 0, 0, 0.03); }
     .cal-day.other-month { background: rgba(0, 0, 0, 0.015); }
@@ -287,64 +264,28 @@ import Swal from 'sweetalert2';
     .chip-name { overflow: hidden; text-overflow: ellipsis; }
     .cal-more { font-size: 0.68rem; color: var(--text-muted); padding-left: 5px; }
     .cal-empty { text-align: center; padding: 2rem; color: var(--text-muted); }
-    /* Panel lateral estilo Notion (side peek) */
-    .peek-overlay {
-      position: fixed; inset: 0; background: rgba(15, 15, 15, 0.35);
-      z-index: 1000; display: flex; justify-content: flex-end;
-      animation: peek-fade 0.18s ease;
+    /* Modal selector de evento */
+    .chooser-modal { max-width: 480px; }
+    .chooser-list { overflow-y: auto; padding: 1rem 1.25rem 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .chooser-hint { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 0.25rem; }
+    .chooser-item {
+      display: flex; align-items: center; gap: 0.6rem; text-align: left;
+      border: 1px solid var(--border); background: var(--bg-input); border-radius: 10px;
+      padding: 0.6rem 0.8rem; cursor: pointer; font-size: 0.85rem; color: var(--text-main);
     }
-    .peek-panel {
-      width: 460px; max-width: 94vw; height: 100%;
-      background: #fff; color: #37352f;
-      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.18);
-      display: flex; flex-direction: column;
-      animation: peek-slide 0.22s ease;
-    }
-    .peek-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 1.25rem 1.25rem 0.75rem; border-bottom: 1px solid #eee;
-    }
-    .peek-title { font-size: 1.05rem; font-weight: 700; text-transform: capitalize; }
-    .peek-subtitle { font-size: 0.8rem; color: #9b9b9b; margin-top: 2px; }
-    .peek-panel .close-btn { border: none; background: none; font-size: 1rem; cursor: pointer; color: #9b9b9b; padding: 0.25rem 0.5rem; border-radius: 6px; }
-    .peek-panel .close-btn:hover { background: rgba(0, 0, 0, 0.06); }
-    .peek-list { flex: 1; overflow-y: auto; padding: 0.25rem 1.25rem 1.5rem; }
-    .peek-page { padding: 1rem 0; border-bottom: 1px solid #eee; }
-    .peek-page:last-child { border-bottom: none; }
-    .peek-page-title { font-size: 1.3rem; font-weight: 700; line-height: 1.3; }
-    .peek-page-sub { font-size: 0.85rem; color: #9b9b9b; margin-top: 2px; }
-    .peek-props { margin-top: 0.75rem; border-top: 1px solid #f1f1f1; }
-    .peek-prop {
-      display: flex; align-items: center; gap: 0.6rem;
-      padding: 0.4rem 0.25rem; border-bottom: 1px solid #f5f5f5; font-size: 0.875rem;
-    }
-    .peek-prop:hover { background: rgba(0, 0, 0, 0.02); }
-    .prop-icon { width: 22px; text-align: center; flex-shrink: 0; }
-    .prop-label { width: 110px; flex-shrink: 0; color: #9b9b9b; }
-    .prop-value { flex: 1; }
-    .prop-muted { color: #9b9b9b; font-size: 0.8rem; }
+    .chooser-item:hover { border-color: var(--brand-gold); }
+    .chooser-time { font-weight: 800; flex-shrink: 0; }
+    .chooser-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .prop-pill {
       font-size: 0.78rem; font-weight: 600; border-radius: 4px; padding: 1px 8px;
-      background: #eee; color: #666;
+      background: #eee; color: #666; flex-shrink: 0;
     }
     .pill-pendiente { background: rgba(255, 200, 0, 0.25); color: #8a6d00; }
     .pill-confirmado { background: rgba(66, 153, 225, 0.18); color: #2b6cb0; }
     .pill-realizado { background: rgba(72, 187, 120, 0.2); color: #276749; }
     .pill-cancelado { background: rgba(160, 174, 192, 0.25); color: #718096; }
-    .peek-body { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
-    .block-label { font-size: 0.8rem; font-weight: 700; color: #9b9b9b; margin-bottom: 2px; }
-    .block-text { font-size: 0.9rem; white-space: pre-wrap; }
-    .peek-actions { display: flex; gap: 0.5rem; margin-top: 0.9rem; }
-    .peek-btn {
-      border: 1px solid #e0e0e0; background: #fff; border-radius: 6px;
-      padding: 0.35rem 0.8rem; font-size: 0.82rem; cursor: pointer; color: #37352f;
-    }
-    .peek-btn:hover { background: rgba(0, 0, 0, 0.04); }
-    @keyframes peek-slide { from { transform: translateX(40px); opacity: 0.5; } to { transform: none; opacity: 1; } }
-    @keyframes peek-fade { from { opacity: 0; } to { opacity: 1; } }
-    @media (max-width: 560px) { .peek-panel { width: 100vw; max-width: 100vw; } }
     @media (max-width: 768px) {
-      .cal-day { min-height: 64px; padding: 0.25rem; }
+      .cal-day { min-height: 52px; padding: 0.2rem; }
       .chip-name { display: none; }
     }
   `]
@@ -366,17 +307,22 @@ export class EventsComponent implements OnInit {
     eventType: 'evento_local',
     eventDate: '',
     endDate: '',
+    setupTime: '',
     theme: '',
     numberOfAttendees: 0,
     kitchenMenu: '',
     barMenu: '',
     otherMenu: '',
+    staffAssigned: '',
+    rentals: '',
+    allergies: '',
     serviceNotes: '',
     totalCost: 0,
     notes: ''
   };
-  showDay = false;
-  diaKey: string | null = null;
+  showChooser = false;
+  eventosChooser: any[] = [];
+  chooserKey = '';
 
   constructor(private api: ApiService) {}
 
@@ -472,31 +418,133 @@ export class EventsComponent implements OnInit {
     return new Date(fecha).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
   }
 
-  // La creación solo se hace con "+ Nuevo". El clic en un día con eventos
-  // abre el detalle; en días vacíos no hace nada.
+  // La creación solo se hace con "+ Nuevo".
+  // Clic en día: sin eventos no hace nada; 1 evento abre su BEO;
+  // varios piden especificar cuál antes de abrir la BEO.
   abrirDia(dia: any): void {
-    if (!dia.eventos || dia.eventos.length === 0) return;
-    this.diaKey = dia.key;
-    this.showDay = true;
+    const lista = (dia.eventos || []).slice().sort((a: any, b: any) =>
+      new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
+    if (lista.length === 0) return;
+    if (lista.length === 1) {
+      this.abrirBEO(lista[0]);
+      return;
+    }
+    this.eventosChooser = lista;
+    this.chooserKey = dia.key;
+    this.showChooser = true;
   }
 
-  cerrarDia(): void {
-    this.showDay = false;
-    this.diaKey = null;
+  cerrarChooser(): void {
+    this.showChooser = false;
+    this.eventosChooser = [];
+    this.chooserKey = '';
   }
 
-  get eventosDia(): any[] {
-    if (!this.diaKey) return [];
-    return this.eventosFiltrados.filter(ev => this.claveEvento(ev) === this.diaKey);
+  tituloChooser(): string {
+    if (!this.chooserKey) return '';
+    const [y, m, d] = this.chooserKey.split('-').map(Number);
+    const nombre = new Date(y, m - 1, d)
+      .toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+    return `${nombre} · ${this.eventosChooser.length} para elegir`;
   }
 
-  tituloDia(): string {
-    if (!this.diaKey) return '';
-    const [y, m, d] = this.diaKey.split('-').map(Number);
-    const fecha = new Date(y, m - 1, d);
-    const nombre = fecha.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
-    const n = this.eventosDia.length;
-    return `${nombre} · ${n} ${n === 1 ? (this.vista === 'evento' ? 'evento' : 'catering') : (this.vista === 'evento' ? 'eventos' : 'caterings')}`;
+  fechaLarga(fecha: any): string {
+    if (!fecha) return '—';
+    return new Date(fecha).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  abrirBEO(ev: any): void {
+    this.cerrarChooser();
+    const pagado = this.getTotalPaid(ev);
+    const total = ev.totalCost || 0;
+    const resta = total - pagado;
+    const porAsistente = ev.numberOfAttendees > 0 ? Math.round(total / ev.numberOfAttendees) : 0;
+    const tipo = ev.eventType === 'catering_externo' ? 'CATERING EXTERNO' : 'EVENTO LOCAL';
+    const fila = (label: string, valor: string) =>
+      valor ? `<tr><td style="padding:5px 8px;color:#555;width:180px;">${label}</td><td style="padding:5px 8px;"><strong>${valor}</strong></td></tr>` : '';
+    const bloque = (label: string, valor: string) =>
+      valor ? `<div style="margin-top:8px;"><div style="font-size:11px;color:#555;font-weight:bold;">${label}</div><div style="white-space:pre-wrap;">${valor}</div></div>` : '';
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>BEO — ${ev.customerName}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #222; padding: 24px; max-width: 760px; margin: 0 auto; }
+    .head { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 14px; }
+    .head h1 { font-size: 20px; letter-spacing: 2px; }
+    .head .sub { font-size: 11px; color: #555; margin-top: 4px; }
+    h2 { font-size: 13px; background: #f0f0f0; padding: 5px 8px; margin: 14px 0 4px; letter-spacing: 1px; }
+    table { width: 100%; border-collapse: collapse; }
+    .alert { border: 2px solid #c00; border-radius: 6px; padding: 8px; margin-top: 8px; }
+    .alert-title { color: #c00; font-weight: bold; font-size: 12px; }
+    .sign { display: flex; gap: 40px; margin-top: 36px; }
+    .sign div { flex: 1; border-top: 1px solid #000; padding-top: 4px; font-size: 11px; text-align: center; }
+    .foot { margin-top: 14px; font-size: 10px; color: #777; text-align: center; }
+    .toolbar { text-align: right; margin: 16px 0 4px; }
+    .toolbar button { font-size: 16px; padding: 6px 12px; cursor: pointer; }
+    @media print { body { padding: 0; } .toolbar { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="toolbar"><button onclick="window.print()" title="Imprimir">🖨️</button></div>
+  <div class="head">
+    <h1>📋 BEO — ORDEN DE EVENTO</h1>
+    <div class="sub">${tipo} · Estado: ${this.estadoLabel(ev.status)} · Emitida: ${new Date().toLocaleString('es-CO')}</div>
+  </div>
+
+  <h2>CLIENTE Y FECHA</h2>
+  <table>
+    ${fila('Cliente', ev.customerName)}
+    ${fila('Teléfono', ev.customerPhone || '')}
+    ${fila('Correo', ev.customerEmail || '')}
+    ${fila('Tema', ev.theme || '')}
+    ${fila('Fecha', this.fechaLarga(ev.eventDate))}
+    ${fila('Montaje', ev.setupTime ? this.fechaLarga(ev.setupTime) : '')}
+    ${fila('Finalización', ev.endDate ? this.fechaLarga(ev.endDate) : '')}
+    ${fila('Asistentes', ev.numberOfAttendees ? String(ev.numberOfAttendees) : '')}
+  </table>
+
+  <h2>MENÚ</h2>
+  <table>
+    ${fila('Cocina', (ev.kitchenMenu || '').replace(/\n/g, '<br>'))}
+    ${fila('Bar / Bebidas', (ev.barMenu || '').replace(/\n/g, '<br>'))}
+    ${fila('Otros', (ev.otherMenu || '').replace(/\n/g, '<br>'))}
+    ${fila('Costo por asistente', porAsistente ? '$' + porAsistente.toLocaleString('es-CO') : '')}
+  </table>
+
+  <h2>OPERACIÓN</h2>
+  <table>
+    ${fila('Personal asignado', (ev.staffAssigned || '').replace(/\n/g, '<br>'))}
+    ${fila('Montaje y equipos', (ev.rentals || '').replace(/\n/g, '<br>'))}
+    ${fila('Consideraciones', (ev.serviceNotes || '').replace(/\n/g, '<br>'))}
+    ${fila('Notas', (ev.notes || '').replace(/\n/g, '<br>'))}
+  </table>
+  ${ev.allergies ? `<div class="alert"><div class="alert-title">⚠️ ALERGIAS Y RESTRICCIONES</div><div style="white-space:pre-wrap;">${ev.allergies}</div></div>` : ''}
+
+  <h2>VALORES</h2>
+  <table>
+    ${fila('Total', '$' + total.toLocaleString('es-CO'))}
+    ${fila('Abonado', '$' + pagado.toLocaleString('es-CO'))}
+    ${fila('Resta', '$' + resta.toLocaleString('es-CO'))}
+  </table>
+
+  <div class="sign">
+    <div>Firma cliente<br><br>Nombre y cédula</div>
+    <div>Firma responsable<br><br>Nombre y cargo</div>
+  </div>
+  <div class="foot">Sistema La Soupe · BEO generada automáticamente</div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=800,height=700');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+    }
   }
 
   getTotalPaid(ev: any): number {
@@ -509,7 +557,7 @@ export class EventsComponent implements OnInit {
       this.editingId = ev._id;
       this.form = { ...ev };
       // Format dates for datetime-local
-      ['eventDate', 'endDate'].forEach(k => {
+      ['eventDate', 'endDate', 'setupTime'].forEach(k => {
         if (this.form[k]) {
           const d = new Date(this.form[k]);
           d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
@@ -521,8 +569,9 @@ export class EventsComponent implements OnInit {
       this.form = {
         customerName: '', customerPhone: '', customerEmail: '',
         eventType: this.vista === 'evento' ? 'evento_local' : 'catering_externo',
-        eventDate: '', endDate: '', theme: '',
-        numberOfAttendees: 0, kitchenMenu: '', barMenu: '', otherMenu: '', serviceNotes: '',
+        eventDate: '', endDate: '', setupTime: '', theme: '',
+        numberOfAttendees: 0, kitchenMenu: '', barMenu: '', otherMenu: '',
+        staffAssigned: '', rentals: '', allergies: '', serviceNotes: '',
         totalCost: 0, notes: ''
       };
     }

@@ -24,29 +24,33 @@ import { Ingredient } from '../../core/models/interfaces';
         <table *ngIf="!loading && filteredItems.length > 0" class="data-table">
           <thead>
             <tr>
-              <th (click)="sort('name')" class="sortable">Nombre</th>
-              <th (click)="sort('stock')" class="sortable">Stock</th>
-              <th (click)="sort('unit')" class="sortable">Unidad</th>
-              <th (click)="sort('cost')" class="sortable">Costo Unitario</th>
-              <th>Estado</th>
+              <th>Producto</th>
+              <th>Ubicación</th>
+              <th>Unidad</th>
+              <th>Cantidad actual</th>
+              <th>Stock mínimo</th>
+              <th>Necesita pedido</th>
+              <th>Cantidad a pedir</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of filteredItems">
               <td><strong>{{ item.name }}</strong></td>
+              <td>{{ item.ubicacion || '—' }}</td>
+              <td>{{ item.unit }}</td>
               <td>
-                <span class="badge" [ngClass]="{'badge-red': item.stock <= item.minStock, 'badge-green': item.stock > item.minStock}">
+                <span class="badge" [ngClass]="{'badge-red': necesitaPedido(item), 'badge-green': !necesitaPedido(item)}">
                   {{ item.stock }}
                 </span>
               </td>
-              <td>{{ item.unit }}</td>
-              <td>{{ item.cost | currency }}</td>
+              <td>{{ item.minStock }}</td>
               <td>
-                <span class="badge" [class.badge-green]="item.isActive" [class.badge-red]="!item.isActive">
-                  {{ item.isActive ? 'Activo' : 'Inactivo' }}
+                <span class="badge" [ngClass]="{'badge-red': necesitaPedido(item), 'badge-green': !necesitaPedido(item)}">
+                  {{ necesitaPedido(item) ? 'PEDIR' : 'OK' }}
                 </span>
               </td>
+              <td>{{ necesitaPedido(item) ? (cantidadAPedir(item) + ' ' + item.unit) : '—' }}</td>
               <td class="actions">
                 <button class="btn-icon" title="Editar" (click)="edit(item)">✏️</button>
                 <button class="btn-icon btn-icon-danger" title="Desactivar" (click)="remove(item._id)" *ngIf="item.isActive">🗑️</button>
@@ -63,6 +67,10 @@ import { Ingredient } from '../../core/models/interfaces';
             <div class="form-group full-width">
               <label>Nombre *</label>
               <input class="form-input" [(ngModel)]="form.name" />
+            </div>
+            <div class="form-group full-width">
+              <label>Ubicación</label>
+              <input class="form-input" [(ngModel)]="form.ubicacion" placeholder="Ej. Refrigerador 1, Congelador 2" />
             </div>
             <div class="form-group">
               <label>Stock Actual</label>
@@ -102,15 +110,14 @@ import { Ingredient } from '../../core/models/interfaces';
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
     .full-width { grid-column: 1 / -1; }
     .actions { display:flex; gap:.4rem; }
-    .sortable { cursor: pointer; user-select: none; transition: background 0.2s; }
-    .sortable:hover { background-color: rgba(0, 229, 255, 0.1); color: var(--text-primary); }
+    .data-table th { text-transform: none; }
   `]
 })
 export class IngredientsComponent implements OnInit {
   items: Ingredient[] = [];
   filteredItems: Ingredient[] = [];
   loading = false; saving = false; showForm = false; editing = false;
-  search = ''; sortColumn = 'name'; sortAsc = true;
+  search = '';
 
   form: any = {};
   private editingId = '';
@@ -133,22 +140,18 @@ export class IngredientsComponent implements OnInit {
       const s = this.search.toLowerCase();
       result = result.filter(i => i.name.toLowerCase().includes(s));
     }
-    result.sort((a: any, b: any) => {
-      let valA = a[this.sortColumn];
-      let valB = b[this.sortColumn];
-      if (typeof valA === 'string') valA = valA.toLowerCase();
-      if (typeof valB === 'string') valB = valB.toLowerCase();
-      if (valA < valB) return this.sortAsc ? -1 : 1;
-      if (valA > valB) return this.sortAsc ? 1 : -1;
-      return 0;
-    });
+    // Orden fijo alfabético por Producto
+    result = [...result].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     this.filteredItems = result;
   }
 
-  sort(column: string) {
-    if (this.sortColumn === column) this.sortAsc = !this.sortAsc;
-    else { this.sortColumn = column; this.sortAsc = true; }
-    this.applySort();
+  necesitaPedido(item: Ingredient): boolean {
+    return (item.stock ?? 0) < (item.minStock ?? 0);
+  }
+
+  cantidadAPedir(item: Ingredient): number {
+    const d = (item.minStock ?? 0) - (item.stock ?? 0);
+    return d > 0 ? Math.round(d * 100) / 100 : 0;
   }
 
   openForm() {
