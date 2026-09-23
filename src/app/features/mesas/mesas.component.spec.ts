@@ -71,9 +71,14 @@ describe('MesasComponent', () => {
 
   it('should group tables by salon in order', () => {
     const grupos = component.grupos;
-    expect(grupos.map(g => g.nombre)).toEqual(['Salón 1', 'Salón 2', 'Para llevar']);
+    expect(grupos.map(g => g.nombre)).toEqual(['Salón 1', 'Salón 2']);
     expect(grupos[0].mesas.length).toBe(2);
     expect(grupos[1].mesas[0].number).toBe(10);
+  });
+
+  it('should expose takeout separately from table groups', () => {
+    expect(component.paraLlevar.number).toBe(0);
+    expect(component.grupos.every(g => g.nombre !== 'Para llevar')).toBeTrue();
   });
 
   it('should navigate to pos when free table pedido is confirmed', async () => {

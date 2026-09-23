@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
   selector: 'app-pos',
   template: `
     <div class="pos-toolbar">
-      <button class="btn-outline btn-sm" (click)="volverMesas()">← Mesas</button>
+      <button class="btn-mesas" (click)="volverMesas()">← Mesas</button>
       <span class="pos-context" *ngIf="selectedTable !== null">
         {{ selectedTable === 0 ? '🛍️ Para llevar' : '🪑 Mesa ' + selectedTable }}
         <span *ngIf="isTableOccupied()" class="badge badge-cyan">Ocupada</span>
@@ -161,6 +161,13 @@ import Swal from 'sweetalert2';
   `,
   styles: [`
     .pos-toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .btn-mesas {
+      background: linear-gradient(135deg, var(--brand-gold), var(--brand-bronze));
+      color: #fff; border: none; border-radius: 8px;
+      padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.35); transition: all 0.15s;
+    }
+    .btn-mesas:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5); }
     .pos-context { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
     .pos-layout { display: grid; grid-template-columns: 1fr 360px; gap: 1rem; min-height: calc(100vh - 100px); }
     .pos-search { margin-bottom: 0.75rem; }
