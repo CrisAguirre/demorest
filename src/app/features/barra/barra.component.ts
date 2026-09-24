@@ -1,6 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../core/services/api.service';
+import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+
+interface ItemBarra {
+  _id: string;
+  codigo: string;
+  nombre: string;
+  categoria: string;
+  ubicacion: string;
+  unidad: string;
+  stock: number;
+  minStock: number;
+}
 
 @Component({
   selector: 'app-barra',
@@ -23,9 +33,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <div class="card table-card">
-        <div *ngIf="loading" style="text-align:center;padding:2rem;color:var(--text-muted)">Cargando insumos de barra...</div>
-        <div *ngIf="!loading && items.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">Sin insumos asignados a barra.<br>Usa + Nuevo o asigna el área editando cada ítem.</div>
-        <table *ngIf="!loading && items.length > 0" class="data-table">
+        <table class="data-table">
           <thead>
             <tr>
               <th>Código</th>
@@ -40,10 +48,10 @@ import Swal from 'sweetalert2';
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of items">
-              <td><span class="badge badge-cyan">{{ item.code || item.codigo || '—' }}</span></td>
-              <td><strong>{{ item.name || item.nombre }}</strong></td>
-              <td><span class="badge badge-gold">{{ categoriaDe(item) }}</span></td>
+            <tr *ngFor="let item of items; let idx = index">
+              <td><span class="badge badge-cyan">{{ item.codigo }}</span></td>
+              <td><strong>{{ item.nombre }}</strong></td>
+              <td><span class="badge badge-gold">{{ item.categoria }}</span></td>
               <td>{{ item.ubicacion || '—' }}</td>
               <td>{{ item.unidad }}</td>
               <td>
@@ -58,7 +66,7 @@ import Swal from 'sweetalert2';
                 </span>
               </td>
               <td class="actions">
-                <button class="btn-icon" title="Editar" (click)="edit(item)">✏️</button>
+                <button class="btn-icon" title="Editar" (click)="edit(idx)">✏️</button>
               </td>
             </tr>
           </tbody>
@@ -71,27 +79,28 @@ import Swal from 'sweetalert2';
           <div class="form-grid">
             <div class="form-group">
               <label>Código</label>
-              <input class="form-input" [(ngModel)]="form.code" placeholder="Ej. BB-008" />
+              <input class="form-input" [(ngModel)]="form.codigo" placeholder="Ej. BB-015" />
             </div>
             <div class="form-group">
-              <label>Área</label>
-              <select class="form-input" [(ngModel)]="form.area">
-                <option value="cocina">Cocina</option>
-                <option value="barra">Barra</option>
-                <option value="servicio">Servicio</option>
+              <label>Categoría</label>
+              <select class="form-input" [(ngModel)]="form.categoria">
+                <option value="Licores y vinos">Licores y vinos</option>
+                <option value="Cervezas">Cervezas</option>
+                <option value="Sin alcohol">Sin alcohol</option>
+                <option value="Insumos">Insumos</option>
               </select>
             </div>
             <div class="form-group full-width">
               <label>Nombre *</label>
-              <input class="form-input" [(ngModel)]="form.name" />
+              <input class="form-input" [(ngModel)]="form.nombre" />
             </div>
             <div class="form-group full-width">
               <label>Ubicación</label>
-              <input class="form-input" [(ngModel)]="form.ubicacion" placeholder="Ej. Cava, Nevera barra" />
+              <input class="form-input" [(ngModel)]="form.ubicacion" placeholder="Ej. Cava" />
             </div>
             <div class="form-group">
               <label>Unidad de Medida</label>
-              <select class="form-input" [(ngModel)]="form.unit">
+              <select class="form-input" [(ngModel)]="form.unidad">
                 <option value="botella">Botella</option>
                 <option value="caja">Caja</option>
                 <option value="litro">Litro (L)</option>
@@ -99,11 +108,8 @@ import Swal from 'sweetalert2';
                 <option value="kg">Kilogramos (kg)</option>
                 <option value="gramos">Gramos (g)</option>
                 <option value="unidades">Unidades</option>
+                <option value="atado">Atado</option>
               </select>
-            </div>
-            <div class="form-group">
-              <label>Costo</label>
-              <input class="form-input" type="number" [(ngModel)]="form.cost" />
             </div>
             <div class="form-group">
               <label>Stock Actual</label>
@@ -116,9 +122,7 @@ import Swal from 'sweetalert2';
           </div>
           <div class="modal-actions">
             <button class="btn-outline" (click)="closeForm()">Cancelar</button>
-            <button class="btn-primary" (click)="save()" [disabled]="saving">
-              {{ saving ? 'Guardando...' : 'Guardar' }}
-            </button>
+            <button class="btn-primary" (click)="save()">Guardar</button>
           </div>
         </div>
       </div>
@@ -182,6 +186,7 @@ import Swal from 'sweetalert2';
               <option value="caja">Caja</option>
               <option value="botella">Botella</option>
               <option value="rollo">Rollo</option>
+              <option value="atado">Atado</option>
             </select>
             <button class="btn-outline btn-sm" (click)="agregarLinea()">
               {{ agregando ? '✔ Añadir' : '＋ Agregar' }}
@@ -203,9 +208,6 @@ import Swal from 'sweetalert2';
     .full-width { grid-column: 1 / -1; }
     .actions { display:flex; gap:.4rem; }
     .modal-lg { max-width: 760px; }
-    .agregar-linea { display: flex; gap: 0.5rem; margin: 0.75rem 0 0.25rem; align-items: center; flex-wrap: wrap; }
-    .agregar-linea .form-input { flex: 1; min-width: 90px; }
-    .agregar-linea .form-input:disabled { opacity: 0.45; }
     .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
     .modal-head .modal-title { margin: 0; }
     .close-btn {
@@ -219,94 +221,82 @@ import Swal from 'sweetalert2';
       background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--brand-gold);
       border-radius: 10px; padding: 0.5rem 0.8rem; margin-bottom: 1rem; font-size: 0.85rem;
     }
+    .agregar-linea { display: flex; gap: 0.5rem; margin: 0.75rem 0 0.25rem; align-items: center; flex-wrap: wrap; }
+    .agregar-linea .form-input { flex: 1; min-width: 90px; }
+    .agregar-linea .form-input:disabled { opacity: 0.45; }
   `]
 })
-export class BarraComponent implements OnInit {
-  items: any[] = [];
-  loading = false; saving = false; showForm = false; editing = false;
+export class BarraComponent {
+  items: ItemBarra[] = [
+    { _id: 'b1', codigo: 'BB-001', nombre: 'Pisco quebranta 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 6, minStock: 4 },
+    { _id: 'b2', codigo: 'BB-002', nombre: 'Vino blanco seco 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 2, minStock: 4 },
+    { _id: 'b3', codigo: 'BB-004', nombre: 'Aguardiente anisado 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 5, minStock: 3 },
+    { _id: 'b4', codigo: 'BB-008', nombre: 'Vino tinto 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 3, minStock: 3 },
+    { _id: 'b5', codigo: 'BB-009', nombre: 'Ron añejo 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 1, minStock: 2 },
+    { _id: 'b6', codigo: 'BB-003', nombre: 'Cerveza lager 330ml', categoria: 'Cervezas', ubicacion: 'Nevera barra', unidad: 'caja', stock: 10, minStock: 6 },
+    { _id: 'b7', codigo: 'BB-010', nombre: 'Cerveza artesanal 330ml', categoria: 'Cervezas', ubicacion: 'Nevera barra', unidad: 'caja', stock: 4, minStock: 4 },
+    { _id: 'b8', codigo: 'BB-005', nombre: 'Agua sin gas 600ml', categoria: 'Sin alcohol', ubicacion: 'Bodega', unidad: 'caja', stock: 8, minStock: 8 },
+    { _id: 'b9', codigo: 'BB-006', nombre: 'Agua con gas 330ml', categoria: 'Sin alcohol', ubicacion: 'Bodega', unidad: 'caja', stock: 4, minStock: 6 },
+    { _id: 'b10', codigo: 'BB-007', nombre: 'Gaseosa lima-limón 350ml', categoria: 'Sin alcohol', ubicacion: 'Nevera barra', unidad: 'caja', stock: 7, minStock: 5 },
+    { _id: 'b11', codigo: 'BB-011', nombre: 'Jugo de naranja 1L', categoria: 'Sin alcohol', ubicacion: 'Refrigerador barra', unidad: 'caja', stock: 5, minStock: 4 },
+    { _id: 'b12', codigo: 'BB-012', nombre: 'Agua tónica 200ml', categoria: 'Sin alcohol', ubicacion: 'Nevera barra', unidad: 'caja', stock: 6, minStock: 3 },
+    { _id: 'b13', codigo: 'BB-013', nombre: 'Café en grano', categoria: 'Sin alcohol', ubicacion: 'Barra', unidad: 'kg', stock: 2, minStock: 1 },
+    { _id: 'b14', codigo: 'BB-014', nombre: 'Leche entera 1L', categoria: 'Sin alcohol', ubicacion: 'Refrigerador barra', unidad: 'caja', stock: 3, minStock: 4 },
+    { _id: 'b15', codigo: 'BI-001', nombre: 'Clara de huevo pasteurizada', categoria: 'Insumos', ubicacion: 'Refrigerador 1', unidad: 'litro', stock: 1, minStock: 2 },
+    { _id: 'b16', codigo: 'BI-002', nombre: 'Amargo aromático (bitters)', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'botella', stock: 3, minStock: 1 },
+    { _id: 'b17', codigo: 'BI-003', nombre: 'Hielo en cubos', categoria: 'Insumos', ubicacion: 'Congelador', unidad: 'kg', stock: 15, minStock: 10 },
+    { _id: 'b18', codigo: 'BI-004', nombre: 'Azúcar refinada', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'kg', stock: 2, minStock: 1 },
+    { _id: 'b19', codigo: 'BI-005', nombre: 'Granadina', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'botella', stock: 1, minStock: 1 },
+    { _id: 'b20', codigo: 'BI-006', nombre: 'Menta fresca para coctelería', categoria: 'Insumos', ubicacion: 'Refrigerador barra', unidad: 'atado', stock: 4, minStock: 3 },
+  ];
+
+  showForm = false; editing = false;
   form: any = {};
   private editingId = '';
 
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.load();
-  }
-
-  load(): void {
-    this.loading = true;
-    this.api.getIngredients({ area: 'barra' }).subscribe({
-      next: (res: any) => {
-        const lista = Array.isArray(res) ? res : (res.items || []);
-        this.items = lista.filter((i: any) => this.areaDe(i) === 'barra');
-        this.loading = false;
-      },
-      error: () => { this.loading = false; }
-    });
-  }
-
-  areaDe(item: any): string {
-    if (item.area === 'cocina' || item.area === 'barra' || item.area === 'servicio') return item.area;
-    const code: string = item.code || item.codigo || '';
-    if (/^(BB|BI|BP)-/.test(code)) return 'barra';
-    if (/^S-/.test(code)) return 'servicio';
-    return 'cocina';
-  }
-
-  openForm(): void {
-    this.form = { area: 'barra', unit: 'botella', stock: 0, minStock: 2, cost: 0 };
-    this.editing = false; this.editingId = ''; this.showForm = true;
-  }
-
-  edit(item: any): void {
-    this.form = { ...item };
-    this.editing = true; this.editingId = item._id; this.showForm = true;
-  }
-
-  closeForm(): void { this.showForm = false; }
-
-  save(): void {
-    if (!this.form.name) return;
-    this.saving = true;
-    const obs = this.editing
-      ? this.api.updateIngredient(this.editingId, this.form)
-      : this.api.createIngredient(this.form);
-    obs.subscribe({
-      next: () => { this.saving = false; this.closeForm(); this.load(); },
-      error: () => { this.saving = false; }
-    });
-  }
-
-  categoriaDe(item: any): string {
-    if (item.categoria) return item.categoria;
-    const code: string = item.code || item.codigo || '';
-    if (/^BB-/.test(code)) return 'Bebidas';
-    if (/^BI-/.test(code)) return 'Insumos';
-    if (/^BP-/.test(code)) return 'Preparaciones';
-    return 'General';
-  }
-
-  necesitaPedido(item: any): boolean {
-    return (item.stock ?? 0) < (item.minStock ?? 0);
-  }
-
-  cantidadAPedir(item: any): number {
-    const d = (item.minStock ?? 0) - (item.stock ?? 0);
-    return d > 0 ? Math.round(d * 100) / 100 : 0;
-  }
-
-  // —— Orden de compra del área (borrador local) ————————————
   showOrden = false;
   lineas: any[] = [];
   ordenConfirmada: any[] = [];
   agregando = false;
   nuevaLinea: any = { nombre: '', qty: 0, unidad: 'unidades' };
 
-  lineaDe(i: any): any {
+  necesitaPedido(item: ItemBarra): boolean {
+    return (item.stock ?? 0) < (item.minStock ?? 0);
+  }
+
+  cantidadAPedir(item: ItemBarra): number {
+    const d = (item.minStock ?? 0) - (item.stock ?? 0);
+    return d > 0 ? Math.round(d * 100) / 100 : 0;
+  }
+
+  openForm(): void {
+    this.form = { categoria: 'Insumos', unidad: 'botella', stock: 0, minStock: 2 };
+    this.editing = false; this.editingId = ''; this.showForm = true;
+  }
+
+  edit(index: number): void {
+    this.form = { ...this.items[index] };
+    this.editing = true; this.editingId = this.items[index]._id; this.showForm = true;
+  }
+
+  closeForm(): void { this.showForm = false; }
+
+  save(): void {
+    if (!this.form.nombre) return;
+    if (this.editing) {
+      const i = this.items.findIndex(x => x._id === this.editingId);
+      if (i >= 0) this.items[i] = { ...this.items[i], ...this.form };
+    } else {
+      this.items.push({ _id: 'local-' + Date.now(), ...this.form });
+    }
+    this.closeForm();
+  }
+
+  private lineaDe(i: any): any {
     const stock = Number(i.stock) || 0;
     const min = Number(i.minStock) || 0;
     const qty = Math.max(0, Math.round((min - stock) * 100) / 100);
-    return { _id: i._id, nombre: i.name || i.nombre, unidad: i.unidad || i.unit, stock, minStock: min, qty, incluir: qty > 0 };
+    return { _id: i._id, nombre: i.nombre, unidad: i.unidad, stock, minStock: min, qty, incluir: qty > 0 };
   }
 
   iniciarOrden(): void {
@@ -328,6 +318,10 @@ export class BarraComponent implements OnInit {
     });
   }
 
+  recalcular(l: any): void {
+    l.qty = Math.max(0, Math.round(((Number(l.minStock) || 0) - (Number(l.stock) || 0)) * 100) / 100);
+  }
+
   resetNuevaLinea(): void {
     this.nuevaLinea = { nombre: '', qty: 0, unidad: 'unidades' };
   }
@@ -346,6 +340,7 @@ export class BarraComponent implements OnInit {
     const qty = Math.max(0, Number(this.nuevaLinea.qty) || 0);
     if (!nombre || qty <= 0) return;
     const unidad = this.nuevaLinea.unidad || 'unidades';
+    const self = this;
     Swal.fire({
       title: '¿Desea conservar el producto en el listado del inventario?',
       text: `"${nombre}" se agregará a la orden. Si elige Sí, también quedará en el inventario de Barra.`,
@@ -356,35 +351,20 @@ export class BarraComponent implements OnInit {
       cancelButtonText: 'No'
     }).then((res) => {
       if (res.isConfirmed) {
-        this.api.createIngredient({ name: nombre, unit: unidad, area: 'barra', stock: 0, minStock: 0, cost: 0 }).subscribe({
-          next: (creado: any) => {
-            this.lineas.push({
-              _id: creado._id || ('manual-' + Date.now()),
-              nombre, unidad, stock: 0, minStock: 0, qty, incluir: true, manual: true
-            });
-            this.resetNuevaLinea();
-          },
-          error: () => {
-            this.agregarLineaManual(nombre, unidad, qty);
-            this.resetNuevaLinea();
-          }
+        self.items.push({
+          _id: 'local-' + Date.now(), codigo: '', nombre,
+          categoria: 'General', ubicacion: '', unidad,
+          stock: 0, minStock: 0
         });
-      } else if (res.dismiss === Swal.DismissReason.cancel) {
-        this.agregarLineaManual(nombre, unidad, qty);
-        this.resetNuevaLinea();
+      }
+      if (res.isConfirmed || res.dismiss === Swal.DismissReason.cancel) {
+        self.lineas.push({
+          _id: 'manual-' + Date.now(), nombre, unidad,
+          stock: 0, minStock: 0, qty, incluir: true, manual: true
+        });
+        self.resetNuevaLinea();
       }
     });
-  }
-
-  private agregarLineaManual(nombre: string, unidad: string, qty: number): void {
-    this.lineas.push({
-      _id: 'manual-' + Date.now(),
-      nombre, unidad, stock: 0, minStock: 0, qty, incluir: true, manual: true
-    });
-  }
-
-  recalcular(l: any): void {
-    l.qty = Math.max(0, Math.round(((Number(l.minStock) || 0) - (Number(l.stock) || 0)) * 100) / 100);
   }
 
   lineasSeleccionadas(): number {
