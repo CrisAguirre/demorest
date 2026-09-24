@@ -165,8 +165,9 @@ export class SidebarComponent {
         {
           icon: '📦', label: 'Inventario', expanded: false,
           subItems: [
-            { icon: '🧅', label: 'Insumos', route: '/ingredients' },
-            { icon: '🛍️', label: 'Productos', route: '/inventory' }
+            { icon: '🍲', label: 'Cocina', route: '/cocina' },
+            { icon: '🍹', label: 'Barra', route: '/barra' },
+            { icon: '🛎️', label: 'Servicio', route: '/servicio' }
           ]
         },
         { icon: '🍲', label: 'Platos',          route: '/dishes' },

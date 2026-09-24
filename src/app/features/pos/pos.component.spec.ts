@@ -202,9 +202,31 @@ describe('PosComponent', () => {
         tableNumber: 1
       });
     });
+
+    it('should send pagoInmediato and print factura directly when cobrar on free table', () => {
+      component.selectedTable = 1;
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
+      ];
+      spyOn(component, 'printComanda');
+      component.finalizeSale('cobrar');
+
+      expect(api.createSale).toHaveBeenCalledWith({
+        items: [{ product: 'd1', quantity: 1 }],
+        paymentMethod: 'efectivo',
+        tableNumber: 1,
+        pagoInmediato: true
+      });
+      expect(component.printComanda).toHaveBeenCalledWith(
+        jasmine.arrayContaining([jasmine.objectContaining({ productName: 'P1' })]),
+        1,
+        'venta'
+      );
+    });
   });
 
-  describe('esAperturaMesa', () => {    it('should be true for a free table in post-pago', () => {
+  describe('esAperturaMesa', () => {
+    it('should be true for a free table', () => {
       component.selectedTable = 1;
       expect(component.esAperturaMesa).toBeTrue();
     });
@@ -224,6 +246,19 @@ describe('PosComponent', () => {
       expect(component.normalizeString('Café')).toBe('cafe');
       expect(component.normalizeString('Jalapeño')).toBe('jalapeno');
       expect(component.normalizeString('')).toBe('');
+    });
+  });
+
+  describe('isTableOccupied', () => {
+    it('should be true with open sale even if status is libre', () => {
+      component.tables = [{ number: 9, status: 'libre', currentSale: { _id: 's9', total: 5000 } }];
+      component.selectedTable = 9;
+      expect(component.isTableOccupied()).toBeTrue();
+    });
+
+    it('should be false without table or sale', () => {
+      component.selectedTable = null;
+      expect(component.isTableOccupied()).toBeFalse();
     });
   });
 
@@ -255,7 +290,7 @@ describe('PosComponent', () => {
         { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
       ];
       component.activeTab = 'agregar';
-      spyOn(component, 'offerPrintComanda');
+      spyOn(component, 'printComanda');
       component.finalizeSale();
 
       expect(api.addItemsToSale).toHaveBeenCalledWith('s1', {
@@ -265,7 +300,7 @@ describe('PosComponent', () => {
       });
       expect(component.cart.length).toBe(0);
       expect(component.activeTab).toBe('venta');
-      expect(component.offerPrintComanda).toHaveBeenCalled();
+      expect(component.printComanda).toHaveBeenCalled();
     });
 
     it('should print only unprinted delta, never repeating', () => {
@@ -295,17 +330,17 @@ describe('PosComponent', () => {
       expect(component.printComanda).not.toHaveBeenCalled();
     });
 
-    it('should offer print with only new items after adding a tanda', () => {
+    it('should print only new items directly after adding a tanda', () => {
       component.selectedTable = 2;
       component.ventaActual = mockSale;
       component.cart = [
         { product: 'd1', productName: 'P1', quantity: 2, unitPrice: 1000, subtotal: 2000, impresoQty: 2 },
         { product: 'd2', productName: 'P2', quantity: 1, unitPrice: 500, subtotal: 500, impresoQty: 0 },
       ];
-      spyOn(component, 'offerPrintComanda');
+      spyOn(component, 'printComanda');
       component.finalizeSale();
 
-      expect(component.offerPrintComanda).toHaveBeenCalledWith(
+      expect(component.printComanda).toHaveBeenCalledWith(
         [{ product: 'd2', productName: 'P2', quantity: 1, unitPrice: 500, subtotal: 500, impresoQty: 0 }],
         2,
         'adicional'

@@ -13,6 +13,10 @@ import Swal from 'sweetalert2';
           {{ libres }} libres · {{ ocupadas }} ocupadas · {{ reservadas }} reservadas
         </p>
       </div>
+      <div *ngIf="paraLlevar" class="takeout-top" [class.busy]="paraLlevar.status === 'ocupada'" (click)="onTableClick(paraLlevar)" title="Pedido para llevar">
+        <span class="takeout-emoji">🛍️</span>
+        <span class="takeout-label">Para llevar</span>
+      </div>
     </div>
 
     <div class="filter-bar">
@@ -57,6 +61,16 @@ import Swal from 'sweetalert2';
   styles: [`
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
     .page-header h1 { margin: 0; }
+    .takeout-top {
+      display: flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--brand-gold); border-radius: 12px;
+      background: rgba(212, 175, 55, 0.05); color: var(--brand-gold);
+      padding: 0.5rem 0.9rem; cursor: pointer; transition: all 0.2s;
+    }
+    .takeout-top:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .takeout-top.busy { border-color: #D32F2F; background: rgba(211, 47, 47, 0.05); color: #D32F2F; }
+    .takeout-emoji { font-size: 1.4rem; }
+    .takeout-label { font-weight: 700; font-size: 0.85rem; }
     .filter-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .filter-chip {
       padding: 0.4rem 0.9rem; border-radius: 20px; border: 1px solid var(--border);
@@ -157,14 +171,16 @@ export class MesasComponent implements OnInit {
   }
 
   get grupos(): { nombre: string; icono: string; mesas: any[] }[] {
-    const orden = ['Salón 1', 'Salón 2', 'Para llevar'];
-    const iconos: Record<string, string> = { 'Salón 1': '🛋️', 'Salón 2': '🌿', 'Para llevar': '🛍️' };
+    const orden = ['Salón 1', 'Salón 2'];
+    const iconos: Record<string, string> = { 'Salón 1': '🛋️', 'Salón 2': '🌿' };
     const mapa = new Map<string, any[]>();
-    this.mesasFiltradas.forEach(t => {
-      const zona = t.zona || (t.number === 0 ? 'Para llevar' : 'Salón 1');
-      if (!mapa.has(zona)) mapa.set(zona, []);
-      mapa.get(zona)!.push(t);
-    });
+    this.mesasFiltradas
+      .filter(t => t.number !== 0)
+      .forEach(t => {
+        const zona = t.zona || 'Salón 1';
+        if (!mapa.has(zona)) mapa.set(zona, []);
+        mapa.get(zona)!.push(t);
+      });
     const conocidos = orden.filter(z => mapa.has(z)).map(z => ({ nombre: z, icono: iconos[z], mesas: mapa.get(z)! }));
     const extras = [...mapa.keys()].filter(z => !orden.includes(z)).map(z => ({ nombre: z, icono: '🪑', mesas: mapa.get(z)! }));
     return [...conocidos, ...extras];
@@ -172,6 +188,10 @@ export class MesasComponent implements OnInit {
 
   get mesas(): any[] {
     return this.tables.filter(t => t.number !== 0);
+  }
+
+  get paraLlevar(): any {
+    return this.tables.find(t => t.number === 0);
   }
 
   get libres(): number { return this.mesas.filter(t => t.status === 'libre').length; }
@@ -192,7 +212,7 @@ export class MesasComponent implements OnInit {
         showDenyButton: table.number !== 0,
         confirmButtonColor: '#2E8B57',
         denyButtonColor: '#FF8F00',
-        confirmButtonText: '🛒 Pedido',
+        confirmButtonText: '🛒 Venta',
         denyButtonText: '📅 Reservar',
         cancelButtonText: 'Cancelar'
       }).then((result) => {

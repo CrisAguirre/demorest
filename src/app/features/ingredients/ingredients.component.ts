@@ -30,7 +30,6 @@ import { Ingredient } from '../../core/models/interfaces';
               <th>Cantidad actual</th>
               <th>Stock mínimo</th>
               <th>Necesita pedido</th>
-              <th>Cantidad a pedir</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -50,7 +49,6 @@ import { Ingredient } from '../../core/models/interfaces';
                   {{ necesitaPedido(item) ? 'PEDIR' : 'OK' }}
                 </span>
               </td>
-              <td>{{ necesitaPedido(item) ? (cantidadAPedir(item) + ' ' + item.unit) : '—' }}</td>
               <td class="actions">
                 <button class="btn-icon" title="Editar" (click)="edit(item)">✏️</button>
                 <button class="btn-icon btn-icon-danger" title="Desactivar" (click)="remove(item._id)" *ngIf="item.isActive">🗑️</button>

@@ -104,6 +104,7 @@ export interface MonthlyPL {
 export interface Ingredient {
   _id: string;
   name: string;
+  code?: string;
   unit: string;
   ubicacion?: string;
   stock: number;
@@ -122,6 +123,7 @@ export interface DishIngredient {
 export interface Dish {
   _id: string;
   name: string;
+  code?: string;
   category: string;
   price: number;
   description: string;
