@@ -23,7 +23,7 @@ interface ItemServicio {
         </div>
         <div style="display:flex;gap:0.5rem">
           <button class="btn-outline" (click)="iniciarOrden()">🧾 Orden de compra</button>
-          <button class="btn-primary" (click)="openForm()">+ Nuevo</button>
+          <button class="btn-primary" (click)="openExistencias()">🔄 Actualizar inventario</button>
         </div>
       </div>
       <div *ngIf="ordenConfirmada.length > 0" class="orden-banner">
@@ -124,6 +124,85 @@ interface ItemServicio {
         </div>
       </div>
 
+      <div class="modal-overlay" *ngIf="showExistencias" (click)="showExistencias = false">
+        <div class="modal modal-lg" (click)="$event.stopPropagation()">
+          <div class="modal-head">
+            <h2 class="modal-title" style="margin:0">🔄 Actualizar inventario — Servicio</h2>
+            <button class="close-btn" (click)="showExistencias = false" title="Cerrar">✕</button>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 0.75rem">
+            Ajuste las existencias y mínimos de cada ítem. Se guardan al confirmar.
+          </p>
+          <div style="overflow-x:auto;max-height:50vh;overflow-y:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Existencias</th>
+                <th>Mínimo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of existencias">
+                <td><strong>{{ e.nombre }}</strong><br><small style="color:var(--text-muted)">{{ e.unidad }}</small></td>
+                <td><input class="form-input input-sm" type="number" min="0" [(ngModel)]="e.stock" /></td>
+                <td><input class="form-input input-sm" type="number" min="0" [(ngModel)]="e.minStock" /></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="agregar-linea">
+            <button *ngIf="!agregandoItem" class="btn-outline btn-sm" (click)="agregandoItem = true">＋ Nuevo ítem</button>
+          </div>
+          <div *ngIf="agregandoItem" class="nuevo-grid">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input class="form-input" [(ngModel)]="nuevoItem.nombre" />
+            </div>
+            <div class="form-group">
+              <label>Categoría</label>
+              <select class="form-input" [(ngModel)]="nuevoItem.categoria">
+                <option value="Desechables">Desechables</option>
+                <option value="Baño">Baño</option>
+                <option value="Limpieza">Limpieza</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ubicación</label>
+              <input class="form-input" [(ngModel)]="nuevoItem.ubicacion" />
+            </div>
+            <div class="form-group">
+              <label>Unidad</label>
+              <select class="form-input" [(ngModel)]="nuevoItem.unidad">
+                <option value="paquete">Paquete</option>
+                <option value="caja">Caja</option>
+                <option value="rollo">Rollo</option>
+                <option value="unidad">Unidad</option>
+                <option value="unidades">Unidades</option>
+                <option value="litro">Litro (L)</option>
+                <option value="kg">Kilogramos (kg)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Existencias</label>
+              <input class="form-input" type="number" min="0" [(ngModel)]="nuevoItem.stock" />
+            </div>
+            <div class="form-group">
+              <label>Mínimo</label>
+              <input class="form-input" type="number" min="0" [(ngModel)]="nuevoItem.minStock" />
+            </div>
+            <div class="nuevo-acciones">
+              <button class="btn-primary btn-sm" (click)="confirmarNuevoItem()">✔ Añadir</button>
+              <button class="btn-ghost btn-sm" (click)="cancelarNuevoItem()" title="Cancelar">✕</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-outline" (click)="showExistencias = false">Cancelar</button>
+            <button class="btn-primary" (click)="guardarExistencias()">✔ Guardar</button>
+          </div>
+        </div>
+      </div>
+
       <div class="modal-overlay" *ngIf="showOrden" (click)="showOrden = false">
         <div class="modal modal-lg" (click)="$event.stopPropagation()">
           <div class="modal-head">
@@ -212,6 +291,12 @@ interface ItemServicio {
       padding: 0.35rem 0.65rem; cursor: pointer; color: var(--text-muted); flex-shrink: 0;
     }
     .close-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+    .nuevo-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+      border: 1px dashed var(--brand-gold); border-radius: 10px; padding: 0.6rem; margin-top: 0.75rem;
+    }
+    .nuevo-acciones { grid-column: 1 / -1; display: flex; gap: 0.5rem; justify-content: flex-end; }
+    .nuevo-grid .form-group label { font-size: 0.72rem; margin-bottom: 0.15rem; }
     .input-sm { padding: 0.3rem 0.5rem; font-size: 0.85rem; max-width: 110px; }
     .orden-banner {
       display: flex; align-items: center; gap: 0.6rem;
@@ -264,6 +349,72 @@ export class ServicioComponent {
   cantidadAPedir(item: ItemServicio): number {
     const d = (item.minStock ?? 0) - (item.stock ?? 0);
     return d > 0 ? Math.round(d * 100) / 100 : 0;
+  }
+
+  showExistencias = false;
+  existencias: any[] = [];
+  agregandoItem = false;
+  nuevoItem: any = { nombre: '', categoria: 'Desechables', ubicacion: '', unidad: 'paquete', stock: 0, minStock: 0 };
+
+  openExistencias(): void {
+    this.existencias = this.items.map(i => ({
+      _id: i._id, nombre: i.nombre, unidad: i.unidad,
+      stock: Number(i.stock) || 0, minStock: Number(i.minStock) || 0
+    }));
+    this.resetNuevoItem();
+    this.showExistencias = true;
+  }
+
+  guardarExistencias(): void {
+    this.existencias.forEach(e => {
+      const item = this.items.find(x => x._id === e._id);
+      if (item) {
+        item.stock = Math.max(0, Number(e.stock) || 0);
+        item.minStock = Math.max(0, Number(e.minStock) || 0);
+      }
+    });
+    this.showExistencias = false;
+  }
+
+  resetNuevoItem(): void {
+    this.agregandoItem = false;
+    this.nuevoItem = { nombre: '', categoria: 'Desechables', ubicacion: '', unidad: 'paquete', stock: 0, minStock: 0 };
+  }
+
+  cancelarNuevoItem(): void {
+    this.resetNuevoItem();
+  }
+
+  siguienteCodigo(categoria: string): string {
+    let max = 0;
+    this.items.forEach(i => {
+      const m = /^S-(\d+)$/.exec(i.codigo || '');
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    return `S-${String(max + 1).padStart(3, '0')}`;
+  }
+
+  confirmarNuevoItem(): void {
+    const nombre = (this.nuevoItem.nombre || '').trim();
+    if (!nombre) return;
+    const categoria = this.nuevoItem.categoria || 'Desechables';
+    const codigo = this.siguienteCodigo(categoria);
+    const nuevo: ItemServicio = {
+      _id: 'local-' + Date.now(),
+      codigo,
+      nombre,
+      categoria,
+      ubicacion: this.nuevoItem.ubicacion || '',
+      unidad: this.nuevoItem.unidad || 'unidades',
+      stock: Math.max(0, Number(this.nuevoItem.stock) || 0),
+      minStock: Math.max(0, Number(this.nuevoItem.minStock) || 0)
+    };
+    this.items.push(nuevo);
+    this.existencias.push({
+      _id: nuevo._id, nombre: nuevo.nombre, unidad: nuevo.unidad,
+      stock: nuevo.stock, minStock: nuevo.minStock
+    });
+    this.resetNuevoItem();
   }
 
   openForm(): void {

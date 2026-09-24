@@ -23,7 +23,7 @@ interface ItemCocina {
         </div>
         <div style="display:flex;gap:0.5rem">
           <button class="btn-outline" (click)="iniciarOrden()">🧾 Orden de compra</button>
-          <button class="btn-primary" (click)="openForm()">+ Nuevo</button>
+          <button class="btn-primary" (click)="openExistencias()">🔄 Actualizar inventario</button>
         </div>
       </div>
       <div *ngIf="ordenConfirmada.length > 0" class="orden-banner">
@@ -122,6 +122,84 @@ interface ItemCocina {
           <div class="modal-actions">
             <button class="btn-outline" (click)="closeForm()">Cancelar</button>
             <button class="btn-primary" (click)="save()">Guardar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" *ngIf="showExistencias" (click)="showExistencias = false">
+        <div class="modal modal-lg" (click)="$event.stopPropagation()">
+          <div class="modal-head">
+            <h2 class="modal-title" style="margin:0">🔄 Actualizar inventario — Cocina</h2>
+            <button class="close-btn" (click)="showExistencias = false" title="Cerrar">✕</button>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 0.75rem">
+            Ajuste las existencias y mínimos de cada ítem. Se guardan al confirmar.
+          </p>
+          <div style="overflow-x:auto;max-height:50vh;overflow-y:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Existencias</th>
+                <th>Mínimo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of existencias">
+                <td><strong>{{ e.nombre }}</strong><br><small style="color:var(--text-muted)">{{ e.unidad }}</small></td>
+                <td><input class="form-input input-sm" type="number" min="0" [(ngModel)]="e.stock" /></td>
+                <td><input class="form-input input-sm" type="number" min="0" [(ngModel)]="e.minStock" /></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="agregar-linea">
+            <button *ngIf="!agregandoItem" class="btn-outline btn-sm" (click)="agregandoItem = true">＋ Nuevo ítem</button>
+          </div>
+          <div *ngIf="agregandoItem" class="nuevo-grid">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input class="form-input" [(ngModel)]="nuevoItem.nombre" />
+            </div>
+            <div class="form-group">
+              <label>Categoría</label>
+              <select class="form-input" [(ngModel)]="nuevoItem.categoria">
+                <option value="Proteínas">Proteínas</option>
+                <option value="Verduras y frutas">Verduras y frutas</option>
+                <option value="Lácteos">Lácteos</option>
+                <option value="Abarrotes">Abarrotes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ubicación</label>
+              <input class="form-input" [(ngModel)]="nuevoItem.ubicacion" />
+            </div>
+            <div class="form-group">
+              <label>Unidad</label>
+              <select class="form-input" [(ngModel)]="nuevoItem.unidad">
+                <option value="g">Gramos (g)</option>
+                <option value="kg">Kilogramos (kg)</option>
+                <option value="ml">Mililitros (ml)</option>
+                <option value="litros">Litros (L)</option>
+                <option value="unidades">Unidades</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Existencias</label>
+              <input class="form-input" type="number" min="0" [(ngModel)]="nuevoItem.stock" />
+            </div>
+            <div class="form-group">
+              <label>Mínimo</label>
+              <input class="form-input" type="number" min="0" [(ngModel)]="nuevoItem.minStock" />
+            </div>
+            <div class="nuevo-acciones">
+              <button class="btn-primary btn-sm" (click)="confirmarNuevoItem()">✔ Añadir</button>
+              <button class="btn-ghost btn-sm" (click)="cancelarNuevoItem()" title="Cancelar">✕</button>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-outline" (click)="showExistencias = false">Cancelar</button>
+            <button class="btn-primary" (click)="guardarExistencias()">✔ Guardar</button>
           </div>
         </div>
       </div>
@@ -227,6 +305,12 @@ interface ItemCocina {
     .agregar-linea { display: flex; gap: 0.5rem; margin: 0.75rem 0 0.25rem; align-items: center; flex-wrap: wrap; }
     .agregar-linea .form-input { flex: 1; min-width: 90px; }
     .agregar-linea .form-input:disabled { opacity: 0.45; }
+    .nuevo-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+      border: 1px dashed var(--brand-gold); border-radius: 10px; padding: 0.6rem; margin-top: 0.75rem;
+    }
+    .nuevo-acciones { grid-column: 1 / -1; display: flex; gap: 0.5rem; justify-content: flex-end; }
+    .nuevo-grid .form-group label { font-size: 0.72rem; margin-bottom: 0.15rem; }
   `]
 })
 export class CocinaComponent {
@@ -262,6 +346,8 @@ export class CocinaComponent {
   ordenConfirmada: any[] = [];
   agregando = false;
   nuevaLinea: any = { nombre: '', qty: 0, unidad: 'unidades' };
+  showExistencias = false;
+  existencias: any[] = [];
 
   necesitaPedido(item: ItemCocina): boolean {
     return (item.stock ?? 0) < (item.minStock ?? 0);
@@ -293,6 +379,76 @@ export class CocinaComponent {
       this.items.push({ _id: 'local-' + Date.now(), ...this.form });
     }
     this.closeForm();
+  }
+
+  openExistencias(): void {
+    this.existencias = this.items.map(i => ({
+      _id: i._id, nombre: i.nombre, unidad: i.unidad,
+      stock: Number(i.stock) || 0, minStock: Number(i.minStock) || 0
+    }));
+    this.resetNuevoItem();
+    this.showExistencias = true;
+  }
+
+  guardarExistencias(): void {
+    this.existencias.forEach(e => {
+      const item = this.items.find(x => x._id === e._id);
+      if (item) {
+        item.stock = Math.max(0, Number(e.stock) || 0);
+        item.minStock = Math.max(0, Number(e.minStock) || 0);
+      }
+    });
+    this.showExistencias = false;
+  }
+
+  // —— Nuevo ítem con código automático por categoría ———————————
+  agregandoItem = false;
+  nuevoItem: any = { nombre: '', categoria: 'Abarrotes', ubicacion: '', unidad: 'g', stock: 0, minStock: 0 };
+
+  resetNuevoItem(): void {
+    this.agregandoItem = false;
+    this.nuevoItem = { nombre: '', categoria: 'Abarrotes', ubicacion: '', unidad: 'g', stock: 0, minStock: 0 };
+  }
+
+  cancelarNuevoItem(): void {
+    this.resetNuevoItem();
+  }
+
+  siguienteCodigo(categoria: string): string {
+    const prefijos: Record<string, string> = {
+      'Proteínas': 'CP', 'Verduras y frutas': 'CF',
+      'Lácteos': 'CL', 'Abarrotes': 'CA'
+    };
+    const pref = prefijos[categoria] || 'CG';
+    let max = 0;
+    this.items.forEach(i => {
+      const m = /^([A-Z]+)-(\d+)$/.exec(i.codigo || '');
+      if (m && m[1] === pref) max = Math.max(max, parseInt(m[2], 10));
+    });
+    return `${pref}-${String(max + 1).padStart(3, '0')}`;
+  }
+
+  confirmarNuevoItem(): void {
+    const nombre = (this.nuevoItem.nombre || '').trim();
+    if (!nombre) return;
+    const categoria = this.nuevoItem.categoria || 'Abarrotes';
+    const codigo = this.siguienteCodigo(categoria);
+    const nuevo: ItemCocina = {
+      _id: 'local-' + Date.now(),
+      codigo,
+      nombre,
+      categoria,
+      ubicacion: this.nuevoItem.ubicacion || '',
+      unidad: this.nuevoItem.unidad || 'unidades',
+      stock: Math.max(0, Number(this.nuevoItem.stock) || 0),
+      minStock: Math.max(0, Number(this.nuevoItem.minStock) || 0)
+    };
+    this.items.push(nuevo);
+    this.existencias.push({
+      _id: nuevo._id, nombre: nuevo.nombre, unidad: nuevo.unidad,
+      stock: nuevo.stock, minStock: nuevo.minStock
+    });
+    this.resetNuevoItem();
   }
 
   private lineaDe(i: any): any {

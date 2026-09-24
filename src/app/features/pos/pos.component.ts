@@ -129,7 +129,7 @@ import Swal from 'sweetalert2';
             </select>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'venta'">
-            <button class="btn-warning" style="flex:2" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Agregar, agréguelos primero">
+            <button class="btn-success" style="flex:2" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Agregar, agréguelos primero">
               💵 Cobrar Cuenta
             </button>
             <button class="btn-danger" style="flex:1" (click)="cancelTableSale()" [disabled]="processing" *ngIf="puedeAnular()" title="Anula la venta y libera la mesa (requiere motivo)">
@@ -144,8 +144,11 @@ import Swal from 'sweetalert2';
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="esAperturaMesa">
             <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing || cart.length === 0" title="Registra la venta y abre la mesa. La comanda imprime solo esta tanda.">
+            <button class="btn-info" style="flex:1.5" (click)="finalizeSale('abrir')" [disabled]="processing || cart.length === 0" title="Registra la venta, abre la mesa e imprime la comanda directo">
               {{ processing ? '⏳' : '🖨️ Comandar' }}
+            </button>
+            <button class="btn-success" style="flex:1.5" (click)="finalizeSale('cobrar')" [disabled]="processing || cart.length === 0" title="Cobra de inmediato con factura, sin abrir cuenta">
+              💵 Cobrar
             </button>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="!isTableOccupied() && !esAperturaMesa">
@@ -293,12 +296,15 @@ export class PosComponent implements OnInit {
 
   isTableOccupied(): boolean {
     const t = this.getSelectedTableObj();
-    return t ? (t.status === 'ocupada' || t.isOccupied) : false;
+    if (!t) return false;
+    // Ocupada por estado o por venta abierta (respaldo ante todo backend)
+    return t.status === 'ocupada' || t.isOccupied || !!t.currentSale;
   }
 
-  // Mesa libre (o Para llevar libre) en post-pago: el primer Comandar abre la venta
+  // Todo pedido con mesa (incluido Para llevar) trabaja post-pago:
+  // la primera comandada abre la venta pendiente.
   get esAperturaMesa(): boolean {
-    return !this.isTableOccupied() && this.settings?.paymentMode === 'post-pago' && this.selectedTable !== null;
+    return !this.isTableOccupied() && this.selectedTable !== null;
   }
 
   // —— Tandas: cada línea recuerda cuánto ya se comandó (impreso) ————————
@@ -500,7 +506,7 @@ export class PosComponent implements OnInit {
     this.marcarComandado(this.cart);
   }
 
-  finalizeSale(): void {
+  finalizeSale(modo: 'abrir' | 'cobrar' = 'abrir'): void {
     this.processing = true;
     const payload: any = {
       items: this.cart.map(i => ({ product: i.product, quantity: i.quantity })),
@@ -508,6 +514,9 @@ export class PosComponent implements OnInit {
     };
     if (this.selectedTable !== null) {
       payload.tableNumber = this.selectedTable;
+    }
+    if (modo === 'cobrar') {
+      payload.pagoInmediato = true;
     }
     
     const t = this.getSelectedTableObj();
@@ -523,7 +532,8 @@ export class PosComponent implements OnInit {
           this.activeTab = 'venta';
           this.ngOnInit();
           this.loadVentaActual();
-          this.offerPrintComanda(this.soloNuevos(commandaItems), tableNum, 'adicional');
+          const nuevos = this.soloNuevos(commandaItems);
+          if (nuevos.length > 0) this.printComanda(nuevos, tableNum, 'adicional');
         },
         error: (err: any) => {
           this.processing = false;
@@ -536,11 +546,17 @@ export class PosComponent implements OnInit {
       this.api.createSale(payload).subscribe({
         next: () => {
           this.processing = false;
-          const isPostPago = this.settings?.paymentMode === 'post-pago' && this.selectedTable !== null;
+          const abreMesa = this.selectedTable !== null && modo === 'abrir';
           this.cart = [];
           this.ngOnInit();
           // Apertura (cocina): solo lo nuevo de la tanda. Factura: todo lo cobrado.
-          this.offerPrintComanda(isPostPago ? this.soloNuevos(commandaItems) : commandaItems, tableNum, isPostPago ? 'cocina' : 'venta');
+          // Impresión directa, sin diálogos intermedios.
+          if (abreMesa) {
+            const nuevos = this.soloNuevos(commandaItems);
+            if (nuevos.length > 0) this.printComanda(nuevos, tableNum, 'cocina');
+          } else {
+            this.printComanda(commandaItems, tableNum, 'venta');
+          }
         },
         error: (err: any) => {
           this.processing = false;
@@ -581,7 +597,7 @@ export class PosComponent implements OnInit {
                allItems.push({ productName: i.dishName, quantity: i.quantity, subtotal: i.subtotal });
             });
 
-            this.offerPrintComanda(allItems, t.number, 'venta');
+            if (allItems.length > 0) this.printComanda(allItems, t.number, 'venta');
           },
           error: (err: any) => {
             this.processing = false;
@@ -630,44 +646,6 @@ export class PosComponent implements OnInit {
             Swal.fire('❌ Error', err.error?.message || 'Error al anular la venta', 'error');
           }
         });
-      }
-    });
-  }
-
-  offerPrintComanda(items: any[], tableNum: number | null, type: 'venta' | 'cocina' | 'adicional'): void {
-    const destino = this.nombreMesa(tableNum);
-    if (items.length === 0) {
-      Swal.fire({
-        icon: 'info',
-        title: '✅ Registrado',
-        text: 'Todo ya estaba comandado, no hay nada nuevo por imprimir en esta tanda.',
-        confirmButtonColor: '#D4AF37'
-      });
-      return;
-    }
-    const titles: Record<string, string> = {
-      'venta': '✅ Venta Registrada',
-      'cocina': '✅ Orden Enviada a Cocina',
-      'adicional': '✅ Ítems Agregados'
-    };
-    const texts: Record<string, string> = {
-      'venta': `Total cobrado: $${items.reduce((s, i) => s + i.subtotal, 0).toLocaleString('es-CO')}`,
-      'cocina': 'El pedido fue enviado a preparación.',
-      'adicional': `Se añadieron ${items.length} ítem(s) a ${destino}. Solo se comanda lo nuevo de esta tanda.`
-    };
-
-    Swal.fire({
-      icon: 'success',
-      title: titles[type] || '✅ Listo',
-      text: texts[type] || '',
-      confirmButtonColor: '#D4AF37',
-      confirmButtonText: type === 'venta' ? '🖨️ Imprimir Factura' : '🖨️ Imprimir Comanda',
-      showDenyButton: true,
-      denyButtonText: 'Cerrar',
-      denyButtonColor: '#6c757d',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.printComanda(items, tableNum, type);
       }
     });
   }

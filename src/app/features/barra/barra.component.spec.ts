@@ -29,6 +29,26 @@ describe('BarraComponent', () => {
     expect(component.cantidadAPedir(vino)).toBe(2);
   });
 
+  it('should update stock from the existencias window', () => {
+    component.openExistencias();
+    expect(component.showExistencias).toBeTrue();
+    expect(component.existencias.length).toBe(20);
+    component.existencias[0].stock = 99;
+    component.guardarExistencias();
+    expect(component.showExistencias).toBeFalse();
+    expect(component.items[0].stock).toBe(99);
+  });
+
+  it('should create a new item with automatic code by category', () => {
+    component.openExistencias();
+    component.nuevoItem = { nombre: 'Tónica', categoria: 'Sin alcohol', ubicacion: 'Barra', unidad: 'caja', stock: 5, minStock: 2 };
+    component.confirmarNuevoItem();
+    const creado = component.items[component.items.length - 1];
+    expect(creado.nombre).toBe('Tónica');
+    expect(creado.codigo).toMatch(/^BB-\d{3}$/);
+    expect(component.existencias.length).toBe(21);
+  });
+
   it('should build order draft on confirm', async () => {
     const Swal = await import('sweetalert2');
     spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
