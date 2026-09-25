@@ -1,6 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
-import { AuthService } from '@core/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -44,15 +43,11 @@ import Swal from 'sweetalert2';
       <div class="pos-cart neon-card-violet" style="animation:none">
         <h3 style="margin-bottom:1rem">
           🛒 Venta Actual
-          <span *ngIf="isTableOccupied()" class="tabs-inline">
-            <button class="tab-btn" [class.active]="activeTab === 'venta'" (click)="activeTab = 'venta'">🧾 Venta</button>
-            <button class="tab-btn" [class.active]="activeTab === 'agregar'" (click)="activeTab = 'agregar'">➕ Agregar</button>
-          </span>
           <span *ngIf="selectedTable === 0" class="badge badge-gold" style="float: right;">🛍️ Para llevar</span>
           <span *ngIf="selectedTable !== null && selectedTable !== 0" class="badge badge-cyan" style="float: right;">Mesa {{ selectedTable }}</span>
         </h3>
-        <!-- Venta actual de la mesa ocupada (solo lectura, lista plana + total) -->
-        <div class="cart-items" *ngIf="isTableOccupied() && activeTab === 'venta'">
+        <!-- Mesa ocupada: venta actual donde se agregan productos para comandar -->
+        <div class="cart-items" *ngIf="isTableOccupied()">
           <div class="cart-item" *ngFor="let item of ventaItems">
             <div class="cart-item-info">
               <span class="cart-item-name">{{ item.productName }}</span>
@@ -63,13 +58,25 @@ import Swal from 'sweetalert2';
               <span class="cart-item-subtotal">\${{ item.subtotal | number:'1.0-0' }}</span>
             </div>
           </div>
-          <div *ngIf="ventaItems.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
-            Sin ítems registrados en la venta
+          <div class="cart-item" *ngFor="let item of cart; let i = index">
+            <div class="cart-item-info">
+              <span class="cart-item-name">{{ item.productName }}</span>
+              <span class="cart-item-price">\${{ item.unitPrice | number:'1.0-0' }} c/u</span>
+            </div>
+            <div class="cart-item-controls">
+              <button class="qty-btn" (click)="changeQty(i, -1)" aria-label="Reducir cantidad">−</button>
+              <span class="qty-display">{{ item.quantity }}</span>
+              <button class="qty-btn" (click)="changeQty(i, 1)" aria-label="Aumentar cantidad">+</button>
+              <span class="cart-item-subtotal">\${{ item.subtotal | number:'1.0-0' }}</span>
+              <button class="btn-ghost btn-sm" (click)="removeItem(i)">✕</button>
+            </div>
+          </div>
+          <div *ngIf="ventaItems.length === 0 && cart.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
+            Agregue productos para comandar
           </div>
         </div>
-        <!-- Carrito editable: venta nueva o pestaña Agregar -->
-        <div class="cart-items" *ngIf="!isTableOccupied() || activeTab === 'agregar'">
-          <div *ngIf="isTableOccupied()" class="adicional-hint">➕ Productos nuevos — en la comanda saldrá solo lo nuevo de esta tanda</div>
+        <!-- Venta nueva: carrito editable -->
+        <div class="cart-items" *ngIf="!isTableOccupied()">
           <div class="cart-item" *ngFor="let item of cart; let i = index">
             <div class="cart-item-info">
               <span class="cart-item-name">{{ item.productName }}</span>
@@ -84,7 +91,7 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div *ngIf="cart.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
-            {{ isTableOccupied() ? 'Agregue productos nuevos' : 'Agregue productos para empezar' }}
+            Agregue productos para empezar
           </div>
         </div>
         <div class="cart-footer">
@@ -97,22 +104,7 @@ import Swal from 'sweetalert2';
             </select>
           </div>
           <div class="cart-total" style="flex-direction: column; align-items: stretch; gap: 0.25rem;">
-            <div style="display:flex; justify-content: space-between; align-items: center;" *ngIf="isTableOccupied() && activeTab === 'venta'">
-              <span>VENTA ACTUAL</span>
-              <span class="total-amount">\${{ ventaTotal | number:'1.0-0' }}</span>
-            </div>
-            <div *ngIf="isTableOccupied() && activeTab === 'venta' && cart.length > 0" class="pending-hint">
-              ⚠️ Tiene {{ cart.length }} producto(s) pendiente(s) en Agregar
-            </div>
-            <div style="display:flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);" *ngIf="isTableOccupied() && activeTab === 'agregar'">
-              <span>Consumo Actual</span>
-              <span>\${{ ventaTotal | number:'1.0-0' }}</span>
-            </div>
-            <div style="display:flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);" *ngIf="isTableOccupied() && activeTab === 'agregar' && cart.length > 0">
-              <span>Esta tanda</span>
-              <span>\${{ total | number:'1.0-0' }}</span>
-            </div>
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;" *ngIf="isTableOccupied() && activeTab === 'agregar'">
+            <div style="display:flex; justify-content: space-between; align-items: center;" *ngIf="isTableOccupied()">
               <span>TOTAL ACUMULADO</span>
               <span class="total-amount">\${{ (ventaTotal + total) | number:'1.0-0' }}</span>
             </div>
@@ -128,19 +120,16 @@ import Swal from 'sweetalert2';
               <option value="mixto">🔄 Mixto</option>
             </select>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'venta'">
-            <button class="btn-success" style="flex:2" (click)="payTableSale()" [disabled]="processing || cart.length > 0" title="Si tiene productos pendientes en Agregar, agréguelos primero">
-              💵 Cobrar Cuenta
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied()">
+            <button class="btn-success" style="flex:1" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+              {{ processing ? '⏳' : '🖨️ Comandar' }}
             </button>
-            <button class="btn-danger" style="flex:1" (click)="cancelTableSale()" [disabled]="processing" *ngIf="puedeAnular()" title="Anula la venta y libera la mesa (requiere motivo)">
-              ❌ Anular
+            <button class="btn-success" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0">
+              💵 Cobrar
             </button>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied() && activeTab === 'agregar'">
-            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-success" style="flex:2" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
-              {{ processing ? '⏳' : '➕ Agregar y Comandar' }}
-            </button>
+          <div style="display:flex;gap:0.5rem;margin-top:0.5rem" *ngIf="isTableOccupied()">
+            <button class="btn-ghost btn-sm" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
           </div>
           <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="esAperturaMesa">
             <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
@@ -217,21 +206,6 @@ import Swal from 'sweetalert2';
       color: var(--brand-gold);
     }
     .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
-    .tabs-inline { display: inline-flex; gap: 0.25rem; margin-left: 0.5rem; vertical-align: middle; }
-    .tab-btn {
-      padding: 0.2rem 0.6rem; border-radius: 20px; border: 1px solid var(--bg-input);
-      background: #fff; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
-    }
-    .tab-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
-    .adicional-hint {
-      font-size: 0.75rem; color: var(--brand-gold); font-weight: 600;
-      background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--brand-gold);
-      border-radius: 8px; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; text-align: center;
-    }
-    .pending-hint {
-      font-size: 0.75rem; color: #b26a00; font-weight: 600; text-align: center;
-      background: rgba(255, 143, 0, 0.12); border-radius: 8px; padding: 0.4rem 0.6rem;
-    }
     @media (max-width: 768px) {
       .pos-layout { grid-template-columns: 1fr; }
       .pos-cart { position: relative; top: 0; }
@@ -258,7 +232,6 @@ export class PosComponent implements OnInit {
   tables: any[] = [];
   selectedTable: number | null = null;
   settings: any = null;
-  activeTab: 'venta' | 'agregar' = 'venta';
   ventaActual: any = null;
 
   get total(): number {
@@ -333,21 +306,14 @@ export class PosComponent implements OnInit {
   constructor(
     private api: ApiService,
     private route: ActivatedRoute,
-    private router: Router,
-    public authService: AuthService
+    private router: Router
   ) {}
-
-  puedeAnular(): boolean {
-    const role = this.authService?.currentUser?.role;
-    return role === 'admin' || role === 'cajero';
-  }
 
   // —— Borradores independientes por mesa (trabajo en paralelo) ——————————
   // Cada mesa conserva sus productos sin comandar al cambiar de mesa o recargar.
   // Se limpian al cobrar, anular o liberar la mesa.
   private readonly DRAFTS_KEY = 'pos-borradores';
   borradores: Record<string, any[]> = {};
-  tabsMesa: Record<string, 'venta' | 'agregar'> = {};
   private claveActual = 'mostrador';
 
   private mesaKey(n: number | null): string {
@@ -369,20 +335,17 @@ export class PosComponent implements OnInit {
 
   private limpiarBorradorMesa(): void {
     delete this.borradores[this.claveActual];
-    delete this.tabsMesa[this.claveActual];
     this.persistirBorradores();
   }
 
   aplicarMesa(): void {
     // Guarda el borrador de la mesa anterior
     this.borradores[this.claveActual] = this.cart;
-    this.tabsMesa[this.claveActual] = this.activeTab;
     this.persistirBorradores();
     // Carga el borrador de la mesa nueva
     this.claveActual = this.mesaKey(this.selectedTable);
     this.cart = this.borradores[this.claveActual] || [];
     this.borradores[this.claveActual] = this.cart;
-    this.activeTab = this.tabsMesa[this.claveActual] || 'venta';
     this.loadVentaActual();
   }
 
@@ -392,7 +355,6 @@ export class PosComponent implements OnInit {
 
   volverMesas(): void {
     this.borradores[this.claveActual] = this.cart;
-    this.tabsMesa[this.claveActual] = this.activeTab;
     this.persistirBorradores();
     this.router.navigate(['/mesas']);
   }
@@ -529,7 +491,6 @@ export class PosComponent implements OnInit {
         next: () => {
           this.processing = false;
           this.cart = [];
-          this.activeTab = 'venta';
           this.ngOnInit();
           this.loadVentaActual();
           const nuevos = this.soloNuevos(commandaItems);
@@ -569,83 +530,61 @@ export class PosComponent implements OnInit {
   payTableSale(): void {
     const t = this.getSelectedTableObj();
     if (!t || !t.currentSale) return;
+    const saleId = t.currentSale._id || t.currentSale;
+    const items = this.ventaItems;
+    const total = this.ventaTotal;
+    const filas = items.length > 0
+      ? items.map(i => `<tr><td style="padding:3px 4px;">${i.productName}</td><td style="text-align:center;">× ${i.quantity}</td><td style="text-align:right;">$${i.subtotal.toLocaleString('es-CO')}</td></tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;color:#888;">Sin detalle cargado</td></tr>';
 
     Swal.fire({
-      title: `¿Cobrar ${this.nombreMesa(t.number)}?`,
-      text: "Se marcará la venta como pagada y se liberará la mesa.",
-      icon: 'question',
+      title: `Cobrar ${this.nombreMesa(t.number)}`,
+      html: `
+        <div style="text-align:left;font-size:0.85rem">
+          <p>Se cobran los productos consumidos por un total de <strong>$${total.toLocaleString('es-CO')}</strong> (${this.paymentMethod}).</p>
+          <table style="width:100%;border-collapse:collapse;margin-top:0.5rem">
+            <tbody>${filas}</tbody>
+          </table>
+        </div>`,
       showCancelButton: true,
+      showDenyButton: true,
       confirmButtonColor: '#D4AF37',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, cobrar'
+      denyButtonColor: '#2E8B57',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: '🖨️ Imprimir factura',
+      denyButtonText: '✅ Aceptar y liberar',
+      cancelButtonText: 'Volver'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.processing = true;
-        const saleId = t.currentSale._id || t.currentSale;
-        this.api.paySale(saleId, { paymentMethod: this.paymentMethod }).subscribe({
-          next: (res: any) => {
-            this.processing = false;
-            this.selectedTable = null;
-            this.activeTab = 'venta';
-            this.ventaActual = null;
-            this.limpiarBorradorMesa();
-            this.ngOnInit();
-            
-            const allItems: any[] = [];
-            if (res.items) res.items.forEach((i: any) => allItems.push(i));
-            if (res.dishItems) res.dishItems.forEach((i: any) => {
-               allItems.push({ productName: i.dishName, quantity: i.quantity, subtotal: i.subtotal });
-            });
-
-            if (allItems.length > 0) this.printComanda(allItems, t.number, 'venta');
-          },
-          error: (err: any) => {
-            this.processing = false;
-            Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
-          }
-        });
+        this.ejecutarCobro(t, saleId, true);
+      } else if (result.isDenied) {
+        this.ejecutarCobro(t, saleId, false);
       }
     });
   }
 
-  cancelTableSale(): void {
-    const t = this.getSelectedTableObj();
-    const saleRef = t?.currentSale;
-    const saleId = saleRef?._id || saleRef;
-    if (!t || !saleId || typeof saleId !== 'string') return;
+  private ejecutarCobro(t: any, saleId: string, imprimir: boolean): void {
+    this.processing = true;
+    this.api.paySale(saleId, { paymentMethod: this.paymentMethod }).subscribe({
+      next: (res: any) => {
+        this.processing = false;
+        this.selectedTable = null;
+        this.ventaActual = null;
+        this.limpiarBorradorMesa();
+        this.ngOnInit();
 
-    Swal.fire({
-      title: `¿Anular venta de ${this.nombreMesa(t.number)}?`,
-      text: 'La venta quedará anulada y la mesa libre. El inventario no se afecta (se descuenta al cobrar).',
-      icon: 'warning',
-      input: 'text',
-      inputLabel: 'Motivo de anulación *',
-      inputPlaceholder: 'Ej. el cliente se retiró',
-      showCancelButton: true,
-      confirmButtonColor: '#D32F2F',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sí, anular',
-      cancelButtonText: 'Volver',
-      inputValidator: (v: string) => (!v || !v.trim() ? 'El motivo es obligatorio' : null)
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.processing = true;
-        this.api.cancelSale(saleId, { reason: result.value }).subscribe({
-          next: () => {
-            this.processing = false;
-            this.selectedTable = null;
-            this.activeTab = 'venta';
-            this.ventaActual = null;
-            this.cart = [];
-            this.limpiarBorradorMesa();
-            this.ngOnInit();
-            Swal.fire({ icon: 'success', title: 'Venta anulada, mesa liberada', timer: 1800, showConfirmButton: false });
-          },
-          error: (err: any) => {
-            this.processing = false;
-            Swal.fire('❌ Error', err.error?.message || 'Error al anular la venta', 'error');
-          }
+        if (!imprimir) return;
+        const allItems: any[] = [];
+        if (res.items) res.items.forEach((i: any) => allItems.push(i));
+        if (res.dishItems) res.dishItems.forEach((i: any) => {
+           allItems.push({ productName: i.dishName, quantity: i.quantity, subtotal: i.subtotal });
         });
+
+        if (allItems.length > 0) this.printComanda(allItems, t.number, 'venta');
+      },
+      error: (err: any) => {
+        this.processing = false;
+        Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
       }
     });
   }

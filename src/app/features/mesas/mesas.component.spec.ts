@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { MesasComponent } from './mesas.component';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
@@ -24,10 +25,11 @@ describe('MesasComponent', () => {
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getTables', 'freeTable', 'createReservation', 'completeReservation', 'cancelReservation'
+      'getTables', 'freeTable', 'createReservation', 'completeReservation', 'cancelReservation', 'cancelSale'
     ]);
     api.getTables.and.callFake(() => of(makeMockTables()));
     api.freeTable.and.returnValue(of({}));
+    api.cancelSale.and.returnValue(of({ _id: 's1', status: 'cancelada' }));
 
     navigateSpy = jasmine.createSpy('navigate');
 
@@ -36,7 +38,8 @@ describe('MesasComponent', () => {
       imports: [CommonModule],
       providers: [
         { provide: ApiService, useValue: api },
-        { provide: Router, useValue: { navigate: navigateSpy } }
+        { provide: Router, useValue: { navigate: navigateSpy } },
+        { provide: AuthService, useValue: { currentUser: { role: 'admin', name: 'Admin' } } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
@@ -96,15 +99,45 @@ describe('MesasComponent', () => {
     expect(api.freeTable).not.toHaveBeenCalled();
   });
 
-  it('should free occupied table when liberar is chosen and confirmed', async () => {
+  it('should clear the table draft when freeing the table', async () => {
+    localStorage.setItem('pos-borradores', JSON.stringify({ '2': [{ productName: 'P' }], '5': [{ productName: 'Q' }] }));
+    spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
+    component.confirmFreeTable(component.tables[1]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const b = JSON.parse(localStorage.getItem('pos-borradores') || '{}');
+    expect(b['2']).toBeUndefined();
+    expect(b['5'].length).toBe(1);
+  });
+
+  it('should clear the table draft when annulling the sale', async () => {
+    localStorage.setItem('pos-borradores', JSON.stringify({ '2': [{ productName: 'P' }] }));
     const fireSpy = spyOn(Swal, 'fire');
     fireSpy.withArgs(jasmine.objectContaining({ confirmButtonText: '🧾 Ver pedido' }))
       .and.returnValue(Promise.resolve({ isDenied: true } as any));
-    fireSpy.and.returnValue(Promise.resolve({ isConfirmed: true } as any));
-    api.freeTable.and.returnValue(of({}));
+    fireSpy.and.returnValue(Promise.resolve({ isConfirmed: true, value: 'se fue' } as any));
     component.onTableClick(component.tables[1]);
     await new Promise(resolve => setTimeout(resolve, 0));
     await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(api.cancelSale).toHaveBeenCalledWith('s1', { reason: 'se fue' });
+    expect(api.freeTable).not.toHaveBeenCalled();
+    expect(navigateSpy).not.toHaveBeenCalled();
+    expect(localStorage.getItem('pos-borradores')).toBe('{}');
+  });
+
+  it('should free occupied table when liberar is chosen and confirmed', async () => {
+    const fireSpy = spyOn(Swal, 'fire');
+    fireSpy.and.callFake((opts: any) => {
+      if (opts && opts.confirmButtonText === '🧾 Ver pedido') {
+        return Promise.resolve({ isDenied: true } as any);
+      }
+      if (opts && opts.title && String(opts.title).includes('Anular')) {
+        return Promise.resolve({ isConfirmed: false } as any);
+      }
+      return Promise.resolve({ isConfirmed: true } as any);
+    });
+    // Simular clic en el enlace "Liberar mesa sin anular" del footer
+    component.confirmFreeTable(component.tables[1]);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(api.freeTable).toHaveBeenCalledWith('t2');
     expect(navigateSpy).not.toHaveBeenCalled();

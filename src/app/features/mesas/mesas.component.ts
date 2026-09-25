@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '@core/services/api.service';
+import { AuthService } from '@core/services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -152,8 +153,14 @@ export class MesasComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService
   ) {}
+
+  puedeAnular(): boolean {
+    const role = this.auth?.currentUser?.role;
+    return role === 'admin' || role === 'cajero';
+  }
 
   ngOnInit(): void {
     this.loadTables();
@@ -224,6 +231,7 @@ export class MesasComponent implements OnInit {
       });
     } else if (table.status === 'ocupada') {
       const total = table.currentSale?.total;
+      const puedoAnular = this.puedeAnular();
       Swal.fire({
         title: `${this.nombreMesa(table)} - Ocupada`,
         html: total ? `<p>Consumo actual: <strong>$${total.toLocaleString('es-CO')}</strong></p><p>¿Qué desea hacer?</p>` : '¿Qué desea hacer?',
@@ -233,13 +241,22 @@ export class MesasComponent implements OnInit {
         confirmButtonColor: '#2E8B57',
         denyButtonColor: '#D32F2F',
         confirmButtonText: '🧾 Ver pedido',
-        denyButtonText: '✅ Liberar mesa',
-        cancelButtonText: 'Cerrar'
+        denyButtonText: puedoAnular ? '❌ Anular venta' : '✅ Liberar mesa',
+        cancelButtonText: 'Cerrar',
+        footer: puedoAnular ? '<a id="liberar-mesa-link" style="color:#D4AF37;cursor:pointer;font-size:0.85rem">Liberar mesa sin anular</a>' : undefined,
+        didOpen: () => {
+          if (!puedoAnular) return;
+          document.getElementById('liberar-mesa-link')?.addEventListener('click', () => {
+            Swal.close();
+            this.confirmFreeTable(table);
+          });
+        }
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['/pos'], { queryParams: { table: table.number } });
         } else if (result.isDenied) {
-          this.confirmFreeTable(table);
+          if (puedoAnular) this.anularVenta(table);
+          else this.confirmFreeTable(table);
         }
       });
     } else if (table.status === 'reservada') {
@@ -312,8 +329,56 @@ export class MesasComponent implements OnInit {
       if (result.isConfirmed) {
         this.api.freeTable(table._id).subscribe({
           next: () => {
+            this.limpiarBorradorMesa(table.number);
             this.loadTables();
             Swal.fire({ icon: 'success', title: 'Mesa liberada', timer: 1500, showConfirmButton: false });
+          }
+        });
+      }
+    });
+  }
+
+  // Borra el borrador local del POS de esa mesa para que Venta Actual quede limpia
+  private limpiarBorradorMesa(numero: number | null): void {
+    try {
+      const raw = localStorage.getItem('pos-borradores');
+      if (!raw) return;
+      const b = JSON.parse(raw) || {};
+      delete b[String(numero)];
+      localStorage.setItem('pos-borradores', JSON.stringify(b));
+    } catch { /* almacenamiento no disponible */ }
+  }
+
+  anularVenta(table: any): void {
+    const saleRef = table?.currentSale;
+    const saleId = saleRef?._id || saleRef;
+    if (!saleId || typeof saleId !== 'string') {
+      Swal.fire('Atención', 'Esta mesa no tiene venta abierta para anular.', 'info');
+      return;
+    }
+    Swal.fire({
+      title: `¿Anular venta de ${this.nombreMesa(table)}?`,
+      text: 'La venta quedará anulada y la mesa libre.',
+      icon: 'warning',
+      input: 'text',
+      inputLabel: 'Motivo de anulación *',
+      inputPlaceholder: 'Ej. el cliente se retiró',
+      showCancelButton: true,
+      confirmButtonColor: '#D32F2F',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, anular',
+      cancelButtonText: 'Volver',
+      inputValidator: (v: string) => (!v || !v.trim() ? 'El motivo es obligatorio' : null)
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.api.cancelSale(saleId, { reason: result.value }).subscribe({
+          next: () => {
+            this.limpiarBorradorMesa(table.number);
+            this.loadTables();
+            Swal.fire({ icon: 'success', title: 'Venta anulada, mesa liberada', timer: 1800, showConfirmButton: false });
+          },
+          error: (err: any) => {
+            Swal.fire('❌ Error', err.error?.message || 'Error al anular la venta', 'error');
           }
         });
       }
