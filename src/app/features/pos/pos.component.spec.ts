@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { PosComponent } from './pos.component';
 import { ApiService } from '../../core/services/api.service';
-import { AuthService } from '../../core/services/auth.service';
 
 describe('PosComponent', () => {
   let component: PosComponent;
@@ -53,8 +52,7 @@ describe('PosComponent', () => {
       providers: [
         { provide: ApiService, useValue: api },
         { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
-        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
-        { provide: AuthService, useValue: { currentUser: { role: 'admin', name: 'Admin' } } }
+        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } }
       ]
     }).compileComponents();
 
@@ -263,15 +261,13 @@ describe('PosComponent', () => {
   });
 
   describe('agregar flow (tandas)', () => {
-    it('should default to venta tab with no sale detail', () => {
-      expect(component.activeTab).toBe('venta');
+    it('should start with no sale detail', () => {
       expect(component.ventaActual).toBeNull();
     });
 
     it('should load venta detail when an occupied table is selected', () => {
       component.selectedTable = 2;
       component.onTableChange();
-      expect(component.activeTab).toBe('venta');
       expect(api.getSale).toHaveBeenCalledWith('s1');
       expect(component.ventaActual._id).toBe('s1');
     });
@@ -283,13 +279,12 @@ describe('PosComponent', () => {
       expect(component.ventaTotal).toBe(5000);
     });
 
-    it('should call addItemsToSale with sale id and switch back to venta tab', () => {
+    it('should call addItemsToSale with sale id and clear the cart', () => {
       component.selectedTable = 2;
       component.ventaActual = mockSale;
       component.cart = [
         { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
       ];
-      component.activeTab = 'agregar';
       spyOn(component, 'printComanda');
       component.finalizeSale();
 
@@ -299,7 +294,6 @@ describe('PosComponent', () => {
         tableNumber: 2
       });
       expect(component.cart.length).toBe(0);
-      expect(component.activeTab).toBe('venta');
       expect(component.printComanda).toHaveBeenCalled();
     });
 
@@ -348,36 +342,50 @@ describe('PosComponent', () => {
     });
   });
 
-  describe('cancelTableSale', () => {    it('should allow admin to cancel', () => {
-      expect(component.puedeAnular()).toBeTrue();
-    });
-
-    it('should call cancelSale with reason and reset state', async () => {
+  describe('payTableSale', () => {
+    it('should pay and print factura when Imprimir factura is chosen', async () => {
       const Swal = await import('sweetalert2');
-      spyOn(Swal.default, 'fire').and.callFake((opts: any) => {
-        if (opts && opts.input) return Promise.resolve({ isConfirmed: true, value: 'cliente se fue' } as any);
-        return Promise.resolve({} as any);
-      });
+      spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
+      spyOn(component, 'printComanda');
+      api.paySale.and.returnValue(of({
+        _id: 's1',
+        items: [{ productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 }],
+        dishItems: []
+      }));
       component.selectedTable = 2;
       component.ventaActual = mockSale;
-      component.cart = [{ product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 }];
-      component.cancelTableSale();
+      component.payTableSale();
+      await new Promise(resolve => setTimeout(resolve, 0));
       await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(api.cancelSale).toHaveBeenCalledWith('s1', { reason: 'cliente se fue' });
+      expect(api.paySale).toHaveBeenCalledWith('s1', { paymentMethod: 'efectivo' });
+      expect(component.printComanda).toHaveBeenCalled();
       expect(component.selectedTable).toBeNull();
-      expect(component.ventaActual).toBeNull();
-      expect(component.cart.length).toBe(0);
+    });
+
+    it('should pay without printing when Aceptar y liberar is chosen', async () => {
+      const Swal = await import('sweetalert2');
+      spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({ isDenied: true } as any));
+      spyOn(component, 'printComanda');
+      component.selectedTable = 2;
+      component.ventaActual = mockSale;
+      component.payTableSale();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(api.paySale).toHaveBeenCalledWith('s1', { paymentMethod: 'efectivo' });
+      expect(component.printComanda).not.toHaveBeenCalled();
+      expect(component.selectedTable).toBeNull();
     });
 
     it('should do nothing without a selected occupied table', async () => {
       const Swal = await import('sweetalert2');
       spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({} as any));
       component.selectedTable = null;
-      component.cancelTableSale();
+      component.payTableSale();
       await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(api.cancelSale).not.toHaveBeenCalled();
+      expect(api.paySale).not.toHaveBeenCalled();
     });
   });
 
