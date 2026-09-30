@@ -1,4 +1,5 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ApiService } from '@core/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -72,7 +73,7 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div *ngIf="ventaItems.length === 0 && cart.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted)">
-            Agregue productos para comandar
+            {{ cargandoVenta ? '⏳ Cargando pedido de la mesa...' : 'Agregue productos para comandar' }}
           </div>
         </div>
         <!-- Venta nueva: carrito editable -->
@@ -120,31 +121,13 @@ import Swal from 'sweetalert2';
               <option value="mixto">🔄 Mixto</option>
             </select>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="isTableOccupied()">
-            <button class="btn-success" style="flex:1" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
+            <button class="btn-info" style="flex:1" (click)="comandar()" [disabled]="processing || cart.length === 0" title="Envía a cocina lo nuevo del carrito">
               {{ processing ? '⏳' : '🖨️ Comandar' }}
             </button>
-            <button class="btn-success" style="flex:1" (click)="payTableSale()" [disabled]="processing || cart.length > 0">
+            <button class="btn-success" style="flex:1" (click)="cobrar()" [disabled]="cobrarDisabled()" title="Cobra la cuenta">
               💵 Cobrar
-            </button>
-          </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.5rem" *ngIf="isTableOccupied()">
-            <button class="btn-ghost btn-sm" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-          </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="esAperturaMesa">
-            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-info" style="flex:1.5" (click)="finalizeSale('abrir')" [disabled]="processing || cart.length === 0" title="Registra la venta, abre la mesa e imprime la comanda directo">
-              {{ processing ? '⏳' : '🖨️ Comandar' }}
-            </button>
-            <button class="btn-success" style="flex:1.5" (click)="finalizeSale('cobrar')" [disabled]="processing || cart.length === 0" title="Cobra de inmediato con factura, sin abrir cuenta">
-              💵 Cobrar
-            </button>
-          </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem" *ngIf="!isTableOccupied() && !esAperturaMesa">
-            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-info" style="flex:1" (click)="printCurrentComanda()" [disabled]="cart.length === 0" title="Ticket de cocina (no registra venta)">🖨️ Comanda</button>
-            <button class="btn-success" style="flex:1.5" (click)="finalizeSale()" [disabled]="processing || cart.length === 0">
-              {{ processing ? '⏳' : '✅ Cobrar' }}
             </button>
           </div>
         </div>
@@ -212,7 +195,7 @@ import Swal from 'sweetalert2';
     }
   `]
 })
-export class PosComponent implements OnInit {
+export class PosComponent implements OnInit, OnDestroy {
   products: any[] = [];
   filteredProducts: any[] = [];
   cart: any[] = [];
@@ -231,8 +214,11 @@ export class PosComponent implements OnInit {
   processing = false;
   tables: any[] = [];
   selectedTable: number | null = null;
+  reservaId: string | null = null;
   settings: any = null;
   ventaActual: any = null;
+  cargandoVenta = false;
+  private subParams: Subscription | null = null;
 
   get total(): number {
     return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
@@ -270,8 +256,9 @@ export class PosComponent implements OnInit {
   isTableOccupied(): boolean {
     const t = this.getSelectedTableObj();
     if (!t) return false;
+    // La mesa reservada actúa como cualquier otra: acepta pedidos igual.
     // Ocupada por estado o por venta abierta (respaldo ante todo backend)
-    return t.status === 'ocupada' || t.isOccupied || !!t.currentSale;
+    return t.status === 'ocupada' || t.status === 'reservada' || t.isOccupied || !!t.currentSale;
   }
 
   // Todo pedido con mesa (incluido Para llevar) trabaja post-pago:
@@ -374,29 +361,55 @@ export class PosComponent implements OnInit {
       next: (res: any) => this.settings = res
     });
 
-    this.route.queryParams.subscribe(params => {
+    // Una sola suscripción aunque ngOnInit se llame manual (evita duplicar aplicarMesa).
+    this.suscribirParams();
+  }
+
+  private suscribirParams(): void {
+    if (this.subParams) return;
+    this.subParams = this.route.queryParams.subscribe(params => {
       if (params['table'] !== undefined) {
         this.selectedTable = parseInt(params['table'], 10);
       }
+      this.reservaId = params['reserva'] || null;
       this.aplicarMesa();
     });
   }
 
+  ngOnDestroy(): void {
+    this.subParams?.unsubscribe();
+    this.subParams = null;
+  }
+
   onTableChange(): void {
+    // Cambio manual de mesa: la reserva de la URL ya no aplica.
+    this.reservaId = null;
     this.aplicarMesa();
   }
 
-  loadVentaActual(): void {
+  loadVentaActual(reintentar = true): void {
     const t = this.getSelectedTableObj();
+    // Mesas aún sin cargar: no borrar lo que haya, solo esperar a getTables.
+    if (!t) return;
     const saleRef = t?.currentSale;
     const saleId = saleRef?._id || saleRef;
-    if (t && (t.status === 'ocupada' || t.isOccupied) && saleId && typeof saleId === 'string') {
+    if ((t.status === 'ocupada' || t.status === 'reservada' || t.isOccupied) && saleId && typeof saleId === 'string') {
+      this.cargandoVenta = true;
       this.api.getSale(saleId).subscribe({
-        next: (res: any) => { this.ventaActual = res; },
-        error: () => { this.ventaActual = null; }
+        next: (res: any) => { this.ventaActual = res; this.cargandoVenta = false; },
+        error: () => {
+          // Render puede fallar/tardar al despertar: un reintento antes de rendirse.
+          if (reintentar) {
+            setTimeout(() => this.loadVentaActual(false), 2000);
+          } else {
+            this.ventaActual = null;
+            this.cargandoVenta = false;
+          }
+        }
       });
     } else {
       this.ventaActual = null;
+      this.cargandoVenta = false;
     }
   }
 
@@ -468,6 +481,34 @@ export class PosComponent implements OnInit {
     this.marcarComandado(this.cart);
   }
 
+  // Botonera única: misma fila, tamaño y color en todo momento.
+  // Cada botón despacha según el estado (ocupada / apertura / mostrador).
+  comandar(): void {
+    if (this.isTableOccupied()) {
+      this.finalizeSale();
+    } else if (this.esAperturaMesa) {
+      this.finalizeSale('abrir');
+    } else {
+      this.printCurrentComanda();
+    }
+  }
+
+  cobrarDisabled(): boolean {
+    if (this.processing) return true;
+    if (this.isTableOccupied()) return this.cart.length > 0;
+    return this.cart.length === 0;
+  }
+
+  cobrar(): void {
+    if (this.isTableOccupied()) {
+      this.payTableSale();
+    } else if (this.esAperturaMesa) {
+      this.finalizeSale('cobrar');
+    } else {
+      this.finalizeSale();
+    }
+  }
+
   finalizeSale(modo: 'abrir' | 'cobrar' = 'abrir'): void {
     this.processing = true;
     const payload: any = {
@@ -482,7 +523,7 @@ export class PosComponent implements OnInit {
     }
     
     const t = this.getSelectedTableObj();
-    if (t && (t.status === 'ocupada' || t.isOccupied) && t.currentSale) {
+    if (t && (t.status === 'ocupada' || t.status === 'reservada' || t.isOccupied) && t.currentSale) {
       // Snapshot del carrito para la comanda antes de limpiarlo (solo productos nuevos)
       const commandaItems = [...this.cart];
       const tableNum = this.selectedTable;
@@ -491,6 +532,7 @@ export class PosComponent implements OnInit {
         next: () => {
           this.processing = false;
           this.cart = [];
+          this.completarReservaSiHay();
           this.ngOnInit();
           this.loadVentaActual();
           const nuevos = this.soloNuevos(commandaItems);
@@ -505,10 +547,12 @@ export class PosComponent implements OnInit {
       const commandaItems = [...this.cart];
       const tableNum = this.selectedTable;
       this.api.createSale(payload).subscribe({
-        next: () => {
+        next: (vendida: any) => {
           this.processing = false;
           const abreMesa = this.selectedTable !== null && modo === 'abrir';
           this.cart = [];
+          // La reserva se completa DESPUÉS de crear la venta para que quede enlazada a la mesa.
+          this.completarReservaSiHay();
           this.ngOnInit();
           // Apertura (cocina): solo lo nuevo de la tanda. Factura: todo lo cobrado.
           // Impresión directa, sin diálogos intermedios.
@@ -527,8 +571,21 @@ export class PosComponent implements OnInit {
     }
   }
 
-  payTableSale(): void {
-    const t = this.getSelectedTableObj();
+  // Completa la reserva que originó el pedido (si viene ?reserva=) una sola vez.
+  // Se llama DESPUÉS de comandar para que la venta quede enlazada a la mesa.
+  completarReservaSiHay(): void {
+    if (!this.reservaId) return;
+    const id = this.reservaId;
+    this.reservaId = null;
+    this.api.completeReservation(id).subscribe({
+      next: () => this.api.getTables().subscribe({
+        next: (res: any) => { this.tables = res; this.loadVentaActual(); }
+      }),
+      error: () => { /* la comandada ya quedó; la reserva se completa manual */ }
+    });
+  }
+
+  payTableSale(): void {    const t = this.getSelectedTableObj();
     if (!t || !t.currentSale) return;
     const saleId = t.currentSale._id || t.currentSale;
     const items = this.ventaItems;

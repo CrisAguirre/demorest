@@ -25,9 +25,14 @@ describe('MesasComponent', () => {
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getTables', 'freeTable', 'createReservation', 'completeReservation', 'cancelReservation', 'cancelSale'
+      'getTables', 'freeTable', 'createReservation', 'completeReservation', 'cancelReservation', 'cancelSale', 'getReservations',
+      'getPendingKitchenOrders', 'getSale', 'paySale'
     ]);
     api.getTables.and.callFake(() => of(makeMockTables()));
+    api.getReservations.and.returnValue(of([]));
+    api.getPendingKitchenOrders.and.returnValue(of([]));
+    api.getSale.and.returnValue(of({ _id: 's9', total: 10000, items: [], dishItems: [], status: 'pendiente' }));
+    api.paySale.and.returnValue(of({ _id: 's9', status: 'pagada' }));
     api.freeTable.and.returnValue(of({}));
     api.cancelSale.and.returnValue(of({ _id: 's1', status: 'cancelada' }));
 
@@ -149,5 +154,51 @@ describe('MesasComponent', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(api.freeTable).not.toHaveBeenCalled();
     expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should count active reservations per table', () => {
+    api.getReservations.and.returnValue(of([
+      { _id: 'r1', table: { _id: 't3' }, status: 'pendiente', date: new Date().toISOString() },
+      { _id: 'r2', table: { _id: 't3' }, status: 'confirmada', date: new Date().toISOString() },
+      { _id: 'r3', table: { _id: 't3' }, status: 'cancelada', date: new Date().toISOString() }
+    ]));
+    component.cargarConteos();
+    expect(component.conteoReservas['t3']).toBe(2);
+  });
+
+  it('should navigate with reserva id when starting order from reservation (without completing yet)', () => {
+    const table = component.tables[2];
+    component.iniciarPedidoReserva(table, { _id: 'r1', customerName: 'Juan' });
+    expect(navigateSpy).toHaveBeenCalledWith(['/pos'], { queryParams: { table: 10, reserva: 'r1' } });
+    expect(api.completeReservation).not.toHaveBeenCalled();
+  });
+
+  it('should search orphan orders when occupied table has no linked sale', async () => {
+    api.getPendingKitchenOrders.and.returnValue(of([
+      { _id: 'k1', tableNumber: 2, sale: 's9', status: 'nuevo' }
+    ]));
+    const fire = spyOn(Swal, 'fire');
+    component.onTableClick({ _id: 't9', number: 2, status: 'ocupada', currentSale: null });
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(api.getPendingKitchenOrders).toHaveBeenCalled();
+    expect(api.getSale).toHaveBeenCalledWith('s9');
+    const args = fire.calls.mostRecent().args[0] as any;
+    expect(args.title).toContain('Pedidos sin enlazar');
+    expect(args.html).toContain('Pedido 1');
+  });
+
+  it('should open reservations window with all data on reserved click', async () => {
+    const r1 = { _id: 'r1', customerName: 'Juan', numberOfPeople: 2, date: new Date(2026, 8, 28, 19, 0).toISOString(), status: 'pendiente' };
+    const r2 = { _id: 'r2', customerName: 'Ana', numberOfPeople: 4, date: new Date(2026, 8, 29, 20, 0).toISOString(), status: 'confirmada' };
+    api.getReservations.and.returnValue(of([r1, r2]));
+    const fire = spyOn(Swal, 'fire');
+    component.onTableClick(component.tables[2]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(api.getReservations).toHaveBeenCalledWith({ table: 't3' });
+    expect(fire).toHaveBeenCalled();
+    const html = (fire.calls.mostRecent().args[0] as any).html as string;
+    expect(html).toContain('Juan');
+    expect(html).toContain('Ana');
+    expect(html).toContain('Fecha y hora');
   });
 });

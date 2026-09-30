@@ -473,6 +473,11 @@ export class ApiService {
     return this.cachedGet(k, this.http.get(`${this.baseUrl}/finance/monthly-pl`, { params }), TTL.finance);
   }
 
+  getIncomeHistory(params?: any): Observable<any> {
+    const k = this.key('finance-income-history', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/finance/income-history`, { params }), TTL.finance);
+  }
+
   // ── Ingredients ─────────────────────────────────────────────────────────
 
   getIngredients(params?: any): Observable<any> {

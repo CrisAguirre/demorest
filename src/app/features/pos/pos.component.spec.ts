@@ -35,7 +35,7 @@ describe('PosComponent', () => {
   beforeEach(async () => {
     localStorage.clear();
     api = jasmine.createSpyObj('ApiService', [
-      'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale', 'cancelSale'
+      'getDishes', 'getTables', 'getSettings', 'getSale', 'createSale', 'addItemsToSale', 'paySale', 'cancelSale', 'completeReservation'
     ]);
     api.getDishes.and.returnValue(of(mockDishes));
     api.getTables.and.returnValue(of(mockTables));
@@ -45,6 +45,7 @@ describe('PosComponent', () => {
     api.addItemsToSale.and.returnValue(of({ _id: 's1' }));
     api.paySale.and.returnValue(of({ _id: 's1', items: [], dishItems: [] }));
     api.cancelSale.and.returnValue(of({ _id: 's1', status: 'cancelada' }));
+    api.completeReservation.and.returnValue(of({ _id: 'r1', status: 'completada' }));
 
     await TestBed.configureTestingModule({
       declarations: [PosComponent],
@@ -221,6 +222,52 @@ describe('PosComponent', () => {
         'venta'
       );
     });
+
+    it('should complete reservation once after creating sale from it', () => {
+      component.selectedTable = 1;
+      component.reservaId = 'r1';
+      component.cart = [
+        { product: 'd1', productName: 'P1', quantity: 1, unitPrice: 1000, subtotal: 1000 },
+      ];
+      spyOn(component, 'printComanda');
+      component.finalizeSale('abrir');
+      expect(api.completeReservation).toHaveBeenCalledWith('r1');
+      expect(component.reservaId).toBeNull();
+    });
+
+    it('should not complete twice', () => {
+      component.reservaId = null;
+      component.completarReservaSiHay();
+      expect(api.completeReservation).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('unified buttons', () => {
+    it('should dispatch comandar per state', () => {
+      const fin = spyOn(component, 'finalizeSale');
+      const prn = spyOn(component, 'printComanda');
+      // Ocupada -> finalizeSale()
+      component.selectedTable = 2;
+      component.comandar();
+      expect(fin).toHaveBeenCalledWith();
+      // Apertura (libre con mesa) -> abrir
+      component.selectedTable = 1;
+      component.comandar();
+      expect(fin).toHaveBeenCalledWith('abrir');
+      // Mostrador -> solo imprime
+      component.selectedTable = null;
+      component.cart = [{ product: 'd1', productName: 'P1', quantity: 1, unitPrice: 100, subtotal: 100, impresoQty: 0 }];
+      component.comandar();
+      expect(prn).toHaveBeenCalled();
+    });
+
+    it('should disable cobrar until pending items are ordered on occupied tables', () => {
+      component.selectedTable = 2;
+      component.cart = [{ product: 'd1', productName: 'P1', quantity: 1, unitPrice: 100, subtotal: 100 }];
+      expect(component.cobrarDisabled()).toBeTrue();
+      component.cart = [];
+      expect(component.cobrarDisabled()).toBeFalse();
+    });
   });
 
   describe('esAperturaMesa', () => {
@@ -258,6 +305,13 @@ describe('PosComponent', () => {
       component.selectedTable = null;
       expect(component.isTableOccupied()).toBeFalse();
     });
+
+    it('should treat reserved tables like any other (accept orders)', () => {
+      component.tables = [{ number: 5, status: 'reservada', currentSale: null }];
+      component.selectedTable = 5;
+      expect(component.isTableOccupied()).toBeTrue();
+      expect(component.esAperturaMesa).toBeFalse();
+    });
   });
 
   describe('agregar flow (tandas)', () => {
@@ -270,6 +324,29 @@ describe('PosComponent', () => {
       component.onTableChange();
       expect(api.getSale).toHaveBeenCalledWith('s1');
       expect(component.ventaActual._id).toBe('s1');
+      expect(component.cargandoVenta).toBeFalse();
+    });
+
+    it('should keep current venta when tables are not loaded yet', () => {
+      component.tables = [];
+      component.selectedTable = 2;
+      component.ventaActual = mockSale;
+      component.loadVentaActual();
+      expect(api.getSale).not.toHaveBeenCalled();
+      expect(component.ventaActual).toBe(mockSale);
+    });
+
+    it('should retry once when getSale fails', (done) => {
+      component.selectedTable = 2;
+      (api.getSale as jasmine.Spy).and.returnValue(throwError(() => new Error('caído')));
+      spyOn(window, 'setTimeout').and.callFake(((fn: any) => { fn(); return 0; }) as any);
+      component.loadVentaActual();
+      setTimeout(() => {
+        expect(api.getSale).toHaveBeenCalledTimes(2);
+        expect(component.ventaActual).toBeNull();
+        expect(component.cargandoVenta).toBeFalse();
+        done();
+      }, 0);
     });
 
     it('should combine items and dishItems in ventaItems', () => {

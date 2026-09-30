@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { SettingsService } from '../../../core/services/settings.service';
@@ -12,6 +12,10 @@ import { environment } from '../../../../environments/environment';
       <div class="navbar-brand" routerLink="/dashboard">
         <img *ngIf="settingsService.logoFullUrl" [src]="settingsService.logoFullUrl" alt="Logo" class="navbar-logo">
         <span class="navbar-title">{{ settingsService.storeName }}</span>
+      </div>
+
+      <div class="navbar-date" title="Fecha de operación">
+        📅 {{ fechaOperacion }}
       </div>
 
       <div class="navbar-actions">
@@ -52,6 +56,10 @@ import { environment } from '../../../../environments/environment';
       color: var(--brand-gold);
     }
     .navbar-actions { display: flex; align-items: center; gap: 1rem; }
+    .navbar-date {
+      font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+      text-transform: capitalize; white-space: nowrap;
+    }
     .btn-notification, .btn-theme {
       position: relative; background: var(--bg-input); border: none;
       width: 38px; height: 38px; border-radius: 8px; font-size: 1.1rem;
@@ -93,6 +101,7 @@ import { environment } from '../../../../environments/environment';
     .dropdown button:hover { background: var(--bg-input); }
     @media (max-width: 600px) {
       .user-name, .user-role { display: none; }
+      .navbar-date { display: none; }
     }
     @media (max-width: 480px) {
       .navbar { padding: 0 0.5rem; }
@@ -104,10 +113,12 @@ import { environment } from '../../../../environments/environment';
     }
   `]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   showMenu = false;
   unreadAlerts = 0;
   isDarkMode = false;
+  fechaOperacion = '';
+  private reloj: any = null;
 
   get userInitial(): string {
     return this.authService.currentUser?.name?.charAt(0)?.toUpperCase() || '?';
@@ -126,6 +137,18 @@ export class NavbarComponent implements OnInit {
       this.loadAlertCount();
     }
     this.initTheme();
+    this.actualizarFecha();
+    this.reloj = setInterval(() => this.actualizarFecha(), 60000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.reloj) clearInterval(this.reloj);
+  }
+
+  actualizarFecha(): void {
+    this.fechaOperacion = new Date().toLocaleDateString('es-CO', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
   }
 
   initTheme(): void {

@@ -7,7 +7,14 @@ import Swal from 'sweetalert2';
   template: `
     <div class="page-header">
       <h1>📅 Eventos y Catering</h1>
-      <button class="btn btn-primary" (click)="openForm()">+ Nuevo</button>
+      <div class="header-actions">
+        <div class="view-toggle" title="Vista del calendario">
+          <button [class.active]="viewMode === 'mes'" (click)="setView('mes')">Mes</button>
+          <button [class.active]="viewMode === 'semana'" (click)="setView('semana')">Semana</button>
+          <button [class.active]="viewMode === 'dia'" (click)="setView('dia')">Día</button>
+        </div>
+        <button class="btn btn-primary" (click)="openForm()">+ Nuevo</button>
+      </div>
     </div>
 
     <div class="tabs-inline" style="margin-bottom:1rem">
@@ -19,39 +26,174 @@ import Swal from 'sweetalert2';
       </button>
     </div>
 
-    <div class="notion-cal">
-      <div class="cal-header">
-        <h2 class="cal-title">{{ nombreMes() }}</h2>
-        <button class="cal-nav" (click)="mesAnterior()" title="Mes anterior">‹</button>
-        <button class="cal-nav" (click)="mesSiguiente()" title="Mes siguiente">›</button>
-        <button class="cal-today" (click)="mesActual()">Hoy</button>
-      </div>
-      <div class="cal-grid cal-weekdays">
-        <div *ngFor="let d of ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']">{{ d }}</div>
-      </div>
-      <div class="cal-grid cal-days">
-        <div *ngFor="let dia of diasCalendario"
-             class="cal-day"
-             [class.other-month]="!dia.inMonth"
-             [class.today]="dia.key === hoyKey"
-             [class.has-events]="dia.eventos.length > 0"
-             (click)="abrirDia(dia)">
-          <div class="cal-daynum" [class.today-badge]="dia.key === hoyKey">{{ dia.num }}</div>
-          <div class="cal-events">
-            <div *ngFor="let ev of dia.eventos.slice(0, 3)"
-                 class="cal-chip"
-                 [ngClass]="'chip-' + ev.status"
-                 title="{{ ev.customerName }} — {{ estadoLabel(ev.status) }}">
-              <span class="chip-time">{{ horaCorta(ev.eventDate) }}</span>
-              <span class="chip-name">{{ ev.customerName }}</span>
+    <div class="ev-layout">
+      <aside class="ev-side">
+        <div class="mini-cal">
+          <div class="mini-head">
+            <button class="cal-nav" (click)="mesAnterior()" title="Mes anterior">‹</button>
+            <strong>{{ nombreMes() }}</strong>
+            <button class="cal-nav" (click)="mesSiguiente()" title="Mes siguiente">›</button>
+          </div>
+          <div class="mini-grid mini-weekdays">
+            <div *ngFor="let d of ['L','M','X','J','V','S','D']">{{ d }}</div>
+          </div>
+          <div class="mini-grid">
+            <button *ngFor="let dia of diasCalendario"
+                    class="mini-day"
+                    [class.other]="!dia.inMonth"
+                    [class.today]="dia.key === hoyKey"
+                    [class.selected]="dia.key === anchorKey"
+                    [class.dot]="dia.eventos.length > 0"
+                    (click)="irDia(dia.key)">{{ dia.num }}</button>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-title">Estados</div>
+          <div class="legend-item"><span class="swatch chip-pendiente"></span> Pendiente</div>
+          <div class="legend-item"><span class="swatch chip-confirmado"></span> Confirmado</div>
+          <div class="legend-item"><span class="swatch chip-realizado"></span> Realizado</div>
+          <div class="legend-item"><span class="swatch chip-cancelado"></span> Cancelado</div>
+        </div>
+      </aside>
+
+      <div class="ev-main">
+        <div class="ev-toolbar">
+          <button class="cal-nav" (click)="navegar(-1)" title="Anterior">‹</button>
+          <button class="cal-today" (click)="irHoy()">Hoy</button>
+          <button class="cal-nav" (click)="navegar(1)" title="Siguiente">›</button>
+          <h2 class="cal-title">{{ tituloVista() }}</h2>
+          <input class="input-field ev-search" placeholder="🔍 Buscar cliente..." [(ngModel)]="filtroCliente" />
+          <select class="input-field ev-filter" [(ngModel)]="filtroEstado" title="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="realizado">Realizado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div class="notion-cal" *ngIf="viewMode === 'mes'">
+          <div class="cal-grid cal-weekdays">
+            <div *ngFor="let d of ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom']">{{ d }}</div>
+          </div>
+          <div class="cal-grid cal-days">
+            <div *ngFor="let dia of diasCalendario"
+                 class="cal-day"
+                 [class.other-month]="!dia.inMonth"
+                 [class.today]="dia.key === hoyKey"
+                 [class.has-events]="dia.eventos.length > 0"
+                 (click)="abrirDia(dia)">
+              <div class="cal-daynum" [class.today-badge]="dia.key === hoyKey">{{ dia.num }}</div>
+              <div class="cal-events">
+                <div *ngFor="let ev of dia.eventos.slice(0, 3)"
+                     class="cal-chip"
+                     [ngClass]="['chip-' + ev.status, 'tipo-' + ev.eventType]"
+                     title="{{ ev.customerName }} — {{ estadoLabel(ev.status) }}">
+                  <span class="chip-time">{{ horaCorta(ev.eventDate) }}</span>
+                  <span class="chip-name">{{ ev.customerName }}</span>
+                  <span class="chip-pax" *ngIf="ev.numberOfAttendees > 0">👥{{ ev.numberOfAttendees }}</span>
+                </div>
+                <div *ngIf="dia.eventos.length > 3" class="cal-more">+{{ dia.eventos.length - 3 }} más</div>
+              </div>
             </div>
-            <div *ngIf="dia.eventos.length > 3" class="cal-more">+{{ dia.eventos.length - 3 }} más</div>
+          </div>
+          <div *ngIf="eventosFiltrados.length === 0" class="cal-empty">
+            No hay {{ vista === 'evento' ? 'eventos' : 'caterings' }} registrados
+          </div>
+        </div>
+
+        <div class="week-view" *ngIf="viewMode === 'semana'">
+          <div class="week-grid">
+            <div *ngFor="let dia of diasSemana" class="week-col" [class.today]="dia.key === hoyKey">
+              <div class="week-head" (click)="irDia(dia.key)" title="Ver día">
+                <span class="week-dow">{{ nombreDiaCorto(dia.date) }}</span>
+                <span class="week-num" [class.today-badge]="dia.key === hoyKey">{{ dia.num }}</span>
+              </div>
+              <div class="week-events">
+                <button *ngFor="let ev of dia.eventos"
+                        class="week-ev"
+                        [ngClass]="['chip-' + ev.status, 'tipo-' + ev.eventType]"
+                        (click)="abrirEvento(ev); $event.stopPropagation()">
+                  <strong>{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</strong>
+                  <span>{{ ev.theme || ev.customerName }}</span>
+                  <span class="chip-pax" *ngIf="ev.numberOfAttendees > 0">👥 {{ ev.numberOfAttendees }}</span>
+                </button>
+                <div *ngIf="dia.eventos.length === 0" class="week-vacio" (click)="ofrecerAgendar(dia.date)" title="Agendar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-view" *ngIf="viewMode === 'dia'">
+          <h3 class="day-title">{{ nombreDiaLargo() }}</h3>
+          <div class="timeline">
+            <div *ngFor="let h of horasDia" class="tl-row">
+              <div class="tl-hour">{{ h }}:00</div>
+              <div class="tl-slot">
+                <button *ngFor="let ev of eventosEnHora(h)"
+                        class="tl-ev"
+                        [ngClass]="['chip-' + ev.status, 'tipo-' + ev.eventType]"
+                        (click)="abrirEvento(ev)">
+                  <strong>{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</strong>
+                  <span>{{ ev.theme || ev.customerName }}</span>
+                  <span class="chip-pax" *ngIf="ev.numberOfAttendees > 0">👥 {{ ev.numberOfAttendees }}</span>
+                  <span class="prop-pill" [ngClass]="'pill-' + ev.status">{{ estadoLabel(ev.status) }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="eventosDia.length === 0" class="cal-empty">
+            No hay eventos este día.
+            <button class="btn btn-primary" style="margin-top:0.5rem" (click)="ofrecerAgendar(anchorDate)">¿Desea agendar evento?</button>
           </div>
         </div>
       </div>
-      <div *ngIf="eventosFiltrados.length === 0" class="cal-empty">
-        No hay {{ vista === 'evento' ? 'eventos' : 'caterings' }} registrados
-      </div>
+    </div>
+
+    <!-- Drawer lateral de detalle -->
+    <div class="drawer-overlay" *ngIf="showDrawer" (click)="cerrarDrawer()">
+      <aside class="drawer" (click)="$event.stopPropagation()" *ngIf="selectedEv">
+        <div class="drawer-head" [ngClass]="'tipo-' + selectedEv.eventType">
+          <div>
+            <div class="drawer-kicker">{{ selectedEv.eventType === 'catering_externo' ? '🍱 CATERING' : '🎉 EVENTO' }}</div>
+            <h2>{{ selectedEv.theme || selectedEv.customerName }}</h2>
+            <span class="prop-pill" [ngClass]="'pill-' + selectedEv.status">{{ estadoLabel(selectedEv.status) }}</span>
+          </div>
+          <button class="close-btn" (click)="cerrarDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div class="drawer-section">👤 Cliente</div>
+          <p><strong>{{ selectedEv.customerName }}</strong><br>{{ selectedEv.customerPhone }} {{ selectedEv.customerEmail }}</p>
+          <div class="drawer-section">🕐 Fecha y asistentes</div>
+          <p>{{ fechaLarga(selectedEv.eventDate) }}<span *ngIf="selectedEv.endDate"> → {{ horaCorta(selectedEv.endDate) }}</span><br>
+          <span *ngIf="selectedEv.setupTime">Montaje: {{ fechaLarga(selectedEv.setupTime) }}<br></span>
+          <span *ngIf="selectedEv.numberOfAttendees > 0">👥 {{ selectedEv.numberOfAttendees }} asistentes</span></p>
+          <div class="drawer-section" *ngIf="selectedEv.kitchenMenu || selectedEv.barMenu || selectedEv.otherMenu">🍽️ Menú</div>
+          <p *ngIf="selectedEv.kitchenMenu" style="white-space:pre-wrap"><strong>Cocina:</strong> {{ selectedEv.kitchenMenu }}</p>
+          <p *ngIf="selectedEv.barMenu" style="white-space:pre-wrap"><strong>Bebidas:</strong> {{ selectedEv.barMenu }}</p>
+          <p *ngIf="selectedEv.otherMenu" style="white-space:pre-wrap"><strong>Otros:</strong> {{ selectedEv.otherMenu }}</p>
+          <div class="drawer-section" *ngIf="selectedEv.staffAssigned || selectedEv.rentals">📋 Operación</div>
+          <p *ngIf="selectedEv.staffAssigned" style="white-space:pre-wrap"><strong>Personal:</strong> {{ selectedEv.staffAssigned }}</p>
+          <p *ngIf="selectedEv.rentals" style="white-space:pre-wrap"><strong>Equipos:</strong> {{ selectedEv.rentals }}</p>
+          <div class="drawer-section">💰 Valores</div>
+          <p>Total: <strong>$ {{ (selectedEv.totalCost || 0).toLocaleString('es-CO') }}</strong><br>
+          Abonado: <strong>$ {{ getTotalPaid(selectedEv).toLocaleString('es-CO') }}</strong><br>
+          Resta: <strong>$ {{ ((selectedEv.totalCost || 0) - getTotalPaid(selectedEv)).toLocaleString('es-CO') }}</strong></p>
+          <div class="drawer-actions">
+            <button class="btn btn-primary" (click)="abrirBEO(selectedEv)">🖨️ BEO</button>
+            <button class="btn btn-secondary" (click)="openForm(selectedEv)">✏️ Editar</button>
+            <button class="btn btn-secondary" (click)="addPayment(selectedEv)">💵 Pagos</button>
+            <button class="btn btn-secondary" (click)="eliminarEvento(selectedEv)">🗑️ Eliminar</button>
+          </div>
+          <div class="drawer-section">📌 Estado</div>
+          <div class="drawer-estados">
+            <button *ngFor="let st of ['pendiente','confirmado','realizado','cancelado']"
+                    class="prop-pill pill-btn" [ngClass]="'pill-' + st"
+                    [class.current]="selectedEv.status === st"
+                    (click)="cambiarEstado(selectedEv, st)">{{ estadoLabel(st) }}</button>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <!-- Modal selector: día con más de un evento -->
@@ -63,7 +205,7 @@ import Swal from 'sweetalert2';
         </div>
         <div class="chooser-list">
           <p class="chooser-hint">Hay {{ eventosChooser.length }} en este día. ¿Cuál desea ver?</p>
-          <button *ngFor="let ev of eventosChooser" class="chooser-item" (click)="abrirBEO(ev)">
+          <button *ngFor="let ev of eventosChooser" class="chooser-item" (click)="abrirEvento(ev)">
             <span class="chooser-time">{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</span>
             <span class="chooser-name">{{ ev.theme || ev.customerName }}</span>
             <span class="prop-pill" [ngClass]="'pill-' + ev.status">{{ estadoLabel(ev.status) }}</span>
@@ -95,19 +237,19 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div class="form-section">🕐 Cronograma</div>
-          <div class="grid-2">
-            <div class="prop-row">
-              <span class="prop-icon">🔧</span>
-              <input type="datetime-local" class="input-field prop-input" name="setupTime" [(ngModel)]="form.setupTime" title="Montaje">
-            </div>
-            <div class="prop-row">
-              <span class="prop-icon">▶️</span>
-              <input type="datetime-local" class="input-field prop-input" name="eventDate" [(ngModel)]="form.eventDate" required title="Inicio">
-            </div>
+          <div class="form-group">
+            <label>Fecha del evento *</label>
+            <input type="date" class="input-field" name="fechaEvento" [(ngModel)]="form.fechaEvento" required>
           </div>
-          <div class="prop-row" style="margin-top:0.5rem">
-            <span class="prop-icon">🏁</span>
-            <input type="datetime-local" class="input-field prop-input" name="endDate" [(ngModel)]="form.endDate" title="Fin">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>▶️ Inicio *</label>
+              <input type="time" class="input-field" name="horaInicio" [(ngModel)]="form.horaInicio" required title="Hora de inicio">
+            </div>
+            <div class="form-group">
+              <label>🏁 Fin</label>
+              <input type="time" class="input-field" name="horaFin" [(ngModel)]="form.horaFin" title="Hora de finalización">
+            </div>
           </div>
           <div class="grid-2" style="margin-top:1rem">
             <div class="form-group">
@@ -120,8 +262,11 @@ import Swal from 'sweetalert2';
             </div>
           </div>
           <div class="form-group" *ngIf="editingId">
-            <label>Costo Total ($)</label>
-            <input type="number" class="input-field" name="totalCost" [(ngModel)]="form.totalCost">
+            <label>Costo Total (COP $)</label>
+            <div class="price-input-wrap">
+              <span class="price-prefix">$</span>
+              <input type="number" class="input-field price-input" name="totalCost" [(ngModel)]="form.totalCost" min="0" placeholder="Valor en pesos colombianos (COP)">
+            </div>
           </div>
           <div class="form-section">🍽️ Menú</div>
           <div class="form-group">
@@ -146,16 +291,12 @@ import Swal from 'sweetalert2';
             </div>
             <div class="form-group">
               <label>Montaje y equipos</label>
-              <textarea class="input-field" name="rentals" [(ngModel)]="form.rentals" rows="2" placeholder="Ej. carpa, sillas, sonido"></textarea>
+              <textarea class="input-field" name="rentals" [(ngModel)]="form.rentals" rows="2" placeholder="Ej. decoración, sillas, sonido"></textarea>
             </div>
           </div>
           <div class="form-group">
             <label>⚠️ Alergias y restricciones</label>
             <textarea class="input-field" name="allergies" [(ngModel)]="form.allergies" rows="2" placeholder="Ej. maní, gluten, lactosa"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Consideraciones del servicio</label>
-            <textarea class="input-field" name="serviceNotes" [(ngModel)]="form.serviceNotes" rows="2" placeholder="Ej. montaje, horarios, personal"></textarea>
           </div>
           <div class="form-group">
             <label>Anotaciones adicionales</label>
@@ -181,6 +322,13 @@ import Swal from 'sweetalert2';
     .status-select:focus { border-color: var(--brand-gold); }
     .badge-gold { background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+    .price-input-wrap { position: relative; }
+    .price-prefix {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--brand-gold); font-weight: 700; font-size: 0.9rem;
+    }
+    .price-input { padding-left: 1.5rem !important; }
     /* Modal formulario: encaja en pantalla con desplazamiento interno */
     .modal-content {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
@@ -288,17 +436,125 @@ import Swal from 'sweetalert2';
       .cal-day { min-height: 52px; padding: 0.2rem; }
       .chip-name { display: none; }
     }
+    /* —— Layout enriquecido: mini-cal + vistas + drawer ——————— */
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .view-toggle button {
+      border: none; background: var(--bg-input); color: var(--text-main);
+      font-size: 0.8rem; font-weight: 700; padding: 0.45rem 1rem; cursor: pointer;
+    }
+    .view-toggle button.active { background: var(--brand-gold); color: #fff; }
+    .ev-layout { display: flex; gap: 1.25rem; align-items: flex-start; }
+    .ev-side { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1rem; }
+    .ev-main { flex: 1; min-width: 0; }
+    .mini-cal { border: 1px solid var(--border); border-radius: 12px; padding: 0.6rem; background: var(--bg-card); }
+    .mini-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem; text-transform: capitalize; }
+    .mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+    .mini-weekdays > div { text-align: center; font-size: 0.62rem; color: var(--text-muted); font-weight: 700; padding: 2px 0; }
+    .mini-day {
+      border: none; background: none; color: var(--text-main); font-size: 0.7rem;
+      border-radius: 6px; padding: 3px 0; cursor: pointer; position: relative;
+    }
+    .mini-day:hover { background: rgba(0, 0, 0, 0.05); }
+    .mini-day.other { color: #c9c9c9; }
+    .mini-day.today { background: #eb5757; color: #fff; font-weight: 700; }
+    .mini-day.selected { outline: 2px solid var(--brand-gold); }
+    .mini-day.dot::after {
+      content: ''; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%; background: var(--brand-gold);
+    }
+    .legend { border: 1px solid var(--border); border-radius: 12px; padding: 0.7rem 0.8rem; background: var(--bg-card); font-size: 0.75rem; }
+    .legend-title { font-weight: 800; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.35rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.25rem; }
+    .swatch { width: 12px; height: 12px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
+    .tipo-evento_local { border-left: 3px solid #8b5cf6; }
+    .tipo-catering_externo { border-left: 3px solid #0ea5e9; }
+    .swatch.tipo-evento_local { background: #8b5cf6; border: none; }
+    .swatch.tipo-catering_externo { background: #0ea5e9; border: none; }
+    .ev-toolbar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .ev-toolbar .cal-title { font-size: 1.05rem; text-transform: capitalize; }
+    .ev-search { max-width: 200px; margin-left: auto; }
+    .ev-filter { max-width: 180px; }
+    .cal-vacio { font-size: 0.65rem; color: #c4c4c4; font-style: italic; padding-left: 5px; }
+    .chip-pax { flex-shrink: 0; font-size: 0.62rem; opacity: 0.85; }
+    /* Vista semana */
+    .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+    .week-col { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; min-height: 220px; background: var(--bg-card); }
+    .week-col.today { border-color: var(--brand-gold); }
+    .week-head { padding: 0.4rem 0.5rem; background: var(--bg-input); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .week-dow { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+    .week-num { font-size: 0.9rem; font-weight: 700; }
+    .week-events { padding: 0.4rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .week-ev {
+      border: none; border-radius: 6px; padding: 0.35rem 0.45rem; font-size: 0.7rem;
+      cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; color: inherit;
+    }
+    .week-vacio { font-size: 0.68rem; color: #c4c4c4; font-style: italic; text-align: center; padding: 0.8rem 0.2rem; cursor: pointer; border-radius: 6px; }
+    .week-vacio:hover { background: rgba(0, 0, 0, 0.04); color: var(--text-muted); }
+    /* Vista día */
+    .day-title { margin: 0 0 0.75rem; font-size: 1rem; text-transform: capitalize; }
+    .timeline { display: flex; flex-direction: column; }
+    .tl-row { display: flex; gap: 0.75rem; border-top: 1px solid var(--border); min-height: 44px; }
+    .tl-row:last-child { border-bottom: 1px solid var(--border); }
+    .tl-hour { width: 48px; flex-shrink: 0; font-size: 0.7rem; color: var(--text-muted); padding-top: 0.4rem; text-align: right; }
+    .tl-slot { flex: 1; padding: 0.25rem 0; display: flex; flex-direction: column; gap: 0.3rem; }
+    .tl-ev {
+      border: none; border-radius: 8px; padding: 0.45rem 0.7rem; font-size: 0.78rem;
+      cursor: pointer; display: flex; align-items: center; gap: 0.6rem; color: inherit; text-align: left;
+    }
+    /* Drawer lateral */
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: 60;
+      display: flex; justify-content: flex-end;
+    }
+    .drawer {
+      width: 380px; max-width: 92vw; height: 100%; overflow-y: auto;
+      background: var(--bg-card); border-left: 1px solid var(--border);
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.2s ease-out;
+    }
+    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .drawer-head {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;
+      padding: 1rem 1.1rem; border-bottom: 1px solid var(--border);
+    }
+    .drawer-head h2 { margin: 0.15rem 0 0.4rem; font-size: 1.05rem; }
+    .drawer-kicker { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; color: var(--text-muted); }
+    .drawer-body { padding: 0.9rem 1.1rem 1.5rem; font-size: 0.85rem; }
+    .drawer-body p { margin: 0 0 0.6rem; }
+    .drawer-section {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); border-bottom: 1px solid var(--border);
+      padding-bottom: 0.2rem; margin: 0.9rem 0 0.4rem;
+    }
+    .drawer-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.4rem; }
+    .drawer-estados { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .pill-btn { border: none; cursor: pointer; opacity: 0.55; }
+    .pill-btn.current { opacity: 1; outline: 2px solid currentColor; }
+    @media (max-width: 900px) {
+      .ev-layout { flex-direction: column; }
+      .ev-side { width: 100%; flex-direction: row; }
+      .mini-cal, .legend { flex: 1; }
+      .week-grid { grid-template-columns: 1fr 1fr; }
+    }
   `]
 })
 export class EventsComponent implements OnInit {
   events: any[] = [];
   vista: 'evento' | 'catering' = 'evento';
+  viewMode: 'mes' | 'semana' | 'dia' = 'mes';
+  anchorDate: Date = new Date();
+  filtroCliente = '';
+  filtroEstado = '';
   calYear = 0;
   calMonth = 0;
   hoyKey = '';
   showForm = false;
   saving = false;
   editingId: string | null = null;
+  showDrawer = false;
+  selectedEv: any = null;
+  horasDia: number[] = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
   form: any = {
     customerName: '',
@@ -342,7 +598,13 @@ export class EventsComponent implements OnInit {
 
   get eventosFiltrados(): any[] {
     const tipo = this.vista === 'evento' ? 'evento_local' : 'catering_externo';
-    return this.events.filter(e => e.eventType === tipo);
+    const cli = (this.filtroCliente || '').toLowerCase().trim();
+    return this.events.filter(e => {
+      if (e.eventType !== tipo) return false;
+      if (this.filtroEstado && e.status !== this.filtroEstado) return false;
+      if (cli && !(e.customerName || '').toLowerCase().includes(cli)) return false;
+      return true;
+    });
   }
 
   contar(tipo: string): number {
@@ -418,20 +680,211 @@ export class EventsComponent implements OnInit {
     return new Date(fecha).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
   }
 
-  // La creación solo se hace con "+ Nuevo".
-  // Clic en día: sin eventos no hace nada; 1 evento abre su BEO;
-  // varios piden especificar cuál antes de abrir la BEO.
+  // La creación: botón "+ Nuevo evento" abre sin fecha;
+  // clic en día vacío pregunta "¿Desea agendar evento?" y pre-llena la fecha.
+  // Clic en día con eventos abre el drawer (1 directo, varios vía selector).
   abrirDia(dia: any): void {
     const lista = (dia.eventos || []).slice().sort((a: any, b: any) =>
       new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
-    if (lista.length === 0) return;
+    if (lista.length === 0) {
+      this.ofrecerAgendar(dia.date);
+      return;
+    }
     if (lista.length === 1) {
-      this.abrirBEO(lista[0]);
+      this.abrirEvento(lista[0]);
       return;
     }
     this.eventosChooser = lista;
     this.chooserKey = dia.key;
     this.showChooser = true;
+  }
+
+  ofrecerAgendar(fecha: Date): void {
+    const nombre = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate())
+      .toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
+    Swal.fire({
+      title: this.vista === 'evento' ? '¿Desea agendar evento?' : '¿Desea agendar servicio de catering?',
+      text: `${nombre}`,
+      showCancelButton: true,
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No'
+    }).then((res) => {
+      if (res.isConfirmed) this.openForm(undefined, fecha);
+    });
+  }
+
+  abrirEvento(ev: any): void {
+    this.cerrarChooser();
+    this.selectedEv = ev;
+    this.showDrawer = true;
+  }
+
+  cerrarDrawer(): void {
+    this.showDrawer = false;
+    this.selectedEv = null;
+  }
+
+  cambiarEstado(ev: any, st: string): void {
+    this.updateStatus(ev, st);
+  }
+
+  eliminarEvento(ev: any): void {
+    Swal.fire({
+      title: '¿Eliminar este evento?',
+      text: `${ev.customerName} · ${this.fechaLarga(ev.eventDate)}`,
+      icon: 'warning',
+      html: `
+        <div style="text-align:left;font-size:0.9rem;">
+          <p style="margin:0 0 0.5rem;">${ev.customerName} · ${this.fechaLarga(ev.eventDate)}</p>
+          <div class="form-group" style="margin-top:10px">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">Motivo de la eliminación *</label>
+            <select id="del-motivo" class="swal2-select" style="width:100%;box-sizing:border-box;font-size:0.9rem;">
+              <option value="">Seleccionar motivo...</option>
+              <option value="cancelado-cliente">Cancelado por el cliente</option>
+              <option value="duplicado">Registro duplicado</option>
+              <option value="fecha-cambiada">Cambio de fecha (se crea de nuevo)</option>
+              <option value="error-datos">Error en los datos</option>
+              <option value="otro">Otro motivo</option>
+            </select>
+          </div>
+          <div class="form-group" id="del-detalle-box" style="display:none;margin-top:10px">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">Detalle del motivo</label>
+            <input type="text" id="del-detalle" class="swal2-input" style="width:100%;box-sizing:border-box;font-size:0.9rem;" placeholder="Describa el motivo">
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Volver',
+      confirmButtonColor: '#e74c3c',
+      didOpen: () => {
+        const motivo = document.getElementById('del-motivo') as HTMLSelectElement;
+        const box = document.getElementById('del-detalle-box') as HTMLElement;
+        motivo.addEventListener('change', () => {
+          box.style.display = motivo.value === 'otro' ? '' : 'none';
+        });
+      },
+      preConfirm: () => {
+        const motivo = (document.getElementById('del-motivo') as HTMLSelectElement).value;
+        if (!motivo) {
+          Swal.showValidationMessage('Indique el motivo de la eliminación');
+          return false;
+        }
+        if (motivo === 'otro') {
+          const detalle = (document.getElementById('del-detalle') as HTMLInputElement).value.trim();
+          if (!detalle) {
+            Swal.showValidationMessage('Describa el motivo');
+            return false;
+          }
+          return { motivo: 'otro: ' + detalle };
+        }
+        return { motivo };
+      }
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.api.deleteEvent(ev._id).subscribe({
+          next: () => {
+            this.cerrarDrawer();
+            this.load();
+            Swal.fire('Eliminado', `Evento eliminado. Motivo: ${(res.value as any).motivo}`, 'success');
+          },
+          error: (err) => Swal.fire('Error', err.error?.message, 'error')
+        });
+      }
+    });
+  }
+
+  // —— Vistas Mes / Semana / Día ——————————————————————————————
+  setView(m: 'mes' | 'semana' | 'dia'): void {
+    this.viewMode = m;
+  }
+
+  get anchorKey(): string {
+    return this.fechaKey(this.anchorDate);
+  }
+
+  navegar(dir: -1 | 1): void {
+    if (this.viewMode === 'mes') {
+      const d = new Date(this.calYear, this.calMonth + dir, 1);
+      this.calYear = d.getFullYear();
+      this.calMonth = d.getMonth();
+    } else if (this.viewMode === 'semana') {
+      this.anchorDate = new Date(this.anchorDate.getFullYear(), this.anchorDate.getMonth(), this.anchorDate.getDate() + dir * 7);
+    } else {
+      this.anchorDate = new Date(this.anchorDate.getFullYear(), this.anchorDate.getMonth(), this.anchorDate.getDate() + dir);
+    }
+  }
+
+  irHoy(): void {
+    const hoy = new Date();
+    this.calYear = hoy.getFullYear();
+    this.calMonth = hoy.getMonth();
+    this.anchorDate = hoy;
+  }
+
+  irDia(key: string): void {
+    const [y, m, d] = key.split('-').map(Number);
+    this.anchorDate = new Date(y, m - 1, d);
+    this.calYear = y;
+    this.calMonth = m - 1;
+    this.viewMode = 'dia';
+  }
+
+  tituloVista(): string {
+    if (this.viewMode === 'mes') return this.nombreMes();
+    if (this.viewMode === 'semana') {
+      const dias = this.diasSemana;
+      const ini = dias[0].date.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
+      const fin = dias[6].date.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `Semana ${ini} → ${fin}`;
+    }
+    return this.nombreDiaLargo();
+  }
+
+  private inicioSemana(ref: Date): Date {
+    const desfase = (ref.getDay() + 6) % 7;
+    return new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() - desfase);
+  }
+
+  private eventosPorDia(): Record<string, any[]> {
+    const porDia: Record<string, any[]> = {};
+    this.eventosFiltrados.forEach(ev => {
+      const k = this.claveEvento(ev);
+      if (!k) return;
+      (porDia[k] = porDia[k] || []).push(ev);
+    });
+    Object.values(porDia).forEach(lista =>
+      lista.sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()));
+    return porDia;
+  }
+
+  get diasSemana(): any[] {
+    const inicio = this.inicioSemana(this.anchorDate);
+    const porDia = this.eventosPorDia();
+    const dias: any[] = [];
+    for (let i = 0; i < 7; i++) {
+      const f = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate() + i);
+      const key = this.fechaKey(f);
+      dias.push({ date: f, num: f.getDate(), key, eventos: porDia[key] || [] });
+    }
+    return dias;
+  }
+
+  get eventosDia(): any[] {
+    const porDia = this.eventosPorDia();
+    return porDia[this.anchorKey] || [];
+  }
+
+  eventosEnHora(h: number): any[] {
+    return this.eventosDia.filter(ev => ev.eventDate && new Date(ev.eventDate).getHours() === h);
+  }
+
+  nombreDiaCorto(d: Date): string {
+    return d.toLocaleDateString('es-CO', { weekday: 'short' });
+  }
+
+  nombreDiaLargo(): string {
+    return this.anchorDate.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   cerrarChooser(): void {
@@ -489,7 +942,7 @@ export class EventsComponent implements OnInit {
   </style>
 </head>
 <body>
-  <div class="toolbar"><button onclick="window.print()" title="Imprimir">🖨️</button></div>
+  <div class="toolbar"><button onclick="window.print()" title="Imprimir">🖨️ Imprimir</button> <button onclick="window.close()" title="Cerrar ventana">✕ Cerrar</button></div>
   <div class="head">
     <h1>📋 BEO — ORDEN DE EVENTO</h1>
     <div class="sub">${tipo} · Estado: ${this.estadoLabel(ev.status)} · Emitida: ${new Date().toLocaleString('es-CO')}</div>
@@ -519,7 +972,6 @@ export class EventsComponent implements OnInit {
   <table>
     ${fila('Personal asignado', (ev.staffAssigned || '').replace(/\n/g, '<br>'))}
     ${fila('Montaje y equipos', (ev.rentals || '').replace(/\n/g, '<br>'))}
-    ${fila('Consideraciones', (ev.serviceNotes || '').replace(/\n/g, '<br>'))}
     ${fila('Notas', (ev.notes || '').replace(/\n/g, '<br>'))}
   </table>
   ${ev.allergies ? `<div class="alert"><div class="alert-title">⚠️ ALERGIAS Y RESTRICCIONES</div><div style="white-space:pre-wrap;">${ev.allergies}</div></div>` : ''}
@@ -552,18 +1004,23 @@ export class EventsComponent implements OnInit {
     return ev.payments.reduce((sum: number, p: any) => sum + p.amount, 0);
   }
 
-  openForm(ev?: any): void {
+  openForm(ev?: any, prefillDate?: Date): void {
+    const aLocal = (v: any): { fecha: string; hora: string } => {
+      if (!v) return { fecha: '', hora: '' };
+      const d = new Date(v);
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      const iso = d.toISOString();
+      return { fecha: iso.slice(0, 10), hora: iso.slice(11, 16) };
+    };
     if (ev) {
       this.editingId = ev._id;
       this.form = { ...ev };
-      // Format dates for datetime-local
-      ['eventDate', 'endDate', 'setupTime'].forEach(k => {
-        if (this.form[k]) {
-          const d = new Date(this.form[k]);
-          d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-          this.form[k] = d.toISOString().slice(0, 16);
-        }
-      });
+      const ini = aLocal(ev.eventDate);
+      const fin = aLocal(ev.endDate);
+      this.form.fechaEvento = ini.fecha;
+      this.form.horaInicio = ini.hora;
+      this.form.endDate = '';
+      this.form.horaFin = fin.hora;
     } else {
       this.editingId = null;
       this.form = {
@@ -574,6 +1031,11 @@ export class EventsComponent implements OnInit {
         staffAssigned: '', rentals: '', allergies: '', serviceNotes: '',
         totalCost: 0, notes: ''
       };
+      if (prefillDate) {
+        const p = (n: number) => String(n).padStart(2, '0');
+        this.form.fechaEvento = `${prefillDate.getFullYear()}-${p(prefillDate.getMonth() + 1)}-${p(prefillDate.getDate())}`;
+        this.form.horaInicio = '12:00';
+      }
     }
     this.showForm = true;
   }
@@ -584,16 +1046,39 @@ export class EventsComponent implements OnInit {
 
   saveEvent(): void {
     this.saving = true;
-    const req = this.editingId 
-      ? this.api.updateEvent(this.editingId, this.form)
-      : this.api.createEvent(this.form);
+    const payload = { ...this.form };
+    const combinar = (hora: string): string => {
+      if (!payload.fechaEvento || !hora) return '';
+      return `${payload.fechaEvento}T${hora}`;
+    };
+    payload.eventDate = combinar(payload.horaInicio);
+    payload.endDate = combinar(payload.horaFin);
+    delete payload.fechaEvento;
+    delete payload.horaInicio;
+    delete payload.horaFin;
+    const req = this.editingId
+      ? this.api.updateEvent(this.editingId, payload)
+      : this.api.createEvent(payload);
 
     req.subscribe({
-      next: () => {
+      next: (guardado) => {
         this.saving = false;
         this.closeForm();
         this.load();
-        Swal.fire('Éxito', 'Evento guardado', 'success');
+        if (this.showDrawer && guardado) this.selectedEv = guardado;
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Evento guardado',
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonText: 'Ir a pagos',
+          cancelButtonText: 'OK',
+          cancelButtonColor: '#d4af37'
+        }).then((res) => {
+          if (res.isConfirmed && guardado) {
+            this.addPayment(guardado);
+          }
+        });
       },
       error: (err) => {
         this.saving = false;
@@ -618,19 +1103,52 @@ export class EventsComponent implements OnInit {
       Swal.fire('Atención', 'El evento ya está pagado en su totalidad', 'info');
       return;
     }
+    const fmt = (n: number) => '$' + Math.round(n).toLocaleString('es-CO');
 
     Swal.fire({
-      title: 'Registrar Pago / Abono',
+      title: 'Registrar pago',
+      width: '46rem',
       html: `
-        <div style="text-align:left">
-          <p>Restante por pagar: <strong>$${remaining}</strong></p>
-          <div class="form-group">
+        <div style="text-align:left;font-size:1rem;">
+          <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
+            <div style="flex:1;background:#f4f4f5;border-radius:10px;padding:0.6rem 0.8rem;">
+              <div style="font-size:0.72rem;color:#777;font-weight:700;">TOTAL</div>
+              <div style="font-size:1.15rem;font-weight:800;">${fmt(ev.totalCost || 0)}</div>
+            </div>
+            <div style="flex:1;background:#f4f4f5;border-radius:10px;padding:0.6rem 0.8rem;">
+              <div style="font-size:0.72rem;color:#777;font-weight:700;">ABONADO</div>
+              <div style="font-size:1.15rem;font-weight:800;">${fmt(this.getTotalPaid(ev))}</div>
+            </div>
+            <div style="flex:1;background:#fff8e1;border:1px solid #f0d060;border-radius:10px;padding:0.6rem 0.8rem;">
+              <div style="font-size:0.72rem;color:#8a6d00;font-weight:700;">RESTANTE</div>
+              <div style="font-size:1.15rem;font-weight:800;">${fmt(remaining)}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:1.5rem;margin-bottom:0.75rem;font-size:0.95rem;">
+            <label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;">
+              <input type="checkbox" id="pay-check-total" checked style="width:18px;height:18px;accent-color:#d4af37;"> Pago total
+            </label>
+            <label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;">
+              <input type="checkbox" id="pay-check-abono" style="width:18px;height:18px;accent-color:#d4af37;"> Abonos
+            </label>
+          </div>
+          <div id="pay-total-box" class="form-group" style="margin-top:6px">
             <label>Monto</label>
-            <input type="number" id="pay-amount" class="swal2-input" value="${remaining}" style="width:100%; box-sizing:border-box;">
+            <input type="text" id="pay-amount-total" class="swal2-input" readonly value="${fmt(remaining)}" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-weight:700;">
+          </div>
+          <div id="pay-abono-box" style="display:none;margin-top:6px">
+            <div class="form-group">
+              <label>Monto a abonar</label>
+              <input type="text" id="pay-amount-abono" class="swal2-input" placeholder="Ej. ${fmt(100000)}" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-weight:700;">
+            </div>
+            <div class="form-group" style="margin-top:10px">
+              <label>Saldo restante</label>
+              <input type="text" id="pay-saldo" class="swal2-input" readonly value="${fmt(remaining)}" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-weight:700;">
+            </div>
           </div>
           <div class="form-group" style="margin-top:10px">
             <label>Método de Pago</label>
-            <select id="pay-method" class="swal2-select" style="width:100%; box-sizing:border-box;">
+            <select id="pay-method" class="swal2-select" style="width:100%;box-sizing:border-box;">
               <option value="efectivo">Efectivo</option>
               <option value="transferencia">Transferencia</option>
               <option value="mixto">Mixto</option>
@@ -641,11 +1159,45 @@ export class EventsComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Registrar',
       cancelButtonText: 'Cancelar',
+      didOpen: () => {
+        const chkTotal = document.getElementById('pay-check-total') as HTMLInputElement;
+        const chkAbono = document.getElementById('pay-check-abono') as HTMLInputElement;
+        const totalBox = document.getElementById('pay-total-box') as HTMLElement;
+        const abonoBox = document.getElementById('pay-abono-box') as HTMLElement;
+        const montoAbono = document.getElementById('pay-amount-abono') as HTMLInputElement;
+        const saldo = document.getElementById('pay-saldo') as HTMLInputElement;
+        const soloDigitos = (v: string) => parseInt(v.replace(/\D/g, ''), 10) || 0;
+        const pintar = (input: HTMLInputElement) => {
+          const n = soloDigitos(input.value);
+          input.value = n > 0 ? '$' + n.toLocaleString('es-CO') : '';
+          return n;
+        };
+        const recalc = () => {
+          const abono = pintar(montoAbono);
+          saldo.value = fmt(remaining - abono);
+        };
+        chkTotal.addEventListener('change', () => {
+          if (chkTotal.checked) chkAbono.checked = false;
+          else chkAbono.checked = true;
+          totalBox.style.display = chkTotal.checked ? '' : 'none';
+          abonoBox.style.display = chkTotal.checked ? 'none' : '';
+        });
+        chkAbono.addEventListener('change', () => {
+          if (chkAbono.checked) chkTotal.checked = false;
+          else chkTotal.checked = true;
+          totalBox.style.display = chkAbono.checked ? 'none' : '';
+          abonoBox.style.display = chkAbono.checked ? '' : 'none';
+        });
+        montoAbono.addEventListener('input', recalc);
+      },
       preConfirm: () => {
-        const amount = parseFloat((document.getElementById('pay-amount') as HTMLInputElement).value);
+        const esTotal = (document.getElementById('pay-check-total') as HTMLInputElement).checked;
         const method = (document.getElementById('pay-method') as HTMLSelectElement).value;
+        if (esTotal) return { amount: remaining, method };
+        const raw = (document.getElementById('pay-amount-abono') as HTMLInputElement).value;
+        const amount = parseInt(raw.replace(/\D/g, ''), 10) || 0;
         if (!amount || amount <= 0 || amount > remaining) {
-          Swal.showValidationMessage('Monto inválido');
+          Swal.showValidationMessage('Monto a abonar inválido: revise el valor y el saldo');
           return false;
         }
         return { amount, method };
@@ -656,6 +1208,7 @@ export class EventsComponent implements OnInit {
           next: () => {
             Swal.fire('Éxito', 'Pago registrado (integrado a caja)', 'success');
             this.load();
+            if (this.selectedEv && this.selectedEv._id === ev._id) this.cerrarDrawer();
           },
           error: (err) => Swal.fire('Error', err.error?.message, 'error')
         });

@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { Purchase, Supplier, Product, Ingredient } from '../../core/models/interfaces';
+import {
+  Requisicion, leerRequisiciones, cambiarEstadoRequisicion, eliminarRequisicion, AREA_LABEL
+} from './requisiciones.store';
 
 type PurchaseType = 'product' | 'ingredient';
 
@@ -38,7 +41,16 @@ interface CartItem {
       </div>
 
       <!-- Filtros -->
-      <div class="filter-bar">
+      <div class="tabs-inline" style="margin-bottom:1rem">
+        <button class="tab-btn" [class.active]="vista === 'compras'" (click)="vista = 'compras'">
+          🛒 Compras
+        </button>
+        <button class="tab-btn" [class.active]="vista === 'requisiciones'" (click)="vista = 'requisiciones'">
+          🧾 Requisiciones ({{ pendientesReq }})
+        </button>
+      </div>
+
+      <div class="filter-bar" *ngIf="vista === 'compras'">
         <select class="filter-chip" [(ngModel)]="filterStatus" (change)="load()">
           <option value="">Todos los estados</option>
           <option value="recibida">✅ Recibida</option>
@@ -54,7 +66,7 @@ interface CartItem {
       </div>
 
       <!-- Tabla Historial -->
-      <div class="card table-card">
+      <div class="card table-card" *ngIf="vista === 'compras'">
         <div *ngIf="loading" class="state-box">
           <div class="spinner"></div>
           <span>Cargando compras...</span>
@@ -118,6 +130,45 @@ interface CartItem {
           <button class="page-btn" [disabled]="page === 1" (click)="changePage(page - 1)">‹ Anterior</button>
           <span class="page-info">{{ page }} / {{ totalPages }}</span>
           <button class="page-btn" [disabled]="page === totalPages" (click)="changePage(page + 1)">Siguiente ›</button>
+        </div>
+      </div>
+
+      <!-- Bandeja de Requisiciones por área -->
+      <div class="card table-card" *ngIf="vista === 'requisiciones'">
+        <div *ngIf="requisiciones.length === 0" class="state-box empty">
+          <span style="font-size:2.5rem">🧾</span>
+          <p>Sin requisiciones. Las áreas las envían con “📤 Enviar a Compras”.</p>
+        </div>
+        <div *ngFor="let r of requisiciones" class="req-card" [class.req-atendida]="r.estado !== 'pendiente'">
+          <div class="req-head">
+            <strong>{{ areaLabel(r.area) }}</strong>
+            <span class="req-fecha">{{ r.fecha | date:'dd MMM yyyy, HH:mm' }}</span>
+            <span class="badge"
+              [class.badge-warning]="r.estado === 'pendiente'"
+              [class.badge-success]="r.estado === 'atendida'"
+              [class.badge-danger]="r.estado === 'descartada'">
+              {{ reqEstadoLabel(r.estado) }}
+            </span>
+          </div>
+          <table class="data-table req-table">
+            <thead><tr><th>Código</th><th>Ítem</th><th>Cantidad</th><th>Unidad</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let it of r.items">
+                <td>{{ it.codigo || '—' }}</td>
+                <td>{{ it.nombre }}</td>
+                <td><strong>{{ it.cantidad }}</strong></td>
+                <td>{{ it.unidad }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="req-actions" *ngIf="r.estado === 'pendiente'">
+            <button class="btn-primary btn-sm" (click)="atenderReq(r.id)">✔ Marcar atendida (comprada)</button>
+            <button class="btn-outline btn-sm" (click)="descartarReq(r.id)">✕ Descartar</button>
+          </div>
+          <div class="req-actions" *ngIf="r.estado !== 'pendiente'">
+            <button class="btn-outline btn-sm" (click)="reabrirReq(r.id)">↩ Reabrir</button>
+            <button class="btn-outline btn-sm" (click)="borrarReq(r.id)">🗑 Eliminar</button>
+          </div>
         </div>
       </div>
     </div>
@@ -365,6 +416,21 @@ interface CartItem {
     .date-col .date-line { font-weight:600; font-size:.9rem; }
     .date-col .date-year { font-size:.75rem; color:var(--text-muted); }
     .supplier-name { font-weight:600; }
+    .tabs-inline { display: inline-flex; gap: 0.5rem; }
+    .tab-btn {
+      padding: 0.45rem 1.1rem; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg-input); color: var(--text-main);
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .tab-btn.active { background: var(--brand-gold); color: #fff; border-color: var(--brand-gold); }
+    .req-card { border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.9rem; background: var(--bg-card); }
+    .req-card.req-atendida { opacity: 0.75; }
+    .req-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+    .req-head strong { font-size: 0.95rem; }
+    .req-fecha { font-size: 0.75rem; color: var(--text-muted); }
+    .req-table { margin-bottom: 0.6rem; }
+    .req-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.78rem; }
     .invoice-col { font-size:.8rem; color:var(--text-muted); }
     .items-badge { background:rgba(212,175,55,.15); color:var(--brand-gold); border-radius:20px; padding:.2rem .6rem; font-size:.75rem; font-weight:700; }
     .type-pills { display:flex; gap:.35rem; flex-wrap:wrap; }
@@ -510,7 +576,7 @@ interface CartItem {
     .detail-total strong { color:var(--brand-gold); font-family:'Outfit',sans-serif; font-size:1.15rem; }
   `]
 })
-export class PurchasesComponent implements OnInit {
+export class PurchasesComponent implements OnInit, OnDestroy {
   purchases: Purchase[] = [];
   suppliers: Supplier[] = [];
   allProducts: Product[] = [];
@@ -536,6 +602,10 @@ export class PurchasesComponent implements OnInit {
   catalogTab: PurchaseType = 'product';
   catalogSearch = '';
 
+  // Bandeja de requisiciones (local, por área)
+  vista: 'compras' | 'requisiciones' = 'compras';
+  requisiciones: Requisicion[] = [];
+
   constructor(private api: ApiService) {}
 
   ngOnInit() {
@@ -543,6 +613,53 @@ export class PurchasesComponent implements OnInit {
     this.api.getProducts({ active: 'true', limit: 1000 }).subscribe((d: any) => this.allProducts = d.products || d);
     this.api.getIngredients().subscribe((d: any) => this.allIngredients = Array.isArray(d) ? d : (d.ingredients || []));
     this.load();
+    this.cargarReqs();
+    window.addEventListener('storage', this.onStorage);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('storage', this.onStorage);
+  }
+
+  private onStorage = (e: StorageEvent) => {
+    if (e.key === 'requisiciones') this.cargarReqs();
+  };
+
+  get pendientesReq(): number {
+    return this.requisiciones.filter(r => r.estado === 'pendiente').length;
+  }
+
+  cargarReqs(): void {
+    this.requisiciones = leerRequisiciones();
+  }
+
+  areaLabel(a: Requisicion['area']): string {
+    return AREA_LABEL[a] || a;
+  }
+
+  reqEstadoLabel(e: string): string {
+    const m: Record<string, string> = { pendiente: '⏳ Pendiente', atendida: '✔ Atendida', descartada: '✕ Descartada' };
+    return m[e] || e;
+  }
+
+  atenderReq(id: string): void {
+    cambiarEstadoRequisicion(id, 'atendida');
+    this.cargarReqs();
+  }
+
+  descartarReq(id: string): void {
+    cambiarEstadoRequisicion(id, 'descartada');
+    this.cargarReqs();
+  }
+
+  reabrirReq(id: string): void {
+    cambiarEstadoRequisicion(id, 'pendiente');
+    this.cargarReqs();
+  }
+
+  borrarReq(id: string): void {
+    eliminarRequisicion(id);
+    this.cargarReqs();
   }
 
   load() {
