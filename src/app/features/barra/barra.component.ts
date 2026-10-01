@@ -319,7 +319,7 @@ interface ItemBarra {
 export class BarraComponent {
   constructor(private api: ApiService) {}
   items: ItemBarra[] = [
-    { _id: 'b1', codigo: 'BB-001', nombre: 'Pisco quebranta 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 6, minStock: 4 },
+    { _id: 'b1', codigo: 'BB-001', nombre: 'Ron Viejo de Caldas 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 6, minStock: 4 },
     { _id: 'b2', codigo: 'BB-002', nombre: 'Vino blanco seco 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 2, minStock: 4 },
     { _id: 'b3', codigo: 'BB-004', nombre: 'Aguardiente anisado 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 5, minStock: 3 },
     { _id: 'b4', codigo: 'BB-008', nombre: 'Vino tinto 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 3, minStock: 3 },
@@ -339,6 +339,10 @@ export class BarraComponent {
     { _id: 'b18', codigo: 'BI-004', nombre: 'Azúcar refinada', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'kg', stock: 2, minStock: 1 },
     { _id: 'b19', codigo: 'BI-005', nombre: 'Granadina', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'botella', stock: 1, minStock: 1 },
     { _id: 'b20', codigo: 'BI-006', nombre: 'Menta fresca para coctelería', categoria: 'Insumos', ubicacion: 'Refrigerador barra', unidad: 'atado', stock: 4, minStock: 3 },
+    { _id: 'b21', codigo: 'BB-015', nombre: 'Panela para coctelería', categoria: 'Insumos', ubicacion: 'Barra', unidad: 'kg', stock: 3, minStock: 1 },
+    { _id: 'b22', codigo: 'BB-016', nombre: 'Limón tahití', categoria: 'Insumos', ubicacion: 'Refrigerador barra', unidad: 'kg', stock: 2, minStock: 1 },
+    { _id: 'b23', codigo: 'BB-017', nombre: 'Lulo', categoria: 'Insumos', ubicacion: 'Refrigerador barra', unidad: 'kg', stock: 2, minStock: 1 },
+    { _id: 'b24', codigo: 'BB-018', nombre: 'Maracuyá', categoria: 'Insumos', ubicacion: 'Refrigerador barra', unidad: 'kg', stock: 2, minStock: 1 },
   ];
 
   showForm = false; editing = false;

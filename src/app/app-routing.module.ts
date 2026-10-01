@@ -31,6 +31,8 @@ const routes: Routes = [
       { path: 'categories', loadChildren: () => import('./features/categories/categories.module').then(m => m.CategoriesModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'expenses',   loadChildren: () => import('./features/expenses/expenses.module').then(m => m.ExpensesModule),    canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: 'finance',    loadChildren: () => import('./features/finance/finance.module').then(m => m.FinanceModule),       canActivate: [RoleGuard], data: { roles: ['admin'] } },
+      { path: 'documentacion', loadChildren: () => import('./features/documentacion/documentacion.module').then(m => m.DocumentacionModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
+      { path: 'sg-sst',    loadChildren: () => import('./features/sg-sst/sg-sst.module').then(m => m.SgSstModule), canActivate: [RoleGuard], data: { roles: ['admin'] } },
       { path: '', redirectTo: 'mesas', pathMatch: 'full' }
     ]
   },

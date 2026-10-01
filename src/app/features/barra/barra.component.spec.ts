@@ -23,9 +23,9 @@ describe('BarraComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create with 20 example items', () => {
+  it('should create with 24 example items', () => {
     expect(component).toBeTruthy();
-    expect(component.items.length).toBe(20);
+    expect(component.items.length).toBe(24);
   });
 
   it('should flag items below minimum', () => {
@@ -37,7 +37,7 @@ describe('BarraComponent', () => {
   it('should update stock from the existencias window', () => {
     component.openExistencias();
     expect(component.showExistencias).toBeTrue();
-    expect(component.existencias.length).toBe(20);
+    expect(component.existencias.length).toBe(24);
     component.existencias[0].stock = 99;
     component.guardarExistencias();
     expect(component.showExistencias).toBeFalse();
@@ -51,7 +51,7 @@ describe('BarraComponent', () => {
     const creado = component.items[component.items.length - 1];
     expect(creado.nombre).toBe('Tónica');
     expect(creado.codigo).toMatch(/^BB-\d{3}$/);
-    expect(component.existencias.length).toBe(21);
+    expect(component.existencias.length).toBe(25);
   });
 
   it('should build order draft on confirm', async () => {
@@ -60,7 +60,7 @@ describe('BarraComponent', () => {
     component.iniciarOrden();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(component.showOrden).toBeTrue();
-    expect(component.lineas.length).toBe(20);
+    expect(component.lineas.length).toBe(24);
   });
 
   it('should add manual line and keep it locally on Si', async () => {
