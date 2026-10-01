@@ -21,6 +21,9 @@ describe('PurchasesComponent requisiciones', () => {
     apiSpy.getPurchases.and.returnValue(of({ purchases: [], pages: 1 }));
     apiSpy.createPurchase.and.returnValue(of({ _id: 'p1' }));
     apiSpy.updatePurchaseStatus.and.returnValue(of({ _id: 'p1', status: 'recibida' }));
+    apiSpy.createPurchase.calls.reset();
+    apiSpy.updatePurchaseStatus.calls.reset();
+    apiSpy.getPurchases.calls.reset();
     await TestBed.configureTestingModule({
       declarations: [PurchasesComponent],
       imports: [CommonModule, FormsModule],
