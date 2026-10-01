@@ -80,7 +80,9 @@ import { environment } from '../../../environments/environment';
 
           <!-- Columna izquierda: foto -->
           <div class="dish-modal-photo">
-            <div class="photo-frame">
+            <div class="photo-frame" [class.zoomable]="(photoPreview || form.imageUrl) && !fotoError"
+                 (click)="ampliarFoto(photoPreview || fotoUrl(form.imageUrl))"
+                 [title]="(photoPreview || form.imageUrl) && !fotoError ? 'Clic para ampliar' : ''">
               <img *ngIf="(photoPreview || form.imageUrl) && !fotoError"
                    [src]="photoPreview || fotoUrl(form.imageUrl)"
                    (error)="fotoError = true"
@@ -240,6 +242,12 @@ Paso 2: ..."></textarea>
             <button class="btn-outline" (click)="showRecipe = false">Cerrar</button>
           </div>
         </div>
+      </div>
+
+      <!-- Zoom de foto (lightbox) -->
+      <div class="zoom-overlay" *ngIf="fotoZoom" (click)="fotoZoom = null">
+        <img [src]="fotoZoom" class="zoom-img" alt="Foto del plato ampliada">
+        <span class="zoom-hint">Clic en cualquier lugar para cerrar ✕</span>
       </div>
     </div>
   `,
@@ -404,6 +412,31 @@ Paso 2: ..."></textarea>
     .action-save:hover { opacity: 0.88; transform: translateY(-1px); }
     .action-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+    /* ─── Zoom de foto (lightbox) ────────────────── */
+    .photo-frame.zoomable { cursor: zoom-in; position: relative; }
+    .photo-frame.zoomable:hover .photo-img { transform: scale(1.04); }
+    .photo-frame.zoomable::after {
+      content: '🔍'; position: absolute; right: 6px; bottom: 6px;
+      background: rgba(0,0,0,0.55); color: #fff; font-size: 0.85rem;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .photo-frame.zoomable:hover::after { opacity: 1; }
+    .photo-img { transition: transform 0.2s ease; }
+    .zoom-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.85);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; padding: 1rem; cursor: zoom-out;
+      animation: fadeIn 0.2s ease;
+    }
+    .zoom-img {
+      max-width: 92vw; max-height: 85vh; object-fit: contain;
+      border-radius: 12px; box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    .zoom-hint { color: rgba(255,255,255,0.7); font-size: 0.8rem; }
+
     /* Modal receta */
     .recipe-detail { padding: 0.5rem 0; min-width:0; max-width:100%; }
     .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; flex-wrap:wrap; min-width:0; }
@@ -437,6 +470,7 @@ export class DishesComponent implements OnInit {
   photoPreview: string | null = null;
   fotoError = false;
   recetaFotoError = false;
+  fotoZoom: string | null = null;
   showPrep = false;
 
   form: any = {};
@@ -451,6 +485,10 @@ export class DishesComponent implements OnInit {
     if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
     const base = (environment.apiUrl || '').replace(/\/api\/?$/, '');
     return base + (url.startsWith('/') ? url : '/' + url);
+  }
+
+  ampliarFoto(src: string | null | undefined): void {
+    if (src) this.fotoZoom = src;
   }
 
   ngOnInit() {
@@ -518,7 +556,7 @@ export class DishesComponent implements OnInit {
     this.editing = true; this.editingId = item._id; this.showForm = true;
   }
 
-  closeForm() { this.showForm = false; }
+  closeForm() { this.showForm = false; this.fotoZoom = null; }
 
   addIngredient() {
     this.form.ingredients.push({ ingredient: '', quantity: 0 });
