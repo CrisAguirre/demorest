@@ -242,9 +242,8 @@ Paso 2: ..."></textarea>
         </div>
       </div>
 
-      <!-- Visor de foto completa -->
-      <div class="photo-viewer" *ngIf="showFoto" (click)="showFoto = false">
-        <button class="photo-close" (click)="showFoto = false" title="Cerrar">✕</button>
+      <!-- Visor de foto completa (cierra pulsando fuera) -->
+      <div class="photo-viewer" *ngIf="showFoto" (click)="showFoto = false" title="Pulsar fuera para cerrar">
         <img [src]="photoPreview || fotoUrl(recipeDish?.imageUrl || '')" class="photo-full" alt="Foto del plato" (click)="$event.stopPropagation()">
       </div>
     </div>
@@ -412,7 +411,7 @@ Paso 2: ..."></textarea>
     /* Modal receta */
     .recipe-detail { padding: 0.5rem 0; }
     .photo-viewer {
-      position: fixed; inset: 0; z-index: 100;
+      position: fixed; inset: 0; z-index: 99999;
       background: rgba(0, 0, 0, 0.85);
       display: flex; align-items: center; justify-content: center;
       cursor: zoom-out;
@@ -422,13 +421,6 @@ Paso 2: ..."></textarea>
       border-radius: 12px; box-shadow: 0 24px 80px rgba(0,0,0,0.6);
       cursor: default;
     }
-    .photo-close {
-      position: absolute; top: 1rem; right: 1.25rem;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
-      color: #fff; font-size: 1.3rem; width: 42px; height: 42px;
-      border-radius: 50%; cursor: pointer; transition: background 0.15s;
-    }
-    .photo-close:hover { background: rgba(255,255,255,0.25); }
     .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; }
     .dish-photo-header {
       position: relative; display: flex; flex-direction: column; align-items: center;
