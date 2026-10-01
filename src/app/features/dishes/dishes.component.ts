@@ -9,23 +9,23 @@ import { environment } from '../../../environments/environment';
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1 class="page-title">ðŸ² MenÃº / Platos</h1>
-          <p class="page-subtitle">GestiÃ³n de la carta del restaurante con recetas</p>
+          <h1 class="page-title">🍲 Menú / Platos</h1>
+          <p class="page-subtitle">Gestión de la carta del restaurante con recetas</p>
         </div>
         <button class="btn-primary" (click)="openForm()">+ Nuevo Plato</button>
       </div>
 
       <div class="search-bar">
-        <input class="form-input" placeholder="ðŸ” Buscar plato..." [(ngModel)]="search" (input)="applySort()" />
+        <input class="form-input" placeholder="🔍 Buscar plato..." [(ngModel)]="search" (input)="applySort()" />
         <select class="form-input" [(ngModel)]="categoryFilter" (change)="applySort()">
-          <option value="">Todas las categorÃ­as</option>
+          <option value="">Todas las categorías</option>
           <option value="Entradas">Entradas</option>
           <option value="Sopas">Sopas</option>
           <option value="Platos fuertes">Platos fuertes</option>
           <option value="Platos a la carta">Platos a la carta</option>
           <option value="Postres">Postres</option>
           <option value="Bebidas">Bebidas</option>
-          <option value="CÃ³cteles">CÃ³cteles</option>
+          <option value="Cócteles">Cócteles</option>
         </select>
         <select class="form-input" [(ngModel)]="estadoFilter" (change)="applySort()" title="Filtrar por disponibilidad">
           <option value="">Todos</option>
@@ -36,12 +36,12 @@ import { environment } from '../../../environments/environment';
 
       <div class="card table-card">
         <div *ngIf="loading" class="loading-state">Cargando platos...</div>
-        <div *ngIf="!loading && filteredItems.length === 0" class="empty-state">No hay platos que coincidan con la bÃºsqueda</div>
+        <div *ngIf="!loading && filteredItems.length === 0" class="empty-state">No hay platos que coincidan con la búsqueda</div>
         <table *ngIf="!loading && filteredItems.length > 0" class="data-table">
           <thead>
             <tr>
               <th (click)="sort('name')" class="sortable">Nombre</th>
-              <th (click)="sort('category')" class="sortable">CategorÃ­a</th>
+              <th (click)="sort('category')" class="sortable">Categoría</th>
               <th (click)="sort('price')" class="sortable">Precio</th>
               <th>Receta</th>
               <th>Estado</th>
@@ -64,17 +64,17 @@ import { environment } from '../../../environments/environment';
                 </span>
               </td>
               <td class="actions">
-                <button class="btn-icon" title="Editar" (click)="edit(item)">âœï¸</button>
-                <button class="btn-icon" title="Ver receta" (click)="viewRecipe(item)" *ngIf="item.ingredients?.length">ðŸ“‹</button>
-                <button class="btn-icon btn-icon-danger" title="Desactivar" (click)="remove(item._id)" *ngIf="item.isAvailable">ðŸ—‘ï¸</button>
-                <button class="btn-icon" title="Reactivar" (click)="reactivate(item._id)" *ngIf="!item.isAvailable">â™»ï¸</button>
+                <button class="btn-icon" title="Editar" (click)="edit(item)">✏️</button>
+                <button class="btn-icon" title="Ver receta" (click)="viewRecipe(item)" *ngIf="item.ingredients?.length">📋</button>
+                <button class="btn-icon btn-icon-danger" title="Desactivar" (click)="remove(item._id)" *ngIf="item.isAvailable">🗑️</button>
+                <button class="btn-icon" title="Reactivar" (click)="reactivate(item._id)" *ngIf="!item.isAvailable">♻️</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- MODAL EDICIÃ“N / CREACIÃ“N -->
+      <!-- MODAL EDICIÓN / CREACIÓN -->
       <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
         <div class="dish-modal" (click)="$event.stopPropagation()">
 
@@ -86,25 +86,25 @@ import { environment } from '../../../environments/environment';
                    (error)="fotoError = true"
                    class="photo-img" alt="Foto del plato">
               <div *ngIf="(!photoPreview && !form.imageUrl) || fotoError" class="photo-empty">
-                <span class="photo-icon">ðŸ½ï¸</span>
+                <span class="photo-icon">🍽️</span>
                 <p>{{ fotoError ? 'Foto no disponible en el servidor' : 'Sin foto' }}</p>
               </div>
             </div>
             <label class="photo-upload-btn">
-              <span>ðŸ“· {{ (photoPreview || form.imageUrl) ? 'Cambiar foto' : 'Subir foto' }}</span>
+              <span>📷 {{ (photoPreview || form.imageUrl) ? 'Cambiar foto' : 'Subir foto' }}</span>
               <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp"
                      (change)="onPhotoSelected($event)" style="display:none">
             </label>
-            <div class="photo-hint">JPG Â· PNG Â· WebP &bull; MÃ¡x. 3 MB</div>
+            <div class="photo-hint">JPG · PNG · WebP &bull; Máx. 3 MB</div>
 
-            <!-- Disponibilidad (solo ediciÃ³n) -->
+            <!-- Disponibilidad (solo edición) -->
             <div class="avail-toggle" *ngIf="editing">
               <label class="toggle-switch">
                 <input type="checkbox" [(ngModel)]="form.isAvailable">
                 <span class="toggle-track"></span>
               </label>
               <span class="avail-label" [class.active]="form.isAvailable">
-                {{ form.isAvailable ? 'âœ… Disponible' : 'âŒ No disponible' }}
+                {{ form.isAvailable ? '✅ Disponible' : '❌ No disponible' }}
               </span>
             </div>
           </div>
@@ -112,28 +112,28 @@ import { environment } from '../../../environments/environment';
           <!-- Columna derecha: form -->
           <div class="dish-modal-form">
             <div class="form-header">
-              <h2>{{ editing ? 'âœï¸ Editar Plato' : 'âž• Nuevo Plato' }}</h2>
-              <button class="close-btn" (click)="closeForm()" title="Cerrar">âœ•</button>
+              <h2>{{ editing ? '✏️ Editar Plato' : '➕ Nuevo Plato' }}</h2>
+              <button class="close-btn" (click)="closeForm()" title="Cerrar">✕</button>
             </div>
 
-            <!-- SecciÃ³n: Datos generales -->
+            <!-- Sección: Datos generales -->
             <div class="form-section">
-              <div class="section-title">ðŸ“ InformaciÃ³n General</div>
+              <div class="section-title">📝 Información General</div>
               <div class="field-group">
                 <label class="field-label">Nombre del plato *</label>
-                <input class="field-input" [(ngModel)]="form.name" placeholder="Ej. Soupe Ã  l'oignon">
+                <input class="field-input" [(ngModel)]="form.name" placeholder="Ej. Soupe à l'oignon">
               </div>
               <div class="field-row">
                 <div class="field-group">
-                  <label class="field-label">CategorÃ­a</label>
+                  <label class="field-label">Categoría</label>
                   <select class="field-input" [(ngModel)]="form.category">
-                    <option value="Entradas">ðŸ¥— Entradas</option>
-                    <option value="Sopas">ðŸ¥£ Sopas</option>
-                    <option value="Platos fuertes">ðŸ² Platos fuertes</option>
-                    <option value="Platos a la carta">ðŸ½ï¸ Platos a la carta</option>
-                    <option value="Postres">ðŸ° Postres</option>
-                    <option value="Bebidas">ðŸ¥¤ Bebidas</option>
-                    <option value="CÃ³cteles">ðŸ¹ CÃ³cteles</option>
+                    <option value="Entradas">🥗 Entradas</option>
+                    <option value="Sopas">🥣 Sopas</option>
+                    <option value="Platos fuertes">🍲 Platos fuertes</option>
+                    <option value="Platos a la carta">🍽️ Platos a la carta</option>
+                    <option value="Postres">🍰 Postres</option>
+                    <option value="Bebidas">🥤 Bebidas</option>
+                    <option value="Cócteles">🍹 Cócteles</option>
                   </select>
                 </div>
                 <div class="field-group">
@@ -145,15 +145,15 @@ import { environment } from '../../../environments/environment';
                 </div>
               </div>
               <div class="field-group">
-                <label class="field-label">DescripciÃ³n (menÃº)</label>
+                <label class="field-label">Descripción (menú)</label>
                 <textarea class="field-input" rows="2" [(ngModel)]="form.description"
-                          placeholder="Breve descripciÃ³n para la carta..."></textarea>
+                          placeholder="Breve descripción para la carta..."></textarea>
               </div>
             </div>
 
-            <!-- SecciÃ³n: Receta / Ingredientes -->
+            <!-- Sección: Receta / Ingredientes -->
             <div class="form-section">
-              <div class="section-title">ðŸ§… Receta e Ingredientes</div>
+              <div class="section-title">🧅 Receta e Ingredientes</div>
               <div class="ing-list">
                 <div class="ing-card" *ngFor="let ing of form.ingredients; let i = index">
                   <span class="ing-num">{{ i + 1 }}</span>
@@ -167,7 +167,7 @@ import { environment } from '../../../environments/environment';
                     <input class="field-input ing-qty" type="number" [(ngModel)]="ing.quantity"
                            placeholder="Cant." min="0" step="0.01">
                   </div>
-                  <button class="ing-remove" (click)="removeIngredient(i)" title="Quitar">âœ•</button>
+                  <button class="ing-remove" (click)="removeIngredient(i)" title="Quitar">✕</button>
                 </div>
                 <div *ngIf="form.ingredients?.length === 0" class="ing-empty">
                   Sin ingredientes cargados. Este plato no desconta insumos del inventario.
@@ -178,11 +178,11 @@ import { environment } from '../../../environments/environment';
               </button>
             </div>
 
-            <!-- SecciÃ³n: PreparaciÃ³n -->
+            <!-- Sección: Preparación -->
             <div class="form-section">
               <div class="section-title" style="cursor:pointer" (click)="showPrep = !showPrep">
-                ðŸ‘¨â€ðŸ³ Instrucciones de preparaciÃ³n
-                <span style="float:right;font-size:0.8rem;color:var(--text-muted)">{{ showPrep ? 'â–² Ocultar' : 'â–¼ Mostrar' }}</span>
+                👨‍🍳 Instrucciones de preparación
+                <span style="float:right;font-size:0.8rem;color:var(--text-muted)">{{ showPrep ? '▲ Ocultar' : '▼ Mostrar' }}</span>
               </div>
               <textarea *ngIf="showPrep" class="field-input" rows="4" [(ngModel)]="form.preparation"
                         placeholder="Paso 1: ...
@@ -193,8 +193,8 @@ Paso 2: ..."></textarea>
             <div class="form-actions">
               <button class="action-cancel" (click)="closeForm()">Cancelar</button>
               <button class="action-save" (click)="save()" [disabled]="saving">
-                <span *ngIf="!saving">ðŸ’¾ Guardar plato</span>
-                <span *ngIf="saving">â³ Guardando...</span>
+                <span *ngIf="!saving">💾 Guardar plato</span>
+                <span *ngIf="saving">⏳ Guardando...</span>
               </button>
             </div>
           </div>
@@ -208,7 +208,7 @@ Paso 2: ..."></textarea>
           <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
             <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
           </div>
-          <h2 class="modal-title">ðŸ“‹ {{ recipeDish?.name }}</h2>
+          <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
           <div class="recipe-detail" *ngIf="loadingRecipe">Calculando costo de la receta...</div>
           <div class="recipe-detail" *ngIf="!loadingRecipe && recipeError" style="color:#e74c3c">{{ recipeError }}</div>
           <div class="recipe-detail" *ngIf="!loadingRecipe && recipeCost">
@@ -232,7 +232,7 @@ Paso 2: ..."></textarea>
               </tbody>
             </table>
             <div *ngIf="recipeDish?.preparation" style="margin-top:1rem">
-              <strong>PreparaciÃ³n:</strong>
+              <strong>Preparación:</strong>
               <p style="margin-top:0.25rem;white-space:pre-wrap">{{ recipeDish?.preparation }}</p>
             </div>
           </div>
@@ -244,13 +244,13 @@ Paso 2: ..."></textarea>
     </div>
   `,
   styles: [`
-    /* â”€â”€â”€ Tabla & BÃºsqueda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ─── Tabla & Búsqueda ─────────────────────────── */
     .search-bar { display:flex; gap:1rem; align-items:center; margin-bottom:1rem; }
     .actions { display:flex; gap:.4rem; }
     .sortable { cursor: pointer; user-select: none; transition: background 0.2s; }
     .sortable:hover { background-color: rgba(0, 229, 255, 0.1); color: var(--text-primary); }
 
-    /* â”€â”€â”€ Modal dish (2 columnas) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ─── Modal dish (2 columnas) ──────────────────── */
     .dish-modal {
       display: flex; flex-direction: row;
       background: var(--bg-card); border-radius: 16px;
@@ -558,7 +558,7 @@ export class DishesComponent implements OnInit {
   }
 
   remove(id: string) {
-    if (!confirm('Â¿Desactivar este plato? QuedarÃ¡ visible como no disponible.')) return;
+    if (!confirm('¿Desactivar este plato? Quedará visible como no disponible.')) return;
     this.api.deleteDish(id).subscribe({
       next: () => {
         // No recargar: el backend ya no lo devuelve; se conserva visible localmente.
@@ -571,7 +571,7 @@ export class DishesComponent implements OnInit {
   }
 
   reactivate(id: string) {
-    if (!confirm('Â¿Reactivar este plato? VolverÃ¡ a la carta.')) return;
+    if (!confirm('¿Reactivar este plato? Volverá a la carta.')) return;
     this.api.updateDish(id, { isAvailable: true }).subscribe({
       next: () => {
         const item = this.items.find(i => i._id === id);
