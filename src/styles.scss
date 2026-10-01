@@ -13,8 +13,12 @@
 
   /* Texto */
   --text-primary: #1A1D26;
+  --text-main: #1A1D26;
   --text-secondary: #5A4A3A;
   --text-muted: #9CA3AF;
+
+  /* Bordes */
+  --border: #EAE0CF;
 
   /* Colores Corporativos */
   --brand-gold: #D4AF37; /* Oro */
@@ -56,10 +60,12 @@ html.dark {
 
   /* Texto oscuro */
   --text-primary: #F3F4F6;
+  --text-main: #F3F4F6;
   --text-secondary: #C0C0C0;
   --text-muted: #8F9BA8;
 
   /* Sombras y bordes en dark mode */
+  --border: rgb(255 255 255 / 10%);
   --shadow-card: 0 4px 15px rgb(0 0 0 / 40%);
 }
 
