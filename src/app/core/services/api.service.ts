@@ -714,10 +714,18 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/events/${id}`);
   }
 
-  addEventPayment(id: string, data: { amount: number; method: string }): Observable<any> {
+  addEventPayment(id: string, data: { amount: number; method: string; milestone?: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/events/${id}/payment`, data).pipe(
       tap(() => this.preload.invalidate('current-cash'))
     );
+  }
+
+  addEventMilestone(id: string, data: { etiqueta: string; monto: number; vencimiento?: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/${id}/milestones`, data);
+  }
+
+  removeEventMilestone(id: string, mid: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/events/${id}/milestones/${mid}`);
   }
 
   clearCache(): void {

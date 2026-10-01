@@ -153,8 +153,7 @@ export class SidebarComponent {
         { icon: '💰', label: 'Caja',            route: '/cash' },
         { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
         { divider: 'Gestión' },
-        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
-        { icon: '🔔', label: 'Alertas',         route: '/alerts' }
+        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' }
       ];
     } else if (role === 'admin') {
       this.menuItems = [
@@ -186,7 +185,10 @@ export class SidebarComponent {
         { divider: 'Inteligencia' },
         { icon: '🧠', label: 'Centro Financiero', route: '/finance' },
         { icon: '📈', label: 'Reportes',        route: '/reports' },
-        { icon: '🔔', label: 'Alertas',         route: '/alerts' },
+        // Documentación
+        { divider: 'Documentación' },
+        { icon: '📚', label: 'Documentación',   route: '/documentacion' },
+        { icon: '🦺', label: 'SG-SST',          route: '/sg-sst' },
         // Configuración y Enlaces Externos
         { divider: 'Sistema' },
         { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },

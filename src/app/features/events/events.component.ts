@@ -179,6 +179,20 @@ import Swal from 'sweetalert2';
           <p>Total: <strong>$ {{ (selectedEv.totalCost || 0).toLocaleString('es-CO') }}</strong><br>
           Abonado: <strong>$ {{ getTotalPaid(selectedEv).toLocaleString('es-CO') }}</strong><br>
           Resta: <strong>$ {{ ((selectedEv.totalCost || 0) - getTotalPaid(selectedEv)).toLocaleString('es-CO') }}</strong></p>
+          <div class="drawer-section">🪜 Plan de pagos (hitos)</div>
+          <div *ngIf="!selectedEv.milestones?.length" class="drawer-hint">Sin hitos. Agregue el anticipo acordado con el cliente.</div>
+          <div *ngFor="let h of selectedEv.milestones" class="hito-row">
+            <div class="hito-info">
+              <strong>{{ h.etiqueta }}</strong>
+              <span class="prop-pill" [ngClass]="hitoClass(h)">{{ hitoLabel(h) }}</span>
+              <div class="hito-sub">$ {{ h.monto.toLocaleString('es-CO') }} · Abonado $ {{ abonadoHito(selectedEv, h).toLocaleString('es-CO') }}<span *ngIf="h.vencimiento"> · Vence {{ h.vencimiento | date:'dd MMM yyyy' }}</span></div>
+            </div>
+            <div class="hito-actions">
+              <button class="btn btn-secondary btn-sm" (click)="addPayment(selectedEv, h._id)">💵 Abonar</button>
+              <button class="btn btn-secondary btn-sm" (click)="eliminarHito(selectedEv, h)">✕</button>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="margin-top:0.4rem" (click)="agregarHito(selectedEv)">＋ Agregar hito</button>
           <div class="drawer-actions">
             <button class="btn btn-primary" (click)="abrirBEO(selectedEv)">🖨️ BEO</button>
             <button class="btn btn-secondary" (click)="openForm(selectedEv)">✏️ Editar</button>
@@ -531,6 +545,16 @@ import Swal from 'sweetalert2';
     .drawer-estados { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .pill-btn { border: none; cursor: pointer; opacity: 0.55; }
     .pill-btn.current { opacity: 1; outline: 2px solid currentColor; }
+    .drawer-hint { font-size: 0.78rem; color: var(--text-muted); font-style: italic; margin-bottom: 0.4rem; }
+    .hito-row {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.55rem 0.7rem; margin-bottom: 0.45rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+    }
+    .hito-info { font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .hito-sub { font-size: 0.72rem; color: var(--text-muted); }
+    .hito-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
+    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
     @media (max-width: 900px) {
       .ev-layout { flex-direction: column; }
       .ev-side { width: 100%; flex-direction: row; }
@@ -1004,6 +1028,95 @@ export class EventsComponent implements OnInit {
     return ev.payments.reduce((sum: number, p: any) => sum + p.amount, 0);
   }
 
+  abonadoHito(ev: any, h: any): number {
+    if (!ev.payments) return 0;
+    return ev.payments
+      .filter((p: any) => p.milestone && String(p.milestone) === String(h._id || h))
+      .reduce((s: number, p: any) => s + p.amount, 0);
+  }
+
+  hitoVencido(h: any): boolean {
+    return h.estado !== 'pagado' && !!h.vencimiento && new Date(h.vencimiento).getTime() < Date.now();
+  }
+
+  hitoClass(h: any): string {
+    if (this.hitoVencido(h)) return 'pill-cancelado';
+    return h.estado === 'pagado' ? 'pill-realizado' : (h.estado === 'parcial' ? 'pill-confirmado' : 'pill-pendiente');
+  }
+
+  hitoLabel(h: any): string {
+    if (this.hitoVencido(h)) return 'Vencido';
+    const m: Record<string, string> = { pendiente: 'Pendiente', parcial: 'Parcial', pagado: 'Pagado' };
+    return m[h.estado] || h.estado;
+  }
+
+  agregarHito(ev: any): void {
+    Swal.fire({
+      title: 'Agregar hito de pago',
+      html: `
+        <div style="text-align:left;font-size:0.9rem;">
+          <div class="form-group">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">Etiqueta * (ej. Anticipo acordado)</label>
+            <input type="text" id="hito-etiqueta" class="swal2-input" style="width:100%;box-sizing:border-box;" placeholder="Anticipo">
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">Monto (COP $) *</label>
+            <input type="number" id="hito-monto" class="swal2-input" style="width:100%;box-sizing:border-box;" min="0" placeholder="0">
+          </div>
+          <div class="form-group" style="margin-top:10px">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">Vencimiento (opcional)</label>
+            <input type="date" id="hito-vence" class="swal2-input" style="width:100%;box-sizing:border-box;">
+          </div>
+        </div>`,
+      showCancelButton: true,
+      confirmButtonText: 'Agregar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#D4AF37',
+      preConfirm: () => {
+        const etiqueta = (document.getElementById('hito-etiqueta') as HTMLInputElement).value.trim();
+        const monto = parseFloat((document.getElementById('hito-monto') as HTMLInputElement).value);
+        const vencimiento = (document.getElementById('hito-vence') as HTMLInputElement).value;
+        if (!etiqueta || !(monto > 0)) {
+          Swal.showValidationMessage('Etiqueta y monto mayor a 0 son obligatorios');
+          return false;
+        }
+        return { etiqueta, monto, vencimiento: vencimiento || undefined };
+      }
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.api.addEventMilestone(ev._id, res.value).subscribe({
+          next: (actualizado: any) => {
+            this.selectedEv = actualizado;
+            this.load();
+          },
+          error: (err) => Swal.fire('Error', err.error?.message, 'error')
+        });
+      }
+    });
+  }
+
+  eliminarHito(ev: any, h: any): void {
+    Swal.fire({
+      title: '¿Eliminar hito?',
+      text: `${h.etiqueta} · $${h.monto.toLocaleString('es-CO')}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Volver',
+      confirmButtonColor: '#e74c3c'
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.api.removeEventMilestone(ev._id, h._id).subscribe({
+          next: (actualizado: any) => {
+            this.selectedEv = actualizado;
+            this.load();
+          },
+          error: (err) => Swal.fire('Error', err.error?.message, 'error')
+        });
+      }
+    });
+  }
+
   openForm(ev?: any, prefillDate?: Date): void {
     const aLocal = (v: any): { fecha: string; hora: string } => {
       if (!v) return { fecha: '', hora: '' };
@@ -1097,7 +1210,7 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  addPayment(ev: any): void {
+  addPayment(ev: any, milestoneId?: string): void {
     const remaining = ev.totalCost - this.getTotalPaid(ev);
     if (remaining <= 0) {
       Swal.fire('Atención', 'El evento ya está pagado en su totalidad', 'info');
@@ -1193,14 +1306,14 @@ export class EventsComponent implements OnInit {
       preConfirm: () => {
         const esTotal = (document.getElementById('pay-check-total') as HTMLInputElement).checked;
         const method = (document.getElementById('pay-method') as HTMLSelectElement).value;
-        if (esTotal) return { amount: remaining, method };
+        if (esTotal) return { amount: remaining, method, milestone: milestoneId || null };
         const raw = (document.getElementById('pay-amount-abono') as HTMLInputElement).value;
         const amount = parseInt(raw.replace(/\D/g, ''), 10) || 0;
         if (!amount || amount <= 0 || amount > remaining) {
           Swal.showValidationMessage('Monto a abonar inválido: revise el valor y el saldo');
           return false;
         }
-        return { amount, method };
+        return { amount, method, milestone: milestoneId || null };
       }
     }).then((res) => {
       if (res.isConfirmed) {
@@ -1208,7 +1321,15 @@ export class EventsComponent implements OnInit {
           next: () => {
             Swal.fire('Éxito', 'Pago registrado (integrado a caja)', 'success');
             this.load();
-            if (this.selectedEv && this.selectedEv._id === ev._id) this.cerrarDrawer();
+            if (milestoneId && this.selectedEv && this.selectedEv._id === ev._id) {
+              // Refresca el drawer para ver el hito actualizado.
+              this.api.getEvent(ev._id).subscribe({
+                next: (actualizado: any) => { this.selectedEv = actualizado; },
+                error: () => this.cerrarDrawer()
+              });
+            } else if (this.selectedEv && this.selectedEv._id === ev._id) {
+              this.cerrarDrawer();
+            }
           },
           error: (err) => Swal.fire('Error', err.error?.message, 'error')
         });

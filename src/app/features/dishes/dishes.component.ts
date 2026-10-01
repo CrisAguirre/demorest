@@ -81,12 +81,13 @@ import { environment } from '../../../environments/environment';
           <!-- Columna izquierda: foto -->
           <div class="dish-modal-photo">
             <div class="photo-frame">
-              <img *ngIf="photoPreview || form.imageUrl"
+              <img *ngIf="(photoPreview || form.imageUrl) && !fotoError"
                    [src]="photoPreview || fotoUrl(form.imageUrl)"
+                   (error)="fotoError = true"
                    class="photo-img" alt="Foto del plato">
-              <div *ngIf="!photoPreview && !form.imageUrl" class="photo-empty">
+              <div *ngIf="(!photoPreview && !form.imageUrl) || fotoError" class="photo-empty">
                 <span class="photo-icon">🍽️</span>
-                <p>Sin foto</p>
+                <p>{{ fotoError ? 'Foto no disponible en el servidor' : 'Sin foto' }}</p>
               </div>
             </div>
             <label class="photo-upload-btn">
@@ -204,8 +205,8 @@ Paso 2: ..."></textarea>
       <div class="modal-overlay" *ngIf="showRecipe" (click)="showRecipe = false">
         <div class="modal" (click)="$event.stopPropagation()">
           <!-- Cabecera con foto en modal receta -->
-          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
-            <img [src]="fotoUrl(recipeDish!.imageUrl)" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
+          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
+            <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
           </div>
           <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
           <div class="recipe-detail" *ngIf="loadingRecipe">Calculando costo de la receta...</div>
@@ -433,6 +434,8 @@ export class DishesComponent implements OnInit {
   recipeError = '';
   photoFile: File | null = null;
   photoPreview: string | null = null;
+  fotoError = false;
+  recetaFotoError = false;
   showPrep = false;
 
   form: any = {};
@@ -498,7 +501,7 @@ export class DishesComponent implements OnInit {
 
   openForm() {
     this.form = { category: 'Platos fuertes', price: 0, description: '', preparation: '', isAvailable: true, ingredients: [] };
-    this.photoFile = null; this.photoPreview = null;
+    this.photoFile = null; this.photoPreview = null; this.fotoError = false;
     this.editing = false; this.editingId = ''; this.showForm = true;
   }
 
@@ -510,7 +513,7 @@ export class DishesComponent implements OnInit {
         quantity: i.quantity
       })) || []
     };
-    this.photoFile = null; this.photoPreview = null;
+    this.photoFile = null; this.photoPreview = null; this.fotoError = false;
     this.editing = true; this.editingId = item._id; this.showForm = true;
   }
 
@@ -583,6 +586,7 @@ export class DishesComponent implements OnInit {
     this.recipeDish = dish;
     this.recipeCost = null;
     this.recipeError = '';
+    this.recetaFotoError = false;
     this.loadingRecipe = true;
     this.showRecipe = true;
     this.api.getRecipeCost(dish._id).subscribe({

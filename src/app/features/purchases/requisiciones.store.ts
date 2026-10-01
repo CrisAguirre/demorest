@@ -17,6 +17,7 @@ export interface Requisicion {
 }
 
 const KEY = 'requisiciones';
+let consec = 0;
 
 export function leerRequisiciones(): Requisicion[] {
   try {
@@ -37,7 +38,7 @@ export function contarPendientes(): number {
 export function enviarRequisicion(area: Requisicion['area'], items: RequisicionItem[]): Requisicion {
   const reqs = leerRequisiciones();
   const nueva: Requisicion = {
-    id: 'req-' + Date.now(),
+    id: `req-${Date.now()}-${(consec++).toString(36)}${Math.floor(Math.random() * 1296).toString(36)}`,
     area,
     fecha: new Date().toISOString(),
     items,

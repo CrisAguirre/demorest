@@ -165,7 +165,7 @@ interface CartItem {
             <button class="btn-primary btn-sm" (click)="atenderReq(r.id)">✔ Marcar atendida (comprada)</button>
             <button class="btn-outline btn-sm" (click)="descartarReq(r.id)">✕ Descartar</button>
           </div>
-          <div class="req-actions" *ngIf="r.estado !== 'pendiente'">
+          <div class="req-actions" *ngIf="r.estado !== 'pendiente' && esLocal(r.id)">
             <button class="btn-outline btn-sm" (click)="reabrirReq(r.id)">↩ Reabrir</button>
             <button class="btn-outline btn-sm" (click)="borrarReq(r.id)">🗑 Eliminar</button>
           </div>
@@ -630,7 +630,65 @@ export class PurchasesComponent implements OnInit, OnDestroy {
   }
 
   cargarReqs(): void {
-    this.requisiciones = leerRequisiciones();
+    const locales = leerRequisiciones();
+    this.api.getPurchases({ origen: 'requisicion', limit: 100 }).subscribe({
+      next: (d: any) => {
+        const lista = d.purchases || d || [];
+        const delBack: Requisicion[] = (Array.isArray(lista) ? lista : []).map((p: any) => ({
+          id: p._id,
+          area: p.area || 'cocina',
+          fecha: p.createdAt,
+          items: (p.items || []).map((i: any) => ({
+            codigo: '',
+            nombre: i.itemName,
+            cantidad: i.quantity,
+            unidad: i.unit
+          })),
+          estado: p.status === 'recibida' ? 'atendida' : (p.status === 'anulada' ? 'descartada' : 'pendiente')
+        }));
+        this.requisiciones = [...delBack, ...locales];
+        this.sincronizarLocales(locales);
+      },
+      error: () => { this.requisiciones = locales; }
+    });
+  }
+
+  esLocal(id: string): boolean {
+    return id.startsWith('req-');
+  }
+
+  // Sube las locales pendientes al backend una vez (evita duplicados borrando al lograrlo).
+  private sincronizando = false;
+  sincronizarLocales(locales: Requisicion[]): void {
+    if (this.sincronizando) return;
+    const pendientes = locales.filter(r => r.estado === 'pendiente');
+    if (pendientes.length === 0) return;
+    this.sincronizando = true;
+    const subir = (i: number): void => {
+      if (i >= pendientes.length) {
+        this.sincronizando = false;
+        this.cargarReqs();
+        return;
+      }
+      const r = pendientes[i];
+      this.api.createPurchase({
+        origen: 'requisicion',
+        area: r.area,
+        status: 'pendiente',
+        notes: 'Requisición sincronizada',
+        items: r.items.map(it => ({
+          itemType: 'ingredient',
+          itemName: it.nombre,
+          unit: it.unidad,
+          quantity: it.cantidad,
+          unitCost: 0
+        }))
+      }).subscribe({
+        next: () => { eliminarRequisicion(r.id); subir(i + 1); },
+        error: () => { this.sincronizando = false; }
+      });
+    };
+    subir(0);
   }
 
   areaLabel(a: Requisicion['area']): string {
@@ -643,21 +701,38 @@ export class PurchasesComponent implements OnInit, OnDestroy {
   }
 
   atenderReq(id: string): void {
-    cambiarEstadoRequisicion(id, 'atendida');
-    this.cargarReqs();
+    if (this.esLocal(id)) {
+      cambiarEstadoRequisicion(id, 'atendida');
+      this.cargarReqs();
+      return;
+    }
+    // Recibir en backend: suma stock automáticamente.
+    this.api.updatePurchaseStatus(id, 'recibida').subscribe({
+      next: () => this.cargarReqs(),
+      error: () => alert('No se pudo marcar como recibida')
+    });
   }
 
   descartarReq(id: string): void {
-    cambiarEstadoRequisicion(id, 'descartada');
-    this.cargarReqs();
+    if (this.esLocal(id)) {
+      cambiarEstadoRequisicion(id, 'descartada');
+      this.cargarReqs();
+      return;
+    }
+    this.api.updatePurchaseStatus(id, 'anulada').subscribe({
+      next: () => this.cargarReqs(),
+      error: () => alert('No se pudo anular')
+    });
   }
 
   reabrirReq(id: string): void {
+    if (!this.esLocal(id)) return;
     cambiarEstadoRequisicion(id, 'pendiente');
     this.cargarReqs();
   }
 
   borrarReq(id: string): void {
+    if (!this.esLocal(id)) return;
     eliminarRequisicion(id);
     this.cargarReqs();
   }

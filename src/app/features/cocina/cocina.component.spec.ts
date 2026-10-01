@@ -1,16 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { of } from 'rxjs';
 import { CocinaComponent } from './cocina.component';
+import { ApiService } from '../../core/services/api.service';
 
 describe('CocinaComponent', () => {
   let component: CocinaComponent;
   let fixture: ComponentFixture<CocinaComponent>;
+  let api: jasmine.SpyObj<ApiService>;
 
   beforeEach(async () => {
+    api = jasmine.createSpyObj('ApiService', ['createPurchase']);
+    api.createPurchase.and.returnValue(of({ _id: 'p1' }));
     await TestBed.configureTestingModule({
       declarations: [CocinaComponent],
-      imports: [CommonModule, FormsModule]
+      imports: [CommonModule, FormsModule],
+      providers: [{ provide: ApiService, useValue: api }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CocinaComponent);
@@ -127,5 +133,18 @@ describe('CocinaComponent', () => {
     component.confirmarOrden();
     expect(component.ordenConfirmada.length).toBeGreaterThan(0);
     expect(component.showOrden).toBeFalse();
+  });
+
+  it('should send requisition to backend API', async () => {
+    const Swal = await import('sweetalert2');
+    spyOn(Swal.default, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true } as any));
+    component.iniciarOrden();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    component.confirmarOrden();
+    component.enviarACompras();
+    expect(api.createPurchase).toHaveBeenCalledWith(jasmine.objectContaining({
+      origen: 'requisicion', area: 'cocina', status: 'pendiente'
+    }));
+    expect(component.ordenConfirmada.length).toBe(0);
   });
 });
