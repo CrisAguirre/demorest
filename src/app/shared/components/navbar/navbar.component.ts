@@ -2,8 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { SettingsService } from '../../../core/services/settings.service';
-import { ApiService } from '../../../core/services/api.service';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -21,10 +19,6 @@ import { environment } from '../../../../environments/environment';
       <div class="navbar-actions">
         <button class="btn-theme" (click)="toggleTheme()" [title]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
           {{ isDarkMode ? '☀️' : '🌙' }}
-        </button>
-        <button class="btn-notification" (click)="toggleAlerts()" aria-label="Ver alertas" *ngIf="authService.hasRole('admin')">
-          🔔
-          <span class="notification-badge" *ngIf="unreadAlerts > 0">{{ unreadAlerts }}</span>
         </button>
         <div class="user-menu" (click)="showMenu = !showMenu">
           <div class="user-avatar">{{ userInitial }}</div>
@@ -60,19 +54,12 @@ import { environment } from '../../../../environments/environment';
       font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
       text-transform: capitalize; white-space: nowrap;
     }
-    .btn-notification, .btn-theme {
+    .btn-theme {
       position: relative; background: var(--bg-input); border: none;
       width: 38px; height: 38px; border-radius: 8px; font-size: 1.1rem;
       cursor: pointer; transition: all 0.2s; color: var(--text-primary);
     }
-    .btn-notification:hover, .btn-theme:hover { background: rgba(212,175,55,0.08); }
-    .notification-badge {
-      position: absolute; top: -4px; right: -4px;
-      background: var(--brand-red); color: #fff; font-size: 0.65rem;
-      min-width: 18px; height: 18px; border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-    }
+    .btn-theme:hover { background: rgba(212,175,55,0.08); }
     .user-menu {
       display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
       padding: 0.375rem 0.75rem; border-radius: 8px;
@@ -108,14 +95,13 @@ import { environment } from '../../../../environments/environment';
       .navbar-title { font-size: 0.95rem; }
       .navbar-actions { gap: 0.5rem; }
       .user-avatar { width: 30px; height: 30px; }
-      .btn-notification, .btn-theme { width: 32px; height: 32px; font-size: 1rem; }
+      .btn-theme { width: 32px; height: 32px; font-size: 1rem; }
       .navbar-brand { gap: 0.5rem; }
     }
   `]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   showMenu = false;
-  unreadAlerts = 0;
   isDarkMode = false;
   fechaOperacion = '';
   private reloj: any = null;
@@ -127,15 +113,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     public authService: AuthService,
     public settingsService: SettingsService,
-    private api: ApiService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.settingsService.loadSettings();
-    if (this.authService.hasRole('admin')) {
-      this.loadAlertCount();
-    }
     this.initTheme();
     this.actualizarFecha();
     this.reloj = setInterval(() => this.actualizarFecha(), 60000);
@@ -168,16 +150,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-  }
-
-  loadAlertCount(): void {
-    this.api.getAlerts({ read: 'false' }).subscribe({
-      next: (res: any) => this.unreadAlerts = res.unread || 0
-    });
-  }
-
-  toggleAlerts(): void {
-    this.router.navigate(['/alerts']);
   }
 
   navigate(path: string): void {
