@@ -13,8 +13,12 @@
 
   /* Texto */
   --text-primary: #1A1D26;
+  --text-main: #1A1D26;
   --text-secondary: #5A4A3A;
   --text-muted: #9CA3AF;
+
+  /* Bordes */
+  --border: #EAE0CF;
 
   /* Colores Corporativos */
   --brand-gold: #D4AF37; /* Oro */
@@ -56,10 +60,12 @@ html.dark {
 
   /* Texto oscuro */
   --text-primary: #F3F4F6;
+  --text-main: #F3F4F6;
   --text-secondary: #C0C0C0;
   --text-muted: #8F9BA8;
 
   /* Sombras y bordes en dark mode */
+  --border: rgb(255 255 255 / 10%);
   --shadow-card: 0 4px 15px rgb(0 0 0 / 40%);
 }
 
@@ -591,3 +597,163 @@ input, select, textarea { font-family: inherit; }
 }
 
 .swal2-container { z-index: 99999 !important; }
+
+/* ══════════════════════════════════════════════════
+   📱 MOBILE FIX PACK — cero scroll lateral, lectura uniforme
+   (solo layout/responsive, no toca lógica ni flujos)
+   ══════════════════════════════════════════════════ */
+html, body {
+  overflow-x: clip;
+  max-width: 100vw;
+  width: 100%;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  overflow-wrap: anywhere;
+}
+
+img, video, canvas, svg, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+table { max-width: 100%; }
+
+// Contenedores de página: nunca empujar el viewport
+.page-container, .page-header, .neon-card, .neon-card-violet, .card,
+.table-card, .table-wrapper, .modal, .modal-content, .modal-shell, .modal-detail {
+  max-width: 100%;
+  min-width: 0;
+}
+
+// Tablas: scroll interno, jamás scroll de página
+.table-wrapper, .card.table-card, .table-card, .table-responsive {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.data-table, .pl-table {
+  min-width: 560px;
+}
+
+// En móvil la tabla puede respirar con scroll interno sin romper el layout
+@media (width <= 768px) {
+  .page-container { padding-inline: 0; overflow-x: clip; }
+
+  .page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.6rem !important;
+    h1 { font-size: 1.25rem; text-align: left; line-height: 1.25; }
+  }
+
+  .page-subtitle { font-size: 0.82rem; }
+
+  .neon-card, .neon-card-violet, .card {
+    padding: 0.9rem 0.75rem !important;
+    border-radius: 12px;
+  }
+
+  // Toolbars y barras de búsqueda: envolver en vez de desbordar
+  .pos-toolbar, .header-actions, .ev-toolbar, .filter-bar,
+  .search-bar, .catalog-header, .req-head, .req-actions,
+  .drawer-actions, .drawer-estados, .type-pills, .form-actions,
+  .modal-actions, .modal-head, .modal-header, .hito-row,
+  .prop-row, .cart-item-controls, .agregar-linea {
+    flex-wrap: wrap !important;
+    row-gap: 0.5rem;
+    max-width: 100%;
+  }
+
+  .search-bar { flex-direction: column !important; align-items: stretch !important; gap: 0.6rem !important; }
+  .search-bar .form-input, .search-bar select, .search-bar button { width: 100% !important; max-width: 100% !important; }
+  .actions { flex-wrap: wrap; }
+
+  // Grids multicolumna → 1 columna legible
+  .grid-2, .grid-3, .grid-4,
+  .form-grid, .general-grid, .order-layout, .section-row,
+  .nuevo-grid, .field-row, .detail-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pl-grid { grid-template-columns: 1fr 1fr !important; gap: 0.6rem !important; }
+  .kitchen-grid, .delivery-grid, .tables-grid, .week-grid,
+  .hourly-grid, .catalog-panel { grid-template-columns: 1fr 1fr !important; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important; }
+
+  // Formularios y controles a ancho completo
+  .form-input, select.form-input, input.form-input, textarea.form-input,
+  .field-input, .search-input, .ev-search, .ev-filter {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    font-size: 16px !important; // evita zoom iOS y mejora legibilidad
+  }
+
+  .btn, .btn-primary, .btn-secondary, .btn-outline, .btn-danger, .btn-info, .btn-success {
+    min-height: 42px;
+  }
+
+  // Modales: hoja inferior legible, sin desborde
+  .modal-overlay { padding: 0.6rem !important; align-items: flex-end !important; }
+  .modal, .modal-content, .modal-shell, .modal-detail, .modal-lg, .dish-modal, .chooser-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    margin: 0 !important;
+    border-radius: 14px 14px 0 0 !important;
+  }
+  .modal-actions, .form-actions { justify-content: stretch !important; }
+  .modal-actions > *, .form-actions > * { flex: 1 1 140px; }
+
+  // Calendarios y reportes: no romper, permitir scroll interno suave
+  .notion-cal, .cal-grid, .cal-days, .week-grid, .monthly-grid,
+  .hourly-grid, .bar-group, .reports-chart-wrap {
+    max-width: 100%;
+  }
+  .cal-grid { min-width: 0; }
+  .cal-day { min-height: 52px !important; padding: 0.2rem !important; }
+  .monthly-grid { overflow-x: auto !important; padding-bottom: 0.5rem; }
+  .progress-row { flex-wrap: wrap !important; gap: 0.4rem; }
+
+  // Textos largos: elipsis, nunca empuje lateral
+  .ci-name, .chooser-name, .cart-item-name, .cal-chip, .table-status {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  // Dropdowns absolutos dentro del viewport
+  .dropdown-menu, .dropdown { max-width: calc(100vw - 1rem) !important; }
+
+  // SweetAlert legible en móvil
+  .swal2-popup { max-width: calc(100vw - 1.5rem) !important; font-size: 0.9rem !important; }
+}
+
+@media (width <= 480px) {
+  html { font-size: 14px; }
+  body { line-height: 1.55; }
+
+  .pl-grid, .kitchen-grid, .delivery-grid, .week-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .tables-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.6rem !important; }
+  .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }
+
+  .page-header h1 { font-size: 1.15rem !important; }
+  .neon-card, .neon-card-violet, .card { padding: 0.75rem 0.6rem !important; }
+
+  .data-table, .pl-table { min-width: 520px; font-size: 0.8rem; }
+  .data-table th, .data-table td { padding: 0.5rem 0.6rem !important; white-space: nowrap; }
+  .data-table td:first-child, .data-table th:first-child { white-space: normal; min-width: 110px; }
+
+  .btn { width: auto; }
+  .form-actions .btn, .modal-actions .btn { width: 100%; }
+
+  .stat-card { padding: 1rem 0.75rem !important; }
+  .stat-card .stat-value { font-size: 1.3rem !important; }
+}

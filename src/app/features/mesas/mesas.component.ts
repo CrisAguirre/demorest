@@ -141,8 +141,21 @@ import Swal from 'sweetalert2';
       font-weight: 500;
       line-height: 1.2;
     }
+    @media (max-width: 900px) {
+      .tables-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    }
     @media (max-width: 600px) {
-      .tables-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-header { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+      .takeout-top { justify-content: center; }
+      .tables-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+      .table-item { padding: 0.75rem 0.5rem; min-height: 88px; }
+      .table-number { font-size: 1.1rem; }
+      .table-status { font-size: 0.68rem; }
+      .neon-card { padding: 0.9rem 0.6rem; }
+    }
+    @media (max-width: 360px) {
+      .tables-grid { gap: 0.5rem; }
+      .table-item { padding: 0.6rem 0.4rem; min-height: 80px; }
     }
   `]
 })

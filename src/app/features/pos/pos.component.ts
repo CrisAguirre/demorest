@@ -135,7 +135,8 @@ import Swal from 'sweetalert2';
     </div>
   `,
   styles: [`
-    .pos-toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .pos-toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; min-width: 0; }
+    .pos-toolbar .pos-context { min-width: 0; overflow-wrap: anywhere; }
     .btn-mesas {
       background: linear-gradient(135deg, var(--brand-gold), var(--brand-bronze));
       color: #fff; border: none; border-radius: 8px;
@@ -190,8 +191,20 @@ import Swal from 'sweetalert2';
     }
     .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
     @media (max-width: 768px) {
-      .pos-layout { grid-template-columns: 1fr; }
-      .pos-cart { position: relative; top: 0; }
+      .pos-layout { grid-template-columns: 1fr; min-width: 0; }
+      .pos-cart { position: relative; top: 0; max-height: none; }
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); max-height: 50vh; }
+      .pos-toolbar { gap: 0.5rem; }
+      .pos-context { font-size: 0.82rem; width: 100%; }
+      .cart-item-controls { flex-wrap: wrap; row-gap: 0.35rem; }
+      .cart-item-info { min-width: 0; }
+      .cart-item-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    }
+    @media (max-width: 480px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .product-tile-name { font-size: 0.78rem; }
+      .cart-footer > div[style] { flex-wrap: wrap !important; }
+      .total-amount { font-size: 1.25rem; }
     }
   `]
 })

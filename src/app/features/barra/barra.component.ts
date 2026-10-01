@@ -288,9 +288,14 @@ interface ItemBarra {
   `,
   styles: [`
     .data-table th { text-transform: none; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; min-width:0; }
     .full-width { grid-column: 1 / -1; }
-    .actions { display:flex; gap:.4rem; }
+    .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+    @media (max-width: 640px) {
+      .form-grid, .nuevo-grid { grid-template-columns:1fr; }
+      .nuevo-acciones { justify-content:stretch; }
+      .nuevo-acciones > * { flex:1; }
+    }
     .modal-lg { max-width: 760px; }
     .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
     .modal-head .modal-title { margin: 0; }
