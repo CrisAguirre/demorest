@@ -8,6 +8,7 @@ Backend: API REST + Socket.IO en Render (`demorestbknd`). Frontend desplegado en
 - `src/app/core/` — servicios (`ApiService`, `AuthService`, preload/caché, websocket), guards, modelos.
 - `src/app/features/` — módulos lazy: `mesas`, `pos`, `dashboard`, `cocina`, `barra`, `servicio`, `ingredients`, `inventory`, `dishes`, `events`, `cash`, `reports`, `finance`, `domicilios`, `documentacion`, `sg-sst`, resto.
 - `src/app/shared/` — sidebar y estilos globales en `src/styles.scss`.
+- Tokens globales: `--border` (`#EAE0CF` claro / blanco 10% dark) y `--text-main` (alias de `--text-primary`); usar siempre `var(--border)` en bordes.
 
 ## Flujos clave (no romper)
 - **Mesas** (`/mesas`, inicial): mapa por salones; ocupada = `status` del backend. Diálogos: Venta/Reservar, Ver pedido/Anular/Liberar.
@@ -15,7 +16,10 @@ Backend: API REST + Socket.IO en Render (`demorestbknd`). Frontend desplegado en
 - **Cobro**: aviso con consumidos + total → *Imprimir factura* / *Aceptar y liberar*. `pagoInmediato` en mesa libre.
 - **Inventario por áreas**: Insumos estilo reporte (PEDIR si stock < mínimo); Cocina (55 ítems)/Barra (24 ítems)/Servicio con requisición al API (`origen=requisicion`, fallback `localStorage`) y bandeja en Compras.
 - **Eventos**: calendario Mes/Semana/Día, drawer con plan de pagos por hitos manuales, BEO imprimible, formulario por secciones.
-- **Menú**: sin Alertas (ruta `/alerts` sigue viva); `documentacion` y `sg-sst` muestran "En proceso de desarrollo".
+- **Menú**: sin Alertas (ruta `/alerts` sigue viva); `documentacion` y `sg-sst` implementados con datos ficticios locales (CRUD + `localStorage`, descarga `.txt`), sin backend.
+- **Documentación** (`/documentacion`, admin): 4 pestañas — Manuales (6: cocina/BPM, servicio, barra, caja, domicilios, eventos), Formatos (6: requisición, temperaturas, limpieza, arqueo, PQRS, domicilios), Contratos modelo (6: fijo, indefinido, OPS, SENA, proveedor, arriendo), Políticas y legal (6: RIT, calidad, saneamiento, manipulación, carpeta legal, alérgenos). Stats + buscador + filtro estado + modal ver/crear/editar + descarga plantilla.
+- **SG-SST** (`/sg-sst`, admin): ciclo PHVA + KPIs (87% estándares); 5 pestañas — Matriz 8 peligros (cocina/barra/servicio/domicilios), 6 capacitaciones, 3 casos ATEL, 6 EPP/dotación, 6 documentos plan. CRUD local (`soupe-sgsst-v1`), badges por riesgo/estado.
+- **Responsive global**: `styles.scss` trae Mobile Fix Pack (cero scroll lateral, tablas con scroll interno, grids a 1 col, modales hoja inferior, inputs 16px).
 
 ## Comandos
 ```bash
@@ -36,4 +40,6 @@ ng test --watch=false --browsers=ChromeHeadless --include="**/pos/pos.component.
 - Todo local por defecto: **nunca** `push`/PR/merge sin orden explícita. Solo `origin` (fork) + PR al propietario.
 - Tras editar: `ng build` + specs del módulo afectado en verde.
 - Producción = Render (backend) + Vercel (frontend), auto-deploy por merge. El usuario prueba en `localhost:4200` contra Render.
+- Finanzas: cards `.pl-card` con icono 44px, `section-title` con borde inferior y `expense-bar-bg: var(--bg-input)`; `.card` con padding 1.25rem.
+- Documentación/SG-SST: claves LS `soupe-docs-v1` / `soupe-sgsst-v1`; módulos importan `FormsModule`.
 - Pendientes conocidos: deploy backend con últimos fixes; backfill de ventas viejas; commit/push a demanda.
