@@ -355,6 +355,23 @@ export class CocinaComponent {
     { _id: 'c36', codigo: 'CA-013', nombre: 'Arroz blanco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 5000, minStock: 1000 },
     { _id: 'c37', codigo: 'CA-014', nombre: 'Harina de maíz precocida', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 500 },
     { _id: 'c38', codigo: 'CA-015', nombre: 'Leche de coco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 1500, minStock: 400 },
+    { _id: 'c39', codigo: 'CF-020', nombre: 'Tomate', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 500 },
+    { _id: 'c40', codigo: 'CF-021', nombre: 'Aguacate', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 1000, minStock: 300 },
+    { _id: 'c41', codigo: 'CF-022', nombre: 'Perejil', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 150, minStock: 60 },
+    { _id: 'c42', codigo: 'CF-023', nombre: 'Papa sabanera', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2500, minStock: 700 },
+    { _id: 'c43', codigo: 'CA-016', nombre: 'Aceite vegetal', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 3000, minStock: 800 },
+    { _id: 'c44', codigo: 'CA-017', nombre: 'Pan rallado', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 1000, minStock: 300 },
+    { _id: 'c45', codigo: 'CA-018', nombre: 'Comino molido', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 150, minStock: 50 },
+    { _id: 'c46', codigo: 'CA-019', nombre: 'Maní tostado', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 800, minStock: 200 },
+    { _id: 'c47', codigo: 'CA-020', nombre: 'Cerveza negra', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 1000, minStock: 300 },
+    { _id: 'c48', codigo: 'CA-021', nombre: 'Salsa Worcestershire', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 300, minStock: 100 },
+    { _id: 'c49', codigo: 'CA-022', nombre: 'Salsa de soya', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 500, minStock: 150 },
+    { _id: 'c50', codigo: 'CA-023', nombre: 'Vinagre blanco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 500, minStock: 150 },
+    { _id: 'c51', codigo: 'CL-004', nombre: 'Leche entera', categoria: 'Lácteos', ubicacion: 'Refrigerador 3', unidad: 'ml', stock: 2000, minStock: 500 },
+    { _id: 'c52', codigo: 'CA-024', nombre: 'Caldo de pollo', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 2000, minStock: 500 },
+    { _id: 'c53', codigo: 'CA-025', nombre: 'Fumet de pescado', categoria: 'Abarrotes', ubicacion: 'Refrigerador 1', unidad: 'ml', stock: 1500, minStock: 400 },
+    { _id: 'c54', codigo: 'CA-026', nombre: 'Mayonesa', categoria: 'Abarrotes', ubicacion: 'Refrigerador 3', unidad: 'g', stock: 500, minStock: 150 },
+    { _id: 'c55', codigo: 'BI-003', nombre: 'Hielo en cubos', categoria: 'Abarrotes', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 5000, minStock: 1000 },
   ];
 
   showForm = false; editing = false;
@@ -481,7 +498,7 @@ export class CocinaComponent {
   iniciarOrden(): void {
     if (this.items.length === 0) return;
     Swal.fire({
-      title: '¿Iniciar requisici�n?',
+      title: '¿Iniciar requisición?',
       text: 'Se listará el inventario actual de Cocina para seleccionar artículos.',
       icon: 'question',
       showCancelButton: true,
@@ -561,7 +578,7 @@ export class CocinaComponent {
     const detalle = sel.map(l => `• ${l.nombre}: ${l.qty} ${l.unidad}`).join('<br>');
     Swal.fire({
       icon: 'success',
-      title: `Requisici�n lista (${sel.length} ítems)`,
+      title: `Requisición lista (${sel.length} ítems)`,
       html: `<div style="text-align:left;max-height:40vh;overflow:auto">${detalle}</div>`,
       confirmButtonColor: '#D4AF37',
       confirmButtonText: 'Entendido'

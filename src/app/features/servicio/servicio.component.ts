@@ -452,7 +452,7 @@ export class ServicioComponent {
   iniciarOrden(): void {
     if (this.items.length === 0) return;
     Swal.fire({
-      title: '¿Iniciar requisici�n?',
+      title: '¿Iniciar requisición?',
       text: 'Se listará el inventario actual de Servicio para seleccionar artículos.',
       icon: 'question',
       showCancelButton: true,
@@ -532,7 +532,7 @@ export class ServicioComponent {
     const detalle = sel.map(l => `• ${l.nombre}: ${l.qty} ${l.unidad}`).join('<br>');
     Swal.fire({
       icon: 'success',
-      title: `Requisici�n lista (${sel.length} ítems)`,
+      title: `Requisición lista (${sel.length} ítems)`,
       html: `<div style="text-align:left;max-height:40vh;overflow:auto">${detalle}</div>`,
       confirmButtonColor: '#D4AF37',
       confirmButtonText: 'Entendido'
