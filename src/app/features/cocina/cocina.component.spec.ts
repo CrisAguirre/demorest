@@ -18,9 +18,9 @@ describe('CocinaComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create with 20 example items', () => {
+  it('should create with 55 example items', () => {
     expect(component).toBeTruthy();
-    expect(component.items.length).toBe(20);
+    expect(component.items.length).toBe(55);
   });
 
   it('should flag items below minimum', () => {
@@ -35,11 +35,11 @@ describe('CocinaComponent', () => {
     component.openForm();
     component.form = { nombre: 'Ajo', categoria: 'Verduras y frutas', unidad: 'g', stock: 1, minStock: 2 };
     component.save();
-    expect(component.items.length).toBe(21);
-    component.edit(20);
+    expect(component.items.length).toBe(56);
+    component.edit(55);
     component.form.stock = 5;
     component.save();
-    expect(component.items[20].stock).toBe(5);
+    expect(component.items[55].stock).toBe(5);
   });
 
   it('should build order draft on confirm', async () => {
@@ -48,7 +48,7 @@ describe('CocinaComponent', () => {
     component.iniciarOrden();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(component.showOrden).toBeTrue();
-    expect(component.lineas.length).toBe(20);
+    expect(component.lineas.length).toBe(55);
   });
 
   it('should add manual line and keep it in local inventory on Si', async () => {
@@ -91,7 +91,7 @@ describe('CocinaComponent', () => {
   it('should update stock from the existencias window', () => {
     component.openExistencias();
     expect(component.showExistencias).toBeTrue();
-    expect(component.existencias.length).toBe(20);
+    expect(component.existencias.length).toBe(55);
     component.existencias[0].stock = 999;
     component.existencias[0].minStock = 111;
     component.guardarExistencias();
@@ -108,7 +108,7 @@ describe('CocinaComponent', () => {
     expect(creado.nombre).toBe('Orégano');
     expect(creado.codigo).toMatch(/^CA-\d{3}$/);
     expect(component.existencias.some(e => e._id === creado._id)).toBeTrue();
-    expect(component.existencias.length).toBe(21);
+    expect(component.existencias.length).toBe(56);
   });
 
   it('should not create a new item without name', () => {

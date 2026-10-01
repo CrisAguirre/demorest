@@ -23,6 +23,12 @@ ng build --configuration development
 ng test --watch=false --browsers=ChromeHeadless --include="**/pos/pos.component.spec.ts"
 ```
 
+## Carta nueva (15 platos, fuente `recetario-carta-15-preparaciones.md` en Desktop)
+- Entradas (1-6): Ceviche 28.000 · Empanadas maíz 14.000 · Tostones camarón 24.000 · Crema choclo 16.000 · Croquetas gallina 18.000 · Causa pechuga 20.000.
+- Fuertes (7-15): Ajiaco 32.000 · Encocado 36.000 · Posta negra 38.000 · Fríjolada 30.000 · Gallina ají maní 34.000 · Piccata 36.000 · Arroz meloso 38.000 · Filete costra 40.000 · Lomo saltado 36.000.
+- Códigos backend previstos: platos `C1..C15`; insumos nuevos `CF-020..023, CA-016..026, CL-004, BI-003` (ya en lista local de Cocina, 55 ítems).
+- Al autorizar backend: seed `seedCarta15.js` (upsert + elimina carta vieja) + `runBootSeeds` v3. Precios/costos/fotos se cargan manual tras deploy.
+
 ## Reglas de trabajo
 - Español en UI y commits. Moneda `es-CO` formato `1.0-0`.
 - Todo local por defecto: **nunca** `push`/PR/merge sin orden explícita. Solo `origin` (fork) + PR al propietario.

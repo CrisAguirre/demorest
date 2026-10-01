@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { enviarRequisicion } from '../purchases/requisiciones.store';
 
 interface ItemCocina {
   _id: string;
@@ -22,13 +23,14 @@ interface ItemCocina {
           <p class="page-subtitle">Ítems del área de cocina</p>
         </div>
         <div style="display:flex;gap:0.5rem">
-          <button class="btn-outline" (click)="iniciarOrden()">🧾 Orden de compra</button>
-          <button class="btn-primary" (click)="openExistencias()">🔄 Actualizar inventario</button>
+          <button class="btn-outline" (click)="openExistencias()">🔄 Actualizar inventario</button>
+          <button class="btn-outline" (click)="iniciarOrden()">🧾 Requisición</button>
         </div>
       </div>
       <div *ngIf="ordenConfirmada.length > 0" class="orden-banner">
-        🧾 Orden lista: <strong>{{ ordenConfirmada.length }} ítems</strong>
+        🧾 Requisición lista: <strong>{{ ordenConfirmada.length }} ítems</strong>
         <button class="btn-outline btn-sm" (click)="verOrden()">Ver</button>
+        <button class="btn-primary btn-sm" (click)="enviarACompras()">📤 Enviar a Compras</button>
         <button class="btn-outline btn-sm" (click)="descartarOrden()">Descartar</button>
       </div>
 
@@ -207,7 +209,7 @@ interface ItemCocina {
       <div class="modal-overlay" *ngIf="showOrden" (click)="showOrden = false">
         <div class="modal modal-lg" (click)="$event.stopPropagation()">
           <div class="modal-head">
-            <h2 class="modal-title" style="margin:0">🧾 Orden de compra — Cocina <small style="color:var(--text-muted)">(borrador)</small></h2>
+            <h2 class="modal-title" style="margin:0">🧾 Requisición — Cocina <small style="color:var(--text-muted)">(borrador)</small></h2>
             <button class="close-btn" (click)="showOrden = false" title="Cerrar">✕</button>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 0.75rem">
@@ -335,6 +337,41 @@ export class CocinaComponent {
     { _id: 'c18', codigo: 'CA-008', nombre: 'Azúcar blanca', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 250, minStock: 500 },
     { _id: 'c19', codigo: 'CA-009', nombre: 'Harina de trigo', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 1800, minStock: 600 },
     { _id: 'c20', codigo: 'CA-003', nombre: 'Cancha serrana', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 120, minStock: 200 },
+    { _id: 'c21', codigo: 'CP-002', nombre: 'Pechuga de pollo', categoria: 'Proteínas', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 4000, minStock: 1000 },
+    { _id: 'c22', codigo: 'CP-003', nombre: 'Gallina criolla', categoria: 'Proteínas', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 4000, minStock: 1000 },
+    { _id: 'c23', codigo: 'CP-004', nombre: 'Carne de res (posta)', categoria: 'Proteínas', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 4000, minStock: 1000 },
+    { _id: 'c24', codigo: 'CP-005', nombre: 'Tocino de cerdo (chicharrón)', categoria: 'Proteínas', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 3000, minStock: 800 },
+    { _id: 'c25', codigo: 'CP-006', nombre: 'Camarón', categoria: 'Proteínas', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 2000, minStock: 500 },
+    { _id: 'c26', codigo: 'CP-007', nombre: 'Huevo', categoria: 'Proteínas', ubicacion: 'Refrigerador 3', unidad: 'unidades', stock: 60, minStock: 24 },
+    { _id: 'c27', codigo: 'CF-012', nombre: 'Papa criolla', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 3000, minStock: 800 },
+    { _id: 'c28', codigo: 'CF-013', nombre: 'Papa pastusa', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 3000, minStock: 800 },
+    { _id: 'c29', codigo: 'CF-014', nombre: 'Guascas', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 200, minStock: 60 },
+    { _id: 'c30', codigo: 'CF-015', nombre: 'Alcaparras', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 300, minStock: 100 },
+    { _id: 'c31', codigo: 'CF-016', nombre: 'Plátano maduro', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 600 },
+    { _id: 'c32', codigo: 'CF-017', nombre: 'Plátano verde', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 600 },
+    { _id: 'c33', codigo: 'CF-018', nombre: 'Yuca', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2500, minStock: 600 },
+    { _id: 'c34', codigo: 'CF-019', nombre: 'Pimentón rojo', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 800, minStock: 300 },
+    { _id: 'c35', codigo: 'CA-012', nombre: 'Fríjol cargamanto', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 3000, minStock: 800 },
+    { _id: 'c36', codigo: 'CA-013', nombre: 'Arroz blanco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 5000, minStock: 1000 },
+    { _id: 'c37', codigo: 'CA-014', nombre: 'Harina de maíz precocida', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 500 },
+    { _id: 'c38', codigo: 'CA-015', nombre: 'Leche de coco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 1500, minStock: 400 },
+    { _id: 'c39', codigo: 'CF-020', nombre: 'Tomate', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2000, minStock: 500 },
+    { _id: 'c40', codigo: 'CF-021', nombre: 'Aguacate', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 1000, minStock: 300 },
+    { _id: 'c41', codigo: 'CF-022', nombre: 'Perejil', categoria: 'Verduras y frutas', ubicacion: 'Refrigerador 2', unidad: 'g', stock: 150, minStock: 60 },
+    { _id: 'c42', codigo: 'CF-023', nombre: 'Papa sabanera', categoria: 'Verduras y frutas', ubicacion: 'Bodega', unidad: 'g', stock: 2500, minStock: 700 },
+    { _id: 'c43', codigo: 'CA-016', nombre: 'Aceite vegetal', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 3000, minStock: 800 },
+    { _id: 'c44', codigo: 'CA-017', nombre: 'Pan rallado', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 1000, minStock: 300 },
+    { _id: 'c45', codigo: 'CA-018', nombre: 'Comino molido', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 150, minStock: 50 },
+    { _id: 'c46', codigo: 'CA-019', nombre: 'Maní tostado', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'g', stock: 800, minStock: 200 },
+    { _id: 'c47', codigo: 'CA-020', nombre: 'Cerveza negra', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 1000, minStock: 300 },
+    { _id: 'c48', codigo: 'CA-021', nombre: 'Salsa Worcestershire', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 300, minStock: 100 },
+    { _id: 'c49', codigo: 'CA-022', nombre: 'Salsa de soya', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 500, minStock: 150 },
+    { _id: 'c50', codigo: 'CA-023', nombre: 'Vinagre blanco', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 500, minStock: 150 },
+    { _id: 'c51', codigo: 'CL-004', nombre: 'Leche entera', categoria: 'Lácteos', ubicacion: 'Refrigerador 3', unidad: 'ml', stock: 2000, minStock: 500 },
+    { _id: 'c52', codigo: 'CA-024', nombre: 'Caldo de pollo', categoria: 'Abarrotes', ubicacion: 'Bodega', unidad: 'ml', stock: 2000, minStock: 500 },
+    { _id: 'c53', codigo: 'CA-025', nombre: 'Fumet de pescado', categoria: 'Abarrotes', ubicacion: 'Refrigerador 1', unidad: 'ml', stock: 1500, minStock: 400 },
+    { _id: 'c54', codigo: 'CA-026', nombre: 'Mayonesa', categoria: 'Abarrotes', ubicacion: 'Refrigerador 3', unidad: 'g', stock: 500, minStock: 150 },
+    { _id: 'c55', codigo: 'BI-003', nombre: 'Hielo en cubos', categoria: 'Abarrotes', ubicacion: 'Refrigerador 1', unidad: 'g', stock: 5000, minStock: 1000 },
   ];
 
   showForm = false; editing = false;
@@ -461,7 +498,7 @@ export class CocinaComponent {
   iniciarOrden(): void {
     if (this.items.length === 0) return;
     Swal.fire({
-      title: '¿Iniciar orden de compra?',
+      title: '¿Iniciar requisición?',
       text: 'Se listará el inventario actual de Cocina para seleccionar artículos.',
       icon: 'question',
       showCancelButton: true,
@@ -502,7 +539,7 @@ export class CocinaComponent {
     const self = this;
     Swal.fire({
       title: '¿Desea conservar el producto en el listado del inventario?',
-      text: `"${nombre}" se agregará a la orden. Si elige Sí, también quedará en el inventario de Cocina.`,
+      text: `"${nombre}" se agregará a la requisición. Si elige Sí, también quedará en el inventario de Cocina.`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#D4AF37',
@@ -541,7 +578,7 @@ export class CocinaComponent {
     const detalle = sel.map(l => `• ${l.nombre}: ${l.qty} ${l.unidad}`).join('<br>');
     Swal.fire({
       icon: 'success',
-      title: `Orden lista (${sel.length} ítems)`,
+      title: `Requisición lista (${sel.length} ítems)`,
       html: `<div style="text-align:left;max-height:40vh;overflow:auto">${detalle}</div>`,
       confirmButtonColor: '#D4AF37',
       confirmButtonText: 'Entendido'
@@ -555,5 +592,24 @@ export class CocinaComponent {
 
   descartarOrden(): void {
     this.ordenConfirmada = [];
+  }
+
+  enviarACompras(): void {
+    if (this.ordenConfirmada.length === 0) return;
+    const items = this.ordenConfirmada.map((l: any) => ({
+      codigo: (this.items.find(i => i._id === l._id)?.codigo) || '',
+      nombre: l.nombre,
+      cantidad: Number(l.qty) || 0,
+      unidad: l.unidad || 'unidades'
+    }));
+    enviarRequisicion('cocina', items);
+    this.ordenConfirmada = [];
+    Swal.fire({
+      icon: 'success',
+      title: 'Requisición enviada a Compras',
+      text: 'El administrador la verá en Compras → Requisiciones.',
+      confirmButtonColor: '#D4AF37',
+      confirmButtonText: 'Entendido'
+    });
   }
 }

@@ -38,17 +38,16 @@ import Swal from 'sweetalert2';
              (click)="onTableClick(t)">
           <div class="table-number" *ngIf="t.number !== 0">{{ t.number }}</div>
           <div class="table-number" *ngIf="t.number === 0">🛍️</div>
-          <div class="table-status">{{ t.number === 0 ? 'Para llevar' : t.status }}</div>
-          <div class="table-order" *ngIf="t.status === 'ocupada' && t.currentSale">
-            #{{ t.currentSale?._id?.toString()?.slice(-6)?.toUpperCase() }}
-          </div>
+          <div class="table-status">{{ t.status === 'reservada' ? 'mesa reservada' : (t.number === 0 ? 'Para llevar' : t.status) }}</div>
           <div class="table-order" *ngIf="t.status === 'ocupada' && t.currentSale?.total">
-            \${{ t.currentSale.total | number:'1.0-0' }}
+            &#36;{{ t.currentSale.total | number:'1.0-0' }}
           </div>
           <div class="table-reservation-info" *ngIf="t.status === 'reservada' && t.currentReservation">
             {{ t.currentReservation?.customerName }}
             <br>
             {{ t.currentReservation?.date | date:'shortTime' }}
+            <br *ngIf="conteoReservas[t._id] > 1">
+            <span *ngIf="conteoReservas[t._id] > 1">+{{ conteoReservas[t._id] - 1 }} reserva(s) más</span>
           </div>
         </div>
       </div>
@@ -150,6 +149,7 @@ import Swal from 'sweetalert2';
 export class MesasComponent implements OnInit {
   tables: any[] = [];
   filtro: '' | 'libre' | 'ocupada' | 'reservada' = '';
+  conteoReservas: Record<string, number> = {};
 
   constructor(
     private api: ApiService,
@@ -164,6 +164,23 @@ export class MesasComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTables();
+    this.cargarConteos();
+  }
+
+  cargarConteos(): void {
+    this.api.getReservations().subscribe({
+      next: (res: any) => {
+        const lista = Array.isArray(res) ? res : (res.reservations || []);
+        const mapa: Record<string, number> = {};
+        lista.forEach((r: any) => {
+          if (r.status === 'cancelada' || r.status === 'completada') return;
+          const tid = r.table?._id || r.table;
+          if (tid) mapa[tid] = (mapa[tid] || 0) + 1;
+        });
+        this.conteoReservas = mapa;
+      },
+      error: () => { /* sin conteo, la tarjeta usa la reserva actual */ }
+    });
   }
 
   loadTables(): void {
@@ -230,6 +247,11 @@ export class MesasComponent implements OnInit {
         }
       });
     } else if (table.status === 'ocupada') {
+      const saleRef = (table as any).currentSale;
+      if (!saleRef) {
+        this.verMesaHuerfana(table);
+        return;
+      }
       const total = table.currentSale?.total;
       const puedoAnular = this.puedeAnular();
       Swal.fire({
@@ -260,60 +282,193 @@ export class MesasComponent implements OnInit {
         }
       });
     } else if (table.status === 'reservada') {
-      const resData = table.currentReservation;
-      Swal.fire({
-        title: `Mesa ${table.number} - Reservada`,
-        html: `
-          <div style="text-align: left; padding: 10px;">
-            <p><strong>Cliente:</strong> ${resData?.customerName || 'N/A'}</p>
-            <p><strong>Personas:</strong> ${resData?.numberOfPeople || 'N/A'}</p>
-            <p><strong>Fecha/Hora:</strong> ${resData?.date ? new Date(resData.date).toLocaleString('es-CO') : 'N/A'}</p>
-            ${resData?.notes ? `<p><strong>Notas:</strong> ${resData.notes}</p>` : ''}
-          </div>
-          <p>¿Qué desea hacer?</p>
-        `,
-        icon: 'info',
-        showCancelButton: true,
-        showDenyButton: true,
-        confirmButtonColor: '#2E8B57',
-        denyButtonColor: '#D32F2F',
-        confirmButtonText: '🛒 Iniciar Pedido',
-        denyButtonText: '❌ Cancelar Reserva',
-        cancelButtonText: 'Cerrar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if (resData?._id) {
-            this.api.completeReservation(resData._id).subscribe({
-              next: () => {
-                this.router.navigate(['/pos'], { queryParams: { table: table.number } });
-              }
-            });
-          } else {
-             this.router.navigate(['/pos'], { queryParams: { table: table.number } });
-          }
-        } else if (result.isDenied) {
-          if (resData?._id) {
-            Swal.fire({
-              title: '¿Confirmar cancelación?',
-              text: 'La reserva será cancelada y la mesa quedará libre.',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#D32F2F',
-              confirmButtonText: 'Sí, cancelar reserva'
-            }).then((cancelResult) => {
-              if (cancelResult.isConfirmed) {
-                this.api.cancelReservation(resData._id).subscribe({
-                  next: () => {
-                    this.loadTables();
-                    Swal.fire({ icon: 'success', title: 'Reserva cancelada', timer: 1500, showConfirmButton: false });
-                  }
-                });
-              }
-            });
-          }
-        }
-      });
+      this.verReservasMesa(table);
     }
+  }
+
+  private fechaReserva(v: any): string {
+    if (!v) return 'N/A';
+    return new Date(v).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  verReservasMesa(table: any): void {
+    this.api.getReservations({ table: table._id }).subscribe({
+      next: (res: any) => {
+        const todas = Array.isArray(res) ? res : (res.reservations || []);
+        const lista = todas
+          .filter((r: any) => r.status !== 'cancelada' && r.status !== 'completada')
+          .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        if (lista.length === 0 && table.currentReservation) lista.push(table.currentReservation);
+        if (lista.length === 0) {
+          Swal.fire('Mesa reservada', 'No hay reservas activas para esta mesa.', 'info');
+          return;
+        }
+        const bloques = lista.map((r: any, i: number) => `
+          <div style="border:1px solid #e0e0e0;border-radius:10px;padding:0.6rem 0.8rem;margin-bottom:0.6rem;text-align:left;">
+            <div style="font-weight:800;margin-bottom:0.25rem;">📌 Reserva ${lista.length > 1 ? (i + 1) + ' de ' + lista.length : ''}</div>
+            <p style="margin:0.15rem 0;"><strong>Cliente:</strong> ${r.customerName || 'N/A'}</p>
+            <p style="margin:0.15rem 0;"><strong>Personas:</strong> ${r.numberOfPeople || 'N/A'}</p>
+            <p style="margin:0.15rem 0;"><strong>Fecha y hora:</strong> ${this.fechaReserva(r.date)}</p>
+            ${r.notes ? `<p style="margin:0.15rem 0;"><strong>Notas:</strong> ${r.notes}</p>` : ''}
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+              <button data-iniciar="${i}" style="flex:1;background:#2E8B57;color:#fff;border:none;border-radius:8px;padding:0.45rem;cursor:pointer;font-weight:700;">🛒 Iniciar pedido</button>
+              <button data-cancelar="${i}" style="flex:1;background:#D32F2F;color:#fff;border:none;border-radius:8px;padding:0.45rem;cursor:pointer;font-weight:700;">❌ Cancelar</button>
+            </div>
+          </div>`).join('');
+        Swal.fire({
+          title: `Mesa ${table.number} - Mesa reservada`,
+          html: `<div style="max-height:55vh;overflow-y:auto;">${bloques}</div>`,
+          icon: 'info',
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Cerrar',
+          didOpen: () => {
+            lista.forEach((_r: any, i: number) => {
+              document.querySelector(`[data-iniciar="${i}"]`)?.addEventListener('click', () => {
+                Swal.close();
+                this.iniciarPedidoReserva(table, lista[i]);
+              });
+              document.querySelector(`[data-cancelar="${i}"]`)?.addEventListener('click', () => {
+                Swal.close();
+                this.pedirCancelarReserva(table, lista[i]);
+              });
+            });
+            // Sin botón agregar: la ventana queda solo con Iniciar pedido y Cancelar.
+          }
+        });
+      },
+      error: () => Swal.fire('❌ Error', 'No se pudieron cargar las reservas', 'error')
+    });
+  }
+
+  iniciarPedidoReserva(table: any, resData: any): void {
+    // No se completa todavía: se completa tras la primera comandada en POS,
+    // para que createSale enlace la venta a la mesa (una mesa ya ocupada no se re-enlaza).
+    const qp: any = { table: table.number };
+    if (resData?._id) qp['reserva'] = resData._id;
+    this.router.navigate(['/pos'], { queryParams: qp });
+  }
+
+  pedirCancelarReserva(table: any, resData: any): void {
+    if (!resData?._id) return;
+    Swal.fire({
+      title: '¿Confirmar cancelación?',
+      html: `<p><strong>${resData.customerName || ''}</strong> · ${this.fechaReserva(resData.date)}</p>
+             <p>La reserva será cancelada y la mesa quedará libre.</p>`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#D32F2F',
+      confirmButtonText: 'Sí, cancelar reserva'
+    }).then((cancelResult) => {
+      if (cancelResult.isConfirmed) {
+        this.api.cancelReservation(resData._id).subscribe({
+          next: () => {
+            this.loadTables();
+            this.cargarConteos();
+            Swal.fire({ icon: 'success', title: 'Reserva cancelada', timer: 1500, showConfirmButton: false });
+          }
+        });
+      }
+    });
+  }
+
+  // Mesa ocupada sin venta enlazada (ventas huérfanas): permite cobrar/anular
+  // cada venta encontrada en cocina para esa mesa y luego liberarla.
+  verMesaHuerfana(table: any): void {
+    Swal.fire({ title: 'Buscando pedidos de la mesa...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    this.api.getPendingKitchenOrders().subscribe({
+      next: (res: any) => {
+        const ordenes = Array.isArray(res) ? res : (res.orders || res.kitchenOrders || []);
+        const mias = ordenes.filter((o: any) => Number(o.tableNumber) === Number(table.number));
+        if (mias.length === 0) {
+          Swal.fire({
+            title: `Mesa ${table.number} - Ocupada sin pedidos`,
+            text: 'No hay comandas pendientes en cocina para esta mesa.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#D4AF37',
+            confirmButtonText: '✅ Liberar mesa',
+            cancelButtonText: 'Cerrar'
+          }).then((r) => { if (r.isConfirmed) this.confirmFreeTable(table); });
+          return;
+        }
+        const detalle = async () => {
+          const filas: string[] = [];
+          for (let i = 0; i < mias.length; i++) {
+            const o = mias[i];
+            const sid = o.sale?._id || o.sale;
+            let info = '—';
+            try {
+              const v: any = await this.api.getSale(sid).toPromise();
+              const n = (v.items?.length || 0) + (v.dishItems?.length || 0);
+              info = `${n} ítem(s) · $${(v.total || 0).toLocaleString('es-CO')} · ${v.status}`;
+              (o as any).__saleId = v._id;
+              (o as any).__total = v.total;
+            } catch { (o as any).__saleId = sid; }
+            filas.push(`
+              <div style="border:1px solid #e0e0e0;border-radius:10px;padding:0.6rem 0.8rem;margin-bottom:0.6rem;text-align:left;">
+                <div style="font-weight:800;">🧾 Pedido ${i + 1} — ${o.status || ''}</div>
+                <p style="margin:0.2rem 0;">${info}</p>
+                <div style="display:flex;gap:0.5rem;margin-top:0.4rem;">
+                  <button data-cobrar="${i}" style="flex:1;background:#2E8B57;color:#fff;border:none;border-radius:8px;padding:0.45rem;cursor:pointer;font-weight:700;">💵 Cobrar</button>
+                  <button data-anular="${i}" style="flex:1;background:#D32F2F;color:#fff;border:none;border-radius:8px;padding:0.45rem;cursor:pointer;font-weight:700;">❌ Anular</button>
+                </div>
+              </div>`);
+          }
+          Swal.fire({
+            title: `Mesa ${table.number} - Pedidos sin enlazar (${mias.length})`,
+            html: `
+              <div style="max-height:50vh;overflow-y:auto;">${filas.join('')}</div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.6rem;align-items:center;">
+                <select id="huerf-metodo" class="swal2-select" style="flex:1;margin:0;">
+                  <option value="efectivo">💵 Efectivo</option>
+                  <option value="transferencia">📱 Transferencia</option>
+                  <option value="mixto">🔄 Mixto</option>
+                </select>
+                <button id="huerf-liberar" style="flex:1;background:#D4AF37;color:#fff;border:none;border-radius:8px;padding:0.55rem;cursor:pointer;font-weight:700;">✅ Liberar mesa</button>
+              </div>`,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            didOpen: () => {
+              const metodo = () => (document.getElementById('huerf-metodo') as HTMLSelectElement)?.value || 'efectivo';
+              mias.forEach((_o: any, i: number) => {
+                document.querySelector(`[data-cobrar="${i}"]`)?.addEventListener('click', () => {
+                  const sid = (mias[i] as any).__saleId;
+                  if (!sid) return;
+                  this.api.paySale(sid, { paymentMethod: metodo() }).subscribe({
+                    next: () => { this.verMesaHuerfana(table); },
+                    error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'Error al cobrar', 'error')
+                  });
+                });
+                document.querySelector(`[data-anular="${i}"]`)?.addEventListener('click', () => {
+                  const sid = (mias[i] as any).__saleId;
+                  if (!sid) return;
+                  Swal.fire({
+                    title: '¿Anular este pedido?', icon: 'warning', input: 'text',
+                    inputLabel: 'Motivo *', inputPlaceholder: 'Ej. pedido duplicado',
+                    showCancelButton: true, confirmButtonColor: '#D32F2F', confirmButtonText: 'Sí, anular',
+                    inputValidator: (v: string) => (!v || !v.trim() ? 'El motivo es obligatorio' : null)
+                  }).then((r2) => {
+                    if (r2.isConfirmed) {
+                      this.api.cancelSale(sid, { reason: r2.value }).subscribe({
+                        next: () => { this.verMesaHuerfana(table); },
+                        error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'Error al anular', 'error')
+                      });
+                    } else {
+                      this.verMesaHuerfana(table);
+                    }
+                  });
+                });
+              });
+              document.getElementById('huerf-liberar')?.addEventListener('click', () => this.confirmFreeTable(table));
+            }
+          });
+        };
+        detalle();
+      },
+      error: () => Swal.fire('❌ Error', 'No se pudo consultar cocina', 'error')
+    });
   }
 
   confirmFreeTable(table: any): void {
@@ -440,6 +595,7 @@ export class MesasComponent implements OnInit {
         this.api.createReservation(result.value).subscribe({
           next: () => {
             this.loadTables();
+            this.cargarConteos();
             Swal.fire({ icon: 'success', title: 'Mesa reservada', timer: 1500, showConfirmButton: false });
           },
           error: (err: any) => {

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { enviarRequisicion } from '../purchases/requisiciones.store';
 
 interface ItemServicio {
   _id: string;
@@ -22,13 +23,14 @@ interface ItemServicio {
           <p class="page-subtitle">Ítems del área de servicio</p>
         </div>
         <div style="display:flex;gap:0.5rem">
-          <button class="btn-outline" (click)="iniciarOrden()">🧾 Orden de compra</button>
-          <button class="btn-primary" (click)="openExistencias()">🔄 Actualizar inventario</button>
+          <button class="btn-outline" (click)="openExistencias()">🔄 Actualizar inventario</button>
+          <button class="btn-outline" (click)="iniciarOrden()">🧾 Requisición</button>
         </div>
       </div>
       <div *ngIf="ordenConfirmada.length > 0" class="orden-banner">
-        🧾 Orden lista: <strong>{{ ordenConfirmada.length }} ítems</strong>
+        🧾 Requisición lista: <strong>{{ ordenConfirmada.length }} ítems</strong>
         <button class="btn-outline btn-sm" (click)="verOrden()">Ver</button>
+        <button class="btn-primary btn-sm" (click)="enviarACompras()">📤 Enviar a Compras</button>
         <button class="btn-outline btn-sm" (click)="descartarOrden()">Descartar</button>
       </div>
 
@@ -206,7 +208,7 @@ interface ItemServicio {
       <div class="modal-overlay" *ngIf="showOrden" (click)="showOrden = false">
         <div class="modal modal-lg" (click)="$event.stopPropagation()">
           <div class="modal-head">
-            <h2 class="modal-title" style="margin:0">🧾 Orden de compra — Servicio <small style="color:var(--text-muted)">(borrador)</small></h2>
+            <h2 class="modal-title" style="margin:0">🧾 Requisición — Servicio <small style="color:var(--text-muted)">(borrador)</small></h2>
             <button class="close-btn" (click)="showOrden = false" title="Cerrar">✕</button>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 0.75rem">
@@ -450,7 +452,7 @@ export class ServicioComponent {
   iniciarOrden(): void {
     if (this.items.length === 0) return;
     Swal.fire({
-      title: '¿Iniciar orden de compra?',
+      title: '¿Iniciar requisición?',
       text: 'Se listará el inventario actual de Servicio para seleccionar artículos.',
       icon: 'question',
       showCancelButton: true,
@@ -491,7 +493,7 @@ export class ServicioComponent {
     const self = this;
     Swal.fire({
       title: '¿Desea conservar el producto en el listado del inventario?',
-      text: `"${nombre}" se agregará a la orden. Si elige Sí, también quedará en el inventario de Servicio.`,
+      text: `"${nombre}" se agregará a la requisición. Si elige Sí, también quedará en el inventario de Servicio.`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#D4AF37',
@@ -530,7 +532,7 @@ export class ServicioComponent {
     const detalle = sel.map(l => `• ${l.nombre}: ${l.qty} ${l.unidad}`).join('<br>');
     Swal.fire({
       icon: 'success',
-      title: `Orden lista (${sel.length} ítems)`,
+      title: `Requisición lista (${sel.length} ítems)`,
       html: `<div style="text-align:left;max-height:40vh;overflow:auto">${detalle}</div>`,
       confirmButtonColor: '#D4AF37',
       confirmButtonText: 'Entendido'
@@ -544,5 +546,24 @@ export class ServicioComponent {
 
   descartarOrden(): void {
     this.ordenConfirmada = [];
+  }
+
+  enviarACompras(): void {
+    if (this.ordenConfirmada.length === 0) return;
+    const items = this.ordenConfirmada.map((l: any) => ({
+      codigo: (this.items.find(i => i._id === l._id)?.codigo) || '',
+      nombre: l.nombre,
+      cantidad: Number(l.qty) || 0,
+      unidad: l.unidad || 'unidades'
+    }));
+    enviarRequisicion('servicio', items);
+    this.ordenConfirmada = [];
+    Swal.fire({
+      icon: 'success',
+      title: 'Requisición enviada a Compras',
+      text: 'El administrador la verá en Compras → Requisiciones.',
+      confirmButtonColor: '#D4AF37',
+      confirmButtonText: 'Entendido'
+    });
   }
 }

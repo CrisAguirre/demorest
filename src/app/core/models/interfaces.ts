@@ -84,19 +84,26 @@ export interface ExpenseCategoryOption { value: ExpenseCategory; label: string; 
 
 export interface FinancialSummary {
   period: string; startDate: string;
-  totalRevenue: number; cogs: number; grossProfit: number; grossMargin: number;
+  totalRevenue: number; saleRevenue: number; eventRevenue: number;
+  cogs: number; grossProfit: number; grossMargin: number;
   totalExpenses: number; totalPurchases: number;
   operatingProfit: number; netProfit: number; netMargin: number;
   expenseByCategory: Record<string, number>;
-  salesCount: number; purchasesCount: number;
+  salesCount: number; eventPaymentsCount: number; purchasesCount: number;
   dailySales: { _id: string; revenue: number }[];
+  dailyEvents: { _id: string; revenue: number; count: number }[];
   dailyExpenses: { _id: string; amount: number }[];
   dailyPurchases: { _id: string; amount: number }[];
 }
 
 export interface MonthlyPL {
   month: string; label: string;
-  revenue: number; expenses: number; purchases: number; profit: number; salesCount: number;
+  revenue: number; eventRevenue: number; expenses: number; purchases: number; profit: number; salesCount: number;
+}
+
+export interface IncomeRow {
+  tipo: 'venta' | 'evento' | 'catering';
+  fecha: string; referencia: string; detalle: string; monto: number; metodo: string;
 }
 
 // ── NUEVAS INTERFACES RESTAURANTE ─────────────────────────────────────────────

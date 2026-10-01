@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { Dish, Ingredient } from '../../core/models/interfaces';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dishes',
@@ -25,6 +26,11 @@ import { Dish, Ingredient } from '../../core/models/interfaces';
           <option value="Postres">Postres</option>
           <option value="Bebidas">Bebidas</option>
           <option value="Cócteles">Cócteles</option>
+        </select>
+        <select class="form-input" [(ngModel)]="estadoFilter" (change)="applySort()" title="Filtrar por disponibilidad">
+          <option value="">Todos</option>
+          <option value="disponible">Disponibles</option>
+          <option value="nodisponible">No disponibles</option>
         </select>
       </div>
 
@@ -61,6 +67,7 @@ import { Dish, Ingredient } from '../../core/models/interfaces';
                 <button class="btn-icon" title="Editar" (click)="edit(item)">✏️</button>
                 <button class="btn-icon" title="Ver receta" (click)="viewRecipe(item)" *ngIf="item.ingredients?.length">📋</button>
                 <button class="btn-icon btn-icon-danger" title="Desactivar" (click)="remove(item._id)" *ngIf="item.isAvailable">🗑️</button>
+                <button class="btn-icon" title="Reactivar" (click)="reactivate(item._id)" *ngIf="!item.isAvailable">♻️</button>
               </td>
             </tr>
           </tbody>
@@ -75,7 +82,7 @@ import { Dish, Ingredient } from '../../core/models/interfaces';
           <div class="dish-modal-photo">
             <div class="photo-frame">
               <img *ngIf="photoPreview || form.imageUrl"
-                   [src]="photoPreview || form.imageUrl"
+                   [src]="photoPreview || fotoUrl(form.imageUrl)"
                    class="photo-img" alt="Foto del plato">
               <div *ngIf="!photoPreview && !form.imageUrl" class="photo-empty">
                 <span class="photo-icon">🍽️</span>
@@ -198,10 +205,12 @@ Paso 2: ..."></textarea>
         <div class="modal" (click)="$event.stopPropagation()">
           <!-- Cabecera con foto en modal receta -->
           <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
-            <img [src]="recipeDish!.imageUrl" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
+            <img [src]="fotoUrl(recipeDish!.imageUrl)" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
           </div>
           <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
-          <div class="recipe-detail" *ngIf="recipeCost">
+          <div class="recipe-detail" *ngIf="loadingRecipe">Calculando costo de la receta...</div>
+          <div class="recipe-detail" *ngIf="!loadingRecipe && recipeError" style="color:#e74c3c">{{ recipeError }}</div>
+          <div class="recipe-detail" *ngIf="!loadingRecipe && recipeCost">
             <div class="recipe-cost-summary">
               <div><strong>Precio venta:</strong> {{ recipeCost.salePrice | currency }}</div>
               <div><strong>Costo receta:</strong> {{ recipeCost.recipeCost | currency }}</div>
@@ -415,11 +424,13 @@ export class DishesComponent implements OnInit {
   items: Dish[] = [];
   filteredItems: Dish[] = [];
   loading = false; saving = false; showForm = false; editing = false;
-  search = ''; categoryFilter = ''; sortColumn = 'name'; sortAsc = true;
+  search = ''; categoryFilter = ''; estadoFilter = ''; sortColumn = 'name'; sortAsc = true;
   availableIngredients: Ingredient[] = [];
   showRecipe = false;
   recipeDish: Dish | null = null;
   recipeCost: any = null;
+  loadingRecipe = false;
+  recipeError = '';
   photoFile: File | null = null;
   photoPreview: string | null = null;
   showPrep = false;
@@ -428,6 +439,15 @@ export class DishesComponent implements OnInit {
   private editingId = '';
 
   constructor(private api: ApiService) {}
+
+  // Las fotos se guardan en el backend (/uploads/...) o como URL absoluta.
+  // Las relativas se resuelven contra el origen del API (Render), no del front.
+  fotoUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
+    const base = (environment.apiUrl || '').replace(/\/api\/?$/, '');
+    return base + (url.startsWith('/') ? url : '/' + url);
+  }
 
   ngOnInit() {
     this.load();
@@ -452,6 +472,11 @@ export class DishesComponent implements OnInit {
     }
     if (this.categoryFilter) {
       result = result.filter(i => i.category === this.categoryFilter);
+    }
+    if (this.estadoFilter === 'disponible') {
+      result = result.filter(i => i.isAvailable !== false);
+    } else if (this.estadoFilter === 'nodisponible') {
+      result = result.filter(i => i.isAvailable === false);
     }
     result.sort((a: any, b: any) => {
       let valA = a[this.sortColumn];
@@ -530,19 +555,39 @@ export class DishesComponent implements OnInit {
   }
 
   remove(id: string) {
-    if (!confirm('¿Desactivar este plato?')) return;
+    if (!confirm('¿Desactivar este plato? Quedará visible como no disponible.')) return;
     this.api.deleteDish(id).subscribe({
-      next: () => this.load(),
+      next: () => {
+        // No recargar: el backend ya no lo devuelve; se conserva visible localmente.
+        const item = this.items.find(i => i._id === id);
+        if (item) item.isAvailable = false;
+        this.applySort();
+      },
       error: (err) => alert('Error al eliminar: ' + (err.error?.message || err.message))
+    });
+  }
+
+  reactivate(id: string) {
+    if (!confirm('¿Reactivar este plato? Volverá a la carta.')) return;
+    this.api.updateDish(id, { isAvailable: true }).subscribe({
+      next: () => {
+        const item = this.items.find(i => i._id === id);
+        if (item) item.isAvailable = true;
+        this.applySort();
+      },
+      error: (err) => alert('Error al reactivar: ' + (err.error?.message || err.message))
     });
   }
 
   viewRecipe(dish: Dish) {
     this.recipeDish = dish;
     this.recipeCost = null;
+    this.recipeError = '';
+    this.loadingRecipe = true;
     this.showRecipe = true;
     this.api.getRecipeCost(dish._id).subscribe({
-      next: (data) => this.recipeCost = data
+      next: (data) => { this.recipeCost = data; this.loadingRecipe = false; },
+      error: (err) => { this.loadingRecipe = false; this.recipeError = 'No se pudo calcular el costo: ' + (err.error?.message || err.message); }
     });
   }
 }

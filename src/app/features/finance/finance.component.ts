@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
-import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
+import { FinancialSummary, MonthlyPL, IncomeRow } from '../../core/models/interfaces';
 
 @Component({
   selector: 'app-finance',
@@ -28,9 +28,9 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
           <div class="pl-card income">
             <div class="pl-icon">💰</div>
             <div class="pl-info">
-              <span class="pl-label">Ingresos por Ventas</span>
+              <span class="pl-label">Ingresos Totales</span>
               <span class="pl-value">{{ summary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-              <span class="pl-sub">{{ summary.salesCount }} transacciones</span>
+              <span class="pl-sub">Ventas {{ (summary.saleRevenue ?? summary.totalRevenue) | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.salesCount }}) · Eventos {{ (summary.eventRevenue || 0) | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.eventPaymentsCount || 0 }})</span>
             </div>
           </div>
           <div class="pl-card cost">
@@ -96,7 +96,9 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
             <h3 class="section-title">Estado de Resultados</h3>
             <table class="pl-table">
               <tbody>
-                <tr class="income-row"><td>Ventas netas</td><td>{{ summary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
+                <tr class="income-row"><td>Ventas netas</td><td>{{ (summary.saleRevenue ?? summary.totalRevenue) | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
+                <tr class="income-row"><td>(+) Ingresos por eventos</td><td>{{ (summary.eventRevenue || 0) | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
+                <tr class="subtotal-row"><td><strong>= Ingresos totales</strong></td><td><strong>{{ summary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></td></tr>
                 <tr class="cost-row"><td>(−) Costo de ventas</td><td>{{ summary.cogs | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
                 <tr class="subtotal-row"><td><strong>= Utilidad Bruta</strong></td><td><strong>{{ summary.grossProfit | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></td></tr>
                 <tr><td colspan="2"><hr class="divider"/></td></tr>
@@ -111,6 +113,26 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- Historial de ingresos (ventas + eventos) -->
+        <div class="card" *ngIf="incomeHistory.length > 0" style="margin-bottom:1.5rem">
+          <h3 class="section-title">Historial de Ingresos — Ventas y Eventos ({{ incomeCount }})</h3>
+          <table class="pl-table">
+            <thead>
+              <tr><td><strong>Fecha</strong></td><td><strong>Tipo</strong></td><td><strong>Referencia</strong></td><td><strong>Método</strong></td><td style="text-align:right"><strong>Monto</strong></td></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of incomeHistory">
+                <td>{{ r.fecha | date:'short' }}</td>
+                <td><span class="badge" [ngClass]="r.tipo === 'venta' ? 'badge-green' : 'badge-violet'">{{ r.tipo }}</span></td>
+                <td>{{ r.referencia }} <span class="pl-sub" *ngIf="r.detalle && r.detalle !== 'Estado: pagada'">· {{ r.detalle }}</span></td>
+                <td>{{ r.metodo }}</td>
+                <td style="text-align:right">{{ r.monto | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+              </tr>
+              <tr class="subtotal-row"><td colspan="4"><strong>Total</strong></td><td style="text-align:right"><strong>{{ incomeTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></td></tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- Monthly trend (last 6 months P&L) -->
@@ -201,6 +223,9 @@ import { FinancialSummary, MonthlyPL } from '../../core/models/interfaces';
 export class FinanceComponent implements OnInit {
   summary: FinancialSummary | null = null;
   monthlyPL: MonthlyPL[] = [];
+  incomeHistory: IncomeRow[] = [];
+  incomeTotal = 0;
+  incomeCount = 0;
   loading = false;
   period = 'month';
   expenseCategories: { key: string; value: number; pct: number }[] = [];
@@ -240,6 +265,13 @@ export class FinanceComponent implements OnInit {
     this.api.getMonthlyPL(6).subscribe((data: MonthlyPL[]) => {
       this.monthlyPL = data;
       this.maxMonthly = Math.max(...data.map(m => Math.max(m.revenue, m.expenses + m.purchases)), 1);
+    });
+    this.api.getIncomeHistory({ limit: 100 }).subscribe({
+      next: (data: any) => {
+        this.incomeHistory = data.rows || [];
+        this.incomeTotal = data.total || 0;
+        this.incomeCount = data.count || 0;
+      }
     });
   }
 
