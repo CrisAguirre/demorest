@@ -88,4 +88,12 @@ describe('DishesComponent', () => {
     expect(component.loadingRecipe).toBeFalse();
     expect(component.recipeError).toContain('caído');
   });
+
+  it('should open and close full photo viewer', () => {
+    expect(component.showFoto).toBeFalse();
+    component.ampliarFoto();
+    expect(component.showFoto).toBeTrue();
+    component.showFoto = false;
+    expect(component.showFoto).toBeFalse();
+  });
 });

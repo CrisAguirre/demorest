@@ -330,11 +330,14 @@ export class MesasComponent implements OnInit {
           </div>`).join('');
         Swal.fire({
           title: `Mesa ${table.number} - Mesa reservada`,
-          html: `<div style="max-height:55vh;overflow-y:auto;">${bloques}</div>`,
+          html: `<div style="max-height:50vh;overflow-y:auto;">${bloques}</div>`,
           icon: 'info',
           showConfirmButton: false,
           showCancelButton: true,
+          showDenyButton: true,
           cancelButtonText: 'Cerrar',
+          denyButtonText: '📅 Agregar nueva reserva',
+          denyButtonColor: '#FF8F00',
           didOpen: () => {
             lista.forEach((_r: any, i: number) => {
               document.querySelector(`[data-iniciar="${i}"]`)?.addEventListener('click', () => {
@@ -348,6 +351,8 @@ export class MesasComponent implements OnInit {
             });
             // Sin botón agregar: la ventana queda solo con Iniciar pedido y Cancelar.
           }
+        }).then((res) => {
+          if (res.isDenied) this.showReservationForm(table);
         });
       },
       error: () => Swal.fire('❌ Error', 'No se pudieron cargar las reservas', 'error')
