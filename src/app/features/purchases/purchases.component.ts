@@ -407,7 +407,7 @@ interface CartItem {
     .btn-clear { color:#e74c3c; border-color:rgba(231,76,60,.3); background:rgba(231,76,60,.05); }
 
     /* ─── Tabla ─────────────────────────────────────────── */
-    .card.table-card { background:var(--bg-card); border-radius:12px; border:1px solid var(--border); overflow:hidden; }
+    .card.table-card { background:var(--bg-card); border-radius:12px; border:1px solid var(--border); overflow-x:auto; max-width:100%; -webkit-overflow-scrolling:touch; }
     .data-table { width:100%; border-collapse:collapse; font-size:.875rem; }
     .data-table th { padding:.75rem 1rem; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); background:rgba(0,0,0,.15); border-bottom:1px solid var(--border); }
     .data-table td { padding:.75rem 1rem; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }

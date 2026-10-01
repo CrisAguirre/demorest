@@ -94,8 +94,12 @@ import { Subscription } from 'rxjs';
     .order-print { position: absolute; top: 0.5rem; right: 0.5rem; cursor: pointer; font-size: 1rem; }
     .order-print:hover { transform: scale(1.2); }
     .empty-msg { color: var(--text-muted); text-align: center; padding: 2rem; font-size: 0.85rem; }
-    .page-header { display: flex; align-items: center; gap: 1rem; }
-    @media (max-width: 900px) { .kitchen-grid { grid-template-columns: 1fr; } }
+    .page-header { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; min-width: 0; }
+    @media (max-width: 900px) { .kitchen-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) {
+      .kitchen-grid { grid-template-columns: 1fr; }
+      .order-header { flex-wrap: wrap; gap: 0.3rem; }
+    }
   `]
 })
 export class KitchenOrderComponent implements OnInit, OnDestroy {

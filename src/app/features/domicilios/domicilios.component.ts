@@ -148,9 +148,12 @@ import Swal from 'sweetalert2';
     .deliv-item { font-size: 0.75rem; padding: 0.1rem 0; }
     .empty-msg { color: var(--text-muted); text-align: center; padding: 2rem; font-size: 0.85rem; }
 
+    .table-responsive { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+    .table-responsive .table { min-width: 620px; width: 100%; }
     /* Tabs */
     .tabs-container {
-      display: flex; gap: 1rem; border-bottom: 1px solid var(--border); width: 100%;
+      display: flex; gap: 0.6rem; border-bottom: 1px solid var(--border); width: 100%; max-width: 100%;
+      flex-wrap: wrap; overflow-x: auto;
     }
     .tab-btn {
       background: none; border: none; padding: 0.5rem 1rem; color: var(--text-muted);
@@ -166,7 +169,11 @@ import Swal from 'sweetalert2';
     .badge-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
 
     @media (max-width: 1100px) { .delivery-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .delivery-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) {
+      .delivery-grid { grid-template-columns: 1fr; }
+      .deliv-header { flex-wrap: wrap; gap: 0.3rem; }
+      .tab-btn { flex: 1; text-align: center; white-space: nowrap; }
+    }
   `]
 })
 export class DomiciliosComponent implements OnInit, OnDestroy {

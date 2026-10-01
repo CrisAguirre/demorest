@@ -164,12 +164,13 @@ import { FinancialSummary, MonthlyPL, IncomeRow } from '../../core/models/interf
     </div>
   `,
   styles: [`
-    .period-selector { display:flex; gap:.4rem; }
+    .period-selector { display:flex; gap:.4rem; flex-wrap:wrap; min-width:0; }
     .btn-period { padding:.4rem .9rem; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); cursor:pointer; font-size:.8rem; transition:all .15s; }
     .btn-period.active { background:var(--brand-gold); color:#000; border-color:var(--brand-gold); font-weight:700; }
 
-    .pl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
-    @media(max-width:768px){ .pl-grid { grid-template-columns:1fr 1fr; } }
+    .pl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; min-width:0; }
+    @media(max-width:768px){ .pl-grid { grid-template-columns:1fr 1fr; gap:.6rem; } .pl-card { padding:.85rem .75rem; } .pl-value { font-size:1rem; } }
+    @media(max-width:480px){ .pl-grid { grid-template-columns:1fr; } }
     .pl-card { display:flex; gap:1rem; align-items:flex-start; padding:1.2rem; border-radius:12px; border:1px solid var(--border); background:var(--bg-card); }
     .pl-icon { font-size:1.8rem; }
     .pl-info { display:flex; flex-direction:column; }

@@ -245,8 +245,9 @@ Paso 2: ..."></textarea>
   `,
   styles: [`
     /* ─── Tabla & Búsqueda ─────────────────────────── */
-    .search-bar { display:flex; gap:1rem; align-items:center; margin-bottom:1rem; }
-    .actions { display:flex; gap:.4rem; }
+    .search-bar { display:flex; gap:1rem; align-items:center; margin-bottom:1rem; flex-wrap:wrap; min-width:0; }
+    .search-bar .form-input, .search-bar select { flex:1 1 160px; min-width:0; }
+    .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
     .sortable { cursor: pointer; user-select: none; transition: background 0.2s; }
     .sortable:hover { background-color: rgba(0, 229, 255, 0.1); color: var(--text-primary); }
 
@@ -404,8 +405,8 @@ Paso 2: ..."></textarea>
     .action-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     /* Modal receta */
-    .recipe-detail { padding: 0.5rem 0; }
-    .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; }
+    .recipe-detail { padding: 0.5rem 0; min-width:0; max-width:100%; }
+    .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; flex-wrap:wrap; min-width:0; }
     .dish-photo-header {
       position: relative; display: flex; flex-direction: column; align-items: center;
       justify-content: center; background: var(--bg-input);

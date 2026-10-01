@@ -335,8 +335,11 @@ import Swal from 'sweetalert2';
     }
     .status-select:focus { border-color: var(--brand-gold); }
     .badge-gold { background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-width: 0; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; min-width: 0; }
+    @media (max-width: 640px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
     .price-input-wrap { position: relative; }
     .price-prefix {
       position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -451,7 +454,7 @@ import Swal from 'sweetalert2';
       .chip-name { display: none; }
     }
     /* —— Layout enriquecido: mini-cal + vistas + drawer ——————— */
-    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; min-width: 0; }
     .view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
     .view-toggle button {
       border: none; background: var(--bg-input); color: var(--text-main);
@@ -556,10 +559,21 @@ import Swal from 'sweetalert2';
     .hito-actions { display: flex; gap: 0.3rem; flex-shrink: 0; }
     .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
     @media (max-width: 900px) {
-      .ev-layout { flex-direction: column; }
-      .ev-side { width: 100%; flex-direction: row; }
-      .mini-cal, .legend { flex: 1; }
+      .ev-layout { flex-direction: column; min-width: 0; }
+      .ev-side { width: 100%; flex-direction: row; flex-wrap: wrap; }
+      .mini-cal, .legend { flex: 1 1 220px; min-width: 0; }
       .week-grid { grid-template-columns: 1fr 1fr; }
+      .header-actions { width: 100%; }
+      .ev-search, .ev-filter { flex: 1 1 140px; min-width: 0; max-width: 100%; }
+      .cal-day { min-height: 52px; }
+    }
+    @media (max-width: 520px) {
+      .ev-side { flex-direction: column; }
+      .week-grid { grid-template-columns: 1fr; }
+      .view-toggle { width: 100%; }
+      .view-toggle button { flex: 1; }
+      .modal-content form { padding: 1rem 0.85rem; }
+      .cal-weekdays > div { font-size: 0.6rem; padding: 0.25rem 0.1rem; }
     }
   `]
 })
