@@ -205,7 +205,7 @@ Paso 2: ..."></textarea>
       <div class="modal-overlay" *ngIf="showRecipe" (click)="showRecipe = false">
         <div class="modal" (click)="$event.stopPropagation()">
           <!-- Cabecera con foto en modal receta -->
-          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
+          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem;cursor:zoom-in" (click)="ampliarFoto()" title="Ver completa">
             <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
           </div>
           <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
@@ -240,6 +240,12 @@ Paso 2: ..."></textarea>
             <button class="btn-outline" (click)="showRecipe = false">Cerrar</button>
           </div>
         </div>
+      </div>
+
+      <!-- Visor de foto completa -->
+      <div class="photo-viewer" *ngIf="showFoto" (click)="showFoto = false">
+        <button class="photo-close" (click)="showFoto = false" title="Cerrar">✕</button>
+        <img [src]="photoPreview || fotoUrl(recipeDish?.imageUrl || '')" class="photo-full" alt="Foto del plato" (click)="$event.stopPropagation()">
       </div>
     </div>
   `,
@@ -405,6 +411,24 @@ Paso 2: ..."></textarea>
 
     /* Modal receta */
     .recipe-detail { padding: 0.5rem 0; }
+    .photo-viewer {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out;
+    }
+    .photo-full {
+      max-width: 92vw; max-height: 88vh; object-fit: contain;
+      border-radius: 12px; box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      cursor: default;
+    }
+    .photo-close {
+      position: absolute; top: 1rem; right: 1.25rem;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; font-size: 1.3rem; width: 42px; height: 42px;
+      border-radius: 50%; cursor: pointer; transition: background 0.15s;
+    }
+    .photo-close:hover { background: rgba(255,255,255,0.25); }
     .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; }
     .dish-photo-header {
       position: relative; display: flex; flex-direction: column; align-items: center;
@@ -428,6 +452,7 @@ export class DishesComponent implements OnInit {
   search = ''; categoryFilter = ''; estadoFilter = ''; sortColumn = 'name'; sortAsc = true;
   availableIngredients: Ingredient[] = [];
   showRecipe = false;
+  showFoto = false;
   recipeDish: Dish | null = null;
   recipeCost: any = null;
   loadingRecipe = false;
@@ -582,8 +607,11 @@ export class DishesComponent implements OnInit {
     });
   }
 
-  viewRecipe(dish: Dish) {
-    this.recipeDish = dish;
+  ampliarFoto(): void {
+    this.showFoto = true;
+  }
+
+  viewRecipe(dish: Dish) {    this.recipeDish = dish;
     this.recipeCost = null;
     this.recipeError = '';
     this.recetaFotoError = false;
