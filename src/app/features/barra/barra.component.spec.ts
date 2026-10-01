@@ -1,16 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { of } from 'rxjs';
 import { BarraComponent } from './barra.component';
+import { ApiService } from '../../core/services/api.service';
 
 describe('BarraComponent', () => {
   let component: BarraComponent;
   let fixture: ComponentFixture<BarraComponent>;
 
   beforeEach(async () => {
+    const api = jasmine.createSpyObj('ApiService', ['createPurchase']);
+    api.createPurchase.and.returnValue(of({ _id: 'p1' }));
     await TestBed.configureTestingModule({
       declarations: [BarraComponent],
-      imports: [CommonModule, FormsModule]
+      imports: [CommonModule, FormsModule],
+      providers: [{ provide: ApiService, useValue: api }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(BarraComponent);

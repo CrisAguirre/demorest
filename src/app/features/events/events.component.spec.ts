@@ -8,7 +8,7 @@ import { ApiService } from '../../core/services/api.service';
 describe('EventsComponent', () => {
   let component: EventsComponent;
   let fixture: ComponentFixture<EventsComponent>;
-  const apiSpy = jasmine.createSpyObj('ApiService', ['getEvents']);
+  const apiSpy = jasmine.createSpyObj('ApiService', ['getEvents', 'addEventMilestone', 'removeEventMilestone', 'getEvent']);
 
   const mkEv = (over: any = {}) => ({
     _id: 'e1', customerName: 'Cliente Prueba', eventType: 'evento_local',
@@ -91,5 +91,18 @@ describe('EventsComponent', () => {
     expect(component.tituloVista()).toContain('Semana');
     component.setView('mes');
     expect(component.tituloVista()).toContain('2026');
+  });
+
+  it('should compute milestone totals and overdue state', () => {
+    const ev = {
+      payments: [
+        { amount: 1500, milestone: 'h1' },
+        { amount: 500, milestone: null }
+      ]
+    };
+    expect(component.abonadoHito(ev, { _id: 'h1' })).toBe(1500);
+    expect(component.hitoVencido({ estado: 'pendiente', vencimiento: new Date(2020, 0, 1).toISOString() })).toBeTrue();
+    expect(component.hitoVencido({ estado: 'pagado', vencimiento: new Date(2020, 0, 1).toISOString() })).toBeFalse();
+    expect(component.hitoLabel({ estado: 'parcial' })).toBe('Parcial');
   });
 });

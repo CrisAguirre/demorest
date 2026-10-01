@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ApiService } from '../../core/services/api.service';
 import { enviarRequisicion } from '../purchases/requisiciones.store';
 
 interface ItemBarra {
@@ -316,6 +317,7 @@ interface ItemBarra {
   `]
 })
 export class BarraComponent {
+  constructor(private api: ApiService) {}
   items: ItemBarra[] = [
     { _id: 'b1', codigo: 'BB-001', nombre: 'Pisco quebranta 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 6, minStock: 4 },
     { _id: 'b2', codigo: 'BB-002', nombre: 'Vino blanco seco 750ml', categoria: 'Licores y vinos', ubicacion: 'Cava', unidad: 'botella', stock: 2, minStock: 4 },
@@ -566,14 +568,43 @@ export class BarraComponent {
       cantidad: Number(l.qty) || 0,
       unidad: l.unidad || 'unidades'
     }));
-    enviarRequisicion('barra', items);
-    this.ordenConfirmada = [];
-    Swal.fire({
-      icon: 'success',
-      title: 'Requisición enviada a Compras',
-      text: 'El administrador la verá en Compras → Requisiciones.',
-      confirmButtonColor: '#D4AF37',
-      confirmButtonText: 'Entendido'
+    const payload = {
+      origen: 'requisicion',
+      area: 'barra',
+      status: 'pendiente',
+      notes: 'Requisición de Barra',
+      items: items.map(i => ({
+        itemType: 'ingredient',
+        itemCode: i.codigo || undefined,
+        itemName: i.nombre,
+        unit: i.unidad,
+        quantity: i.cantidad,
+        unitCost: 0
+      }))
+    };
+    this.api.createPurchase(payload).subscribe({
+      next: () => {
+        this.ordenConfirmada = [];
+        Swal.fire({
+          icon: 'success',
+          title: 'Requisición enviada a Compras',
+          text: 'El administrador la verá en Compras → Requisiciones.',
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Entendido'
+        });
+      },
+      error: () => {
+        // Sin conexión: queda en bandeja local y se sincroniza al abrir Compras.
+        enviarRequisicion('barra', items);
+        this.ordenConfirmada = [];
+        Swal.fire({
+          icon: 'success',
+          title: 'Requisición guardada (sin conexión)',
+          text: 'Se enviará al abrir Compras con conexión.',
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Entendido'
+        });
+      }
     });
   }
 }
