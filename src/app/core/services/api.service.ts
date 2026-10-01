@@ -510,7 +510,9 @@ export class ApiService {
   // ── Dishes ──────────────────────────────────────────────────────────────
 
   getDishes(params?: any): Observable<any> {
-    const k = this.key('dishes', params);
+    // v2: invalida la carta cacheada (el seed de carta 15 cambió el menú en servidor
+    // sin pasar por la API, así que la caché anterior quedaba con platos viejos).
+    const k = this.key('dishes-v2', params);
     return this.cachedGet(k, this.http.get(`${this.baseUrl}/dishes`, { params }), TTL.products);
   }
 
