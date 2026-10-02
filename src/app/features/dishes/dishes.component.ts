@@ -245,7 +245,7 @@ Paso 2: ..."></textarea>
       </div>
 
       <!-- Zoom de foto (lightbox) -->
-      <div class="zoom-overlay" *ngIf="fotoZoom" (click)="fotoZoom = null">
+      <div class="zoom-overlay" *ngIf="fotoZoom" (click)="cerrarFoto()">
         <img [src]="fotoZoom" class="zoom-img" alt="Foto del plato ampliada">
         <span class="zoom-hint">Clic en cualquier lugar para cerrar ✕</span>
       </div>
@@ -488,8 +488,13 @@ export class DishesComponent implements OnInit {
     return base + (url.startsWith('/') ? url : '/' + url);
   }
 
-  ampliarFoto(src: string | null | undefined): void {
-    if (src) this.fotoZoom = src;
+  ampliarFoto(src?: string | null): void {
+    if (src) {
+      this.fotoZoom = src;
+    } else if (this.recipeDish?.imageUrl) {
+      this.fotoZoom = this.fotoUrl(this.recipeDish.imageUrl);
+    }
+    this.showFoto = true;
   }
 
   ngOnInit() {
@@ -557,7 +562,9 @@ export class DishesComponent implements OnInit {
     this.editing = true; this.editingId = item._id; this.showForm = true;
   }
 
-  closeForm() { this.showForm = false; this.fotoZoom = null; }
+  closeForm() { this.showForm = false; this.fotoZoom = null; this.showFoto = false; }
+
+  cerrarFoto(): void { this.fotoZoom = null; this.showFoto = false; }
 
   addIngredient() {
     this.form.ingredients.push({ ingredient: '', quantity: 0 });
@@ -620,10 +627,6 @@ export class DishesComponent implements OnInit {
       },
       error: (err) => alert('Error al reactivar: ' + (err.error?.message || err.message))
     });
-  }
-
-  ampliarFoto(): void {
-    this.showFoto = true;
   }
 
   viewRecipe(dish: Dish) {    this.recipeDish = dish;

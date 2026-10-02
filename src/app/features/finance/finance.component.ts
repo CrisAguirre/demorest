@@ -30,7 +30,7 @@ import { FinancialSummary, MonthlyPL, IncomeRow } from '../../core/models/interf
             <div class="pl-info">
               <span class="pl-label">Ingresos Totales</span>
               <span class="pl-value">{{ summary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-              <span class="pl-sub">Ventas {{ (summary.saleRevenue ?? summary.totalRevenue) | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.salesCount }}) · Eventos {{ (summary.eventRevenue || 0) | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.eventPaymentsCount || 0 }})</span>
+              <span class="pl-sub">Ventas {{ summary.saleRevenue | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.salesCount }}) · Eventos {{ (summary.eventRevenue || 0) | currency:'COP':'symbol-narrow':'1.0-0' }} ({{ summary.eventPaymentsCount || 0 }})</span>
             </div>
           </div>
           <div class="pl-card cost">
@@ -96,7 +96,7 @@ import { FinancialSummary, MonthlyPL, IncomeRow } from '../../core/models/interf
             <h3 class="section-title">Estado de Resultados</h3>
             <table class="pl-table">
               <tbody>
-                <tr class="income-row"><td>Ventas netas</td><td>{{ (summary.saleRevenue ?? summary.totalRevenue) | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
+                <tr class="income-row"><td>Ventas netas</td><td>{{ summary.saleRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
                 <tr class="income-row"><td>(+) Ingresos por eventos</td><td>{{ (summary.eventRevenue || 0) | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
                 <tr class="subtotal-row"><td><strong>= Ingresos totales</strong></td><td><strong>{{ summary.totalRevenue | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></td></tr>
                 <tr class="cost-row"><td>(−) Costo de ventas</td><td>{{ summary.cogs | currency:'COP':'symbol-narrow':'1.0-0' }}</td></tr>
