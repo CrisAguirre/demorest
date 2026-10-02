@@ -52,7 +52,7 @@ import { environment } from '../../../environments/environment';
             <tr *ngFor="let item of filteredItems">
               <td><strong>{{ item.name }}</strong></td>
               <td><span class="badge badge-violet">{{ item.category }}</span></td>
-              <td>{{ item.price | currency }}</td>
+              <td>{{ item.price | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
               <td>
                 <span class="badge" [class.badge-green]="item.ingredients.length" [class.badge-red]="!item.ingredients.length">
                   {{ item.ingredients.length ? item.ingredients.length + ' insumos' : 'Sin receta' }}
@@ -207,7 +207,7 @@ Paso 2: ..."></textarea>
       <div class="modal-overlay" *ngIf="showRecipe" (click)="showRecipe = false">
         <div class="modal" (click)="$event.stopPropagation()">
           <!-- Cabecera con foto en modal receta -->
-          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem">
+          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem;cursor:zoom-in" (click)="ampliarFoto()" title="Ver completa">
             <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
           </div>
           <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
@@ -215,8 +215,8 @@ Paso 2: ..."></textarea>
           <div class="recipe-detail" *ngIf="!loadingRecipe && recipeError" style="color:#e74c3c">{{ recipeError }}</div>
           <div class="recipe-detail" *ngIf="!loadingRecipe && recipeCost">
             <div class="recipe-cost-summary">
-              <div><strong>Precio venta:</strong> {{ recipeCost.salePrice | currency }}</div>
-              <div><strong>Costo receta:</strong> {{ recipeCost.recipeCost | currency }}</div>
+              <div><strong>Precio venta:</strong> {{ recipeCost.salePrice | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
+              <div><strong>Costo receta:</strong> {{ recipeCost.recipeCost | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
               <div><strong>Margen:</strong> <span [class.badge-green]="recipeCost.margin >= 40" [class.badge-yellow]="recipeCost.margin >= 20 && recipeCost.margin < 40" [class.badge-red]="recipeCost.margin < 20">{{ recipeCost.margin }}%</span></div>
             </div>
             <table class="data-table" style="margin-top:1rem">
@@ -228,8 +228,8 @@ Paso 2: ..."></textarea>
                   <td>{{ ing.name }}</td>
                   <td>{{ ing.quantity }}</td>
                   <td>{{ ing.unit }}</td>
-                  <td>{{ ing.costPerUnit | currency }}</td>
-                  <td>{{ ing.subtotal | currency }}</td>
+                  <td>{{ ing.costPerUnit | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                  <td>{{ ing.subtotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -462,6 +462,7 @@ export class DishesComponent implements OnInit {
   search = ''; categoryFilter = ''; estadoFilter = ''; sortColumn = 'name'; sortAsc = true;
   availableIngredients: Ingredient[] = [];
   showRecipe = false;
+  showFoto = false;
   recipeDish: Dish | null = null;
   recipeCost: any = null;
   loadingRecipe = false;
@@ -621,8 +622,11 @@ export class DishesComponent implements OnInit {
     });
   }
 
-  viewRecipe(dish: Dish) {
-    this.recipeDish = dish;
+  ampliarFoto(): void {
+    this.showFoto = true;
+  }
+
+  viewRecipe(dish: Dish) {    this.recipeDish = dish;
     this.recipeCost = null;
     this.recipeError = '';
     this.recetaFotoError = false;

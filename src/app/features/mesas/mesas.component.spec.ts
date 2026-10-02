@@ -187,11 +187,28 @@ describe('MesasComponent', () => {
     expect(args.html).toContain('Pedido 1');
   });
 
+  it('should offer agregar nueva reserva next to Cerrar on reserved tables', async () => {
+    const r1 = { _id: 'r1', customerName: 'Juan', numberOfPeople: 2, date: new Date(2026, 8, 28, 19, 0).toISOString(), status: 'pendiente' };
+    api.getReservations.and.returnValue(of([r1]));
+    const fire = spyOn(Swal, 'fire');
+    let llamadas = 0;
+    fire.and.callFake(() => {
+      llamadas += 1;
+      if (llamadas === 1) return Promise.resolve({ isDenied: true } as any);
+      return Promise.resolve({ isConfirmed: false } as any);
+    });
+    component.onTableClick(component.tables[2]);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const args = fire.calls.allArgs().find(a => (a[0] as any).denyButtonText);
+    expect(args).toBeTruthy();
+    expect((args![0] as any).denyButtonText).toContain('Agregar nueva reserva');
+  });
+
   it('should open reservations window with all data on reserved click', async () => {
     const r1 = { _id: 'r1', customerName: 'Juan', numberOfPeople: 2, date: new Date(2026, 8, 28, 19, 0).toISOString(), status: 'pendiente' };
     const r2 = { _id: 'r2', customerName: 'Ana', numberOfPeople: 4, date: new Date(2026, 8, 29, 20, 0).toISOString(), status: 'confirmada' };
     api.getReservations.and.returnValue(of([r1, r2]));
-    const fire = spyOn(Swal, 'fire');
+    const fire = spyOn(Swal, 'fire').and.returnValue(Promise.resolve({} as any));
     component.onTableClick(component.tables[2]);
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(api.getReservations).toHaveBeenCalledWith({ table: 't3' });
