@@ -41,8 +41,8 @@ import { PreloadService } from './core/services/preload.service';
     </a>
   `,
   styles: [`
-    .app-layout { display: flex; min-height: calc(100vh - 60px); width: 100%; max-width: 100vw; overflow-x: clip; }
-    .app-content { flex: 1; min-width: 0; width: 100%; max-width: 100%; padding: 1.5rem; overflow-x: clip; overflow-wrap: anywhere; animation: fadeIn 0.3s ease; }
+    .app-layout { display: flex; height: calc(100vh - 60px); height: calc(100dvh - 60px); width: 100%; max-width: 100vw; overflow: hidden; }
+    .app-content { flex: 1; min-width: 0; width: 100%; max-width: 100%; height: 100%; overflow-y: auto; overflow-x: clip; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 1.5rem; overflow-wrap: anywhere; animation: fadeIn 0.3s ease; }
 
     .floating-wa {
       position: fixed; bottom: 30px; right: 30px; z-index: 1000;

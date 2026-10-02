@@ -48,12 +48,13 @@ import { AuthService } from '../../../core/services/auth.service';
   `,
   styles: [`
     .sidebar {
-      width: 220px; min-height: calc(100vh - 60px);
+      width: 220px; height: calc(100vh - 60px); height: calc(100dvh - 60px);
       background: var(--bg-sidebar);
-      border-right: 1px solid rgba(212,175,55,0.08);
-      padding: 1rem 0; transition: width 0.25s ease;
+      border-right: 1px solid var(--border);
+      padding: 1rem 0 0; transition: width 0.25s ease;
       display: flex; flex-direction: column;
-      position: sticky; top: 60px;
+      position: sticky; top: 60px; flex-shrink: 0;
+      overflow: hidden;
     }
     .sidebar.collapsed { width: 60px; }
     .toggle-btn {
@@ -64,7 +65,7 @@ import { AuthService } from '../../../core/services/auth.service';
       transition: background 0.15s;
     }
     .toggle-btn:hover { background: var(--bg-input); }
-    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: 1rem; scrollbar-width: thin; }
     .section-divider {
       font-size: .65rem; text-transform: uppercase; letter-spacing: .08em;
       color: var(--text-secondary); padding: .9rem 1.5rem .3rem;
@@ -107,7 +108,7 @@ import { AuthService } from '../../../core/services/auth.service';
     .collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
     .collapsed .nav-item { justify-content: center; padding: 0.65rem; }
     @media (max-width: 768px) {
-      .sidebar { width: 64px; flex-shrink: 0; }
+      .sidebar { width: 64px; flex-shrink: 0; height: calc(100vh - 60px); height: calc(100dvh - 60px); }
       .desktop-only { display: none; }
       .nav-label { display: none; }
       .section-divider { display: none; }

@@ -757,3 +757,33 @@ table { max-width: 100%; }
   .stat-card { padding: 1rem 0.75rem !important; }
   .stat-card .stat-value { font-size: 1.3rem !important; }
 }
+
+/* ══════════════════════════════════════════════════
+   ↔️ SCROLL INDEPENDIENTE — menú lateral vs contenido
+   Desktop y móvil: cada panel hace scroll propio,
+   sin arrastrar al otro (overscroll-behavior: contain)
+   ══════════════════════════════════════════════════ */
+app-sidebar { display: flex; flex-shrink: 0; min-height: 0; }
+app-navbar { display: block; }
+
+.app-layout {
+  height: calc(100vh - 60px);
+  height: calc(100dvh - 60px);
+  overflow: hidden !important;
+}
+
+.app-content {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: clip;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.sidebar-nav {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
