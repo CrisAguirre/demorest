@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
   selector: 'app-sidebar',
   template: `
     <aside class="sidebar" [class.collapsed]="collapsed">
-      <button class="toggle-btn desktop-only" (click)="collapsed = !collapsed">
+      <button class="toggle-btn desktop-only" (click)="collapsed = !collapsed" aria-label="Colapsar menú">
         {{ collapsed ? '☰' : '✕' }}
       </button>
       <nav class="sidebar-nav">
@@ -16,21 +16,31 @@ import { AuthService } from '../../../core/services/auth.service';
           
           <!-- Enlace Normal -->
           <a *ngIf="!item.divider && !item.externalUrl && !item.subItems" [routerLink]="item.route" routerLinkActive="active"
-             class="nav-item" [title]="item.label">
+             class="nav-item" [attr.aria-label]="item.label"
+             (mouseenter)="showTip($event, item.label)" (mouseleave)="hideTip()"
+             (focus)="showTip($event, item.label)" (blur)="hideTip()"
+             (touchstart)="showTip($event, item.label, true)" (touchend)="scheduleHideTip()">
             <span class="nav-icon">{{ item.icon }}</span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
           </a>
 
           <!-- Enlace con Submenú -->
           <div *ngIf="!item.divider && item.subItems" class="nav-item-group">
-            <div class="nav-item" (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [title]="item.label">
+            <div class="nav-item nav-parent" (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [attr.aria-label]="item.label"
+                 (mouseenter)="showTip($event, item.label)" (mouseleave)="hideTip()"
+                 (focus)="showTip($event, item.label)" (blur)="hideTip()"
+                 (touchstart)="showTip($event, item.label, true)" (touchend)="scheduleHideTip()">
               <span class="nav-icon">{{ item.icon }}</span>
               <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
               <span class="nav-arrow" *ngIf="!collapsed" [class.rotated]="item.expanded">▼</span>
             </div>
-            <div class="nav-subitems" *ngIf="item.expanded && !collapsed">
-              <a *ngFor="let sub of item.subItems" [routerLink]="sub.route" routerLinkActive="active" class="nav-subitem">
-                <span class="nav-icon" style="font-size: 0.95rem;">{{ sub.icon }}</span>
+            <div class="nav-subitems" *ngIf="item.expanded">
+              <a *ngFor="let sub of item.subItems" [routerLink]="sub.route" routerLinkActive="active" class="nav-subitem"
+                 [attr.aria-label]="sub.label"
+                 (mouseenter)="showTip($event, sub.label)" (mouseleave)="hideTip()"
+                 (focus)="showTip($event, sub.label)" (blur)="hideTip()"
+                 (touchstart)="showTip($event, sub.label, true)" (touchend)="scheduleHideTip()">
+                <span class="nav-icon sub-icon">{{ sub.icon }}</span>
                 <span class="nav-label">{{ sub.label }}</span>
               </a>
             </div>
@@ -38,12 +48,16 @@ import { AuthService } from '../../../core/services/auth.service';
 
           <!-- Enlace Externo -->
           <a *ngIf="!item.divider && item.externalUrl && !item.subItems" [href]="item.externalUrl" target="_blank"
-             class="nav-item" [title]="item.label">
+             class="nav-item" [attr.aria-label]="item.label"
+             (mouseenter)="showTip($event, item.label)" (mouseleave)="hideTip()"
+             (focus)="showTip($event, item.label)" (blur)="hideTip()"
+             (touchstart)="showTip($event, item.label, true)" (touchend)="scheduleHideTip()">
             <span class="nav-icon">{{ item.icon }}</span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
           </a>
         </ng-container>
       </nav>
+      <div class="sidebar-tip" *ngIf="tipVisible" [style.left.px]="tipX" [style.top.px]="tipY">{{ tipText }}</div>
     </aside>
   `,
   styles: [`
@@ -77,22 +91,24 @@ import { AuthService } from '../../../core/services/auth.service';
       border-radius: 8px; font-size: 0.85rem; font-weight: 500;
       color: var(--text-secondary); transition: all 0.15s;
       white-space: nowrap; overflow: hidden;
-      user-select: none;
+      user-select: none; position: relative;
     }
     .nav-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.2s; }
     .nav-arrow.rotated { transform: rotate(180deg); }
     .nav-subitems {
       display: flex; flex-direction: column; gap: 2px;
       margin: 0.2rem 0.5rem 0.2rem 2.5rem;
-      border-left: 1px solid rgba(212,175,55,0.2);
+      border-left: 1px solid var(--border);
       padding-left: 0.5rem;
     }
     .nav-subitem {
       display: flex; align-items: center; gap: 0.5rem;
       padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.8rem;
       color: var(--text-secondary); transition: all 0.15s;
-      text-decoration: none;
+      text-decoration: none; position: relative;
+      white-space: nowrap; overflow: hidden;
     }
+    .nav-subitem .sub-icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
     .nav-subitem:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
     .nav-subitem.active {
       color: var(--brand-gold); font-weight: 600;
@@ -107,19 +123,45 @@ import { AuthService } from '../../../core/services/auth.service';
     .nav-label { transition: opacity 0.2s; }
     .collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
     .collapsed .nav-item { justify-content: center; padding: 0.65rem; }
+    .collapsed .nav-item-group { display: flex; flex-direction: column; align-items: stretch; }
+    .collapsed .nav-subitems { margin: 0.15rem 0.25rem 0.35rem; padding: 0; border-left: none; align-items: stretch; }
+    .collapsed .nav-subitem { justify-content: center; padding: 0.65rem; margin: 0; }
+    .collapsed .nav-subitem .nav-label { display: none; }
+    .collapsed .nav-subitem .sub-icon { font-size: 1.2rem; }
+    .sidebar-tip {
+      position: fixed; z-index: 9999;
+      background: var(--bg-card); color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.6rem; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 600;
+      white-space: nowrap; pointer-events: none;
+      box-shadow: var(--shadow-card);
+      transform: translate(12px, -50%);
+    }
     @media (max-width: 768px) {
       .sidebar { width: 64px; flex-shrink: 0; height: calc(100vh - 60px); height: calc(100dvh - 60px); }
       .desktop-only { display: none; }
-      .nav-label { display: none; }
+      .nav-label { display: none !important; }
       .section-divider { display: none; }
       .nav-item { justify-content: center; padding: 0.85rem 0; margin: 0.15rem 0.25rem; }
+      .nav-item-group { display: flex; flex-direction: column; align-items: stretch; }
+      .nav-arrow { display: none !important; }
+      .nav-subitems { margin: 0.1rem 0.25rem 0.3rem; padding: 0; border-left: none; align-items: stretch; gap: 4px; }
+      .nav-subitem { justify-content: center; margin: 0; padding: 0.85rem 0; border-radius: 6px; }
+      .nav-subitem .sub-icon { font-size: 1.4rem !important; min-width: 24px; }
       .nav-icon { font-size: 1.4rem; }
       .nav-item.active { border-left: none; border-bottom: 3px solid var(--brand-gold); border-radius: 6px; }
+      .nav-subitem.active { border-left: none; border-bottom: 3px solid var(--brand-gold); }
     }
   `]
 })
 export class SidebarComponent {
   collapsed = false;
+  tipText = '';
+  tipX = 0;
+  tipY = 0;
+  tipVisible = false;
+  private tipTimer: any = null;
   menuItems: { icon?: string; label?: string; route?: string; divider?: string; externalUrl?: string; subItems?: any[]; expanded?: boolean }[] = [];
 
   constructor(private auth: AuthService) {
@@ -203,5 +245,41 @@ export class SidebarComponent {
         }
       ];
     }
+  }
+
+  showTip(event: any, label?: string, isTouch = false): void {
+    if (!label) return;
+    if (this.tipTimer) { clearTimeout(this.tipTimer); this.tipTimer = null; }
+    let x = 0;
+    let y = 0;
+    const target = (event?.currentTarget || event?.target) as HTMLElement | null;
+    if (event?.touches?.[0]) {
+      x = event.touches[0].clientX;
+      y = event.touches[0].clientY;
+    } else if (typeof event?.clientX === 'number') {
+      x = event.clientX;
+      y = event.clientY;
+    } else if (target?.getBoundingClientRect) {
+      const r = target.getBoundingClientRect();
+      x = r.right;
+      y = r.top + r.height / 2;
+    }
+    // En escritorio expandido el label ya es visible: no mostrar tip para no duplicar.
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile && !this.collapsed && !isTouch) return;
+    this.tipText = label;
+    this.tipX = x;
+    this.tipY = y;
+    this.tipVisible = true;
+  }
+
+  hideTip(): void {
+    if (this.tipTimer) { clearTimeout(this.tipTimer); this.tipTimer = null; }
+    this.tipVisible = false;
+  }
+
+  scheduleHideTip(): void {
+    if (this.tipTimer) clearTimeout(this.tipTimer);
+    this.tipTimer = setTimeout(() => { this.tipVisible = false; }, 1200);
   }
 }

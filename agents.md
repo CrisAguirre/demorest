@@ -20,13 +20,21 @@ Backend: API REST + Socket.IO en Render (`demorestbknd`). Frontend desplegado en
 - **Documentación** (`/documentacion`, admin): 4 pestañas — Manuales (6: cocina/BPM, servicio, barra, caja, domicilios, eventos), Formatos (6: requisición, temperaturas, limpieza, arqueo, PQRS, domicilios), Contratos modelo (6: fijo, indefinido, OPS, SENA, proveedor, arriendo), Políticas y legal (6: RIT, calidad, saneamiento, manipulación, carpeta legal, alérgenos). Stats + buscador + filtro estado + modal ver/crear/editar + descarga plantilla.
 - **SG-SST** (`/sg-sst`, admin): ciclo PHVA + KPIs (87% estándares); 5 pestañas — Matriz 8 peligros (cocina/barra/servicio/domicilios), 6 capacitaciones, 3 casos ATEL, 6 EPP/dotación, 6 documentos plan. CRUD local (`soupe-sgsst-v1`), badges por riesgo/estado.
 - **Responsive global**: `styles.scss` trae Mobile Fix Pack (cero scroll lateral, tablas con scroll interno, grids a 1 col, modales hoja inferior, inputs 16px).
+- **Scroll independiente (2026-10-02)**: `app-layout` `height: calc(100vh-60px)/calc(100dvh-60px)` + `overflow:hidden`; `app-content` `height:100%` + `overflow-y:auto` + `overscroll-behavior:contain`; `sidebar` `height: calc(100dvh-60px)` + `sticky top:60px` + `overflow:hidden`; `sidebar-nav` `flex:1` + `overflow-y:auto` + `contain`. Menú y contenido hacen scroll propio sin arrastrarse (desktop y móvil). Host `app-sidebar{display:flex}` en `styles.scss`. No usar `min-height` con scroll compartido en layout.
 
 ## Comandos
 ```bash
 ng serve
 ng build --configuration development
+npx ng build # prod, igual que Vercel (npm run build)
 ng test --watch=false --browsers=ChromeHeadless --include="**/pos/pos.component.spec.ts"
+ng test --watch=false --browsers=ChromeHeadless --include="**/dishes/dishes.component.spec.ts"
 ```
+
+## Fixes deploy Vercel (2026-10-02, build prod en verde)
+- **Dishes `TS2393`**: había doble `ampliarFoto(src)` / `ampliarFoto()` que rompía `npm run build` en Vercel. Unificado en `dishes.component.ts:491` `ampliarFoto(src?: string|null)` (si hay `src` setea `fotoZoom`; si no, usa `fotoUrl(recipeDish.imageUrl)`; siempre `showFoto=true`) + `cerrarFoto()` que limpia `fotoZoom` + `showFoto`. Overlay usa `(click)="cerrarFoto()"`, `closeForm()` limpia ambos. Spec 8/8 en verde.
+- **Finance `NG8102`**: `FinancialSummary.saleRevenue: number` no-nulleable (`interfaces.ts:87`), se quitó `?? summary.totalRevenue` en `finance.component.ts:33,99` (ahora `summary.saleRevenue` directo). Build prod sin warnings.
+- Verificado: `npx ng build` prod OK 2026-10-02; `pos` 45 SUCCESS; `dishes` 8 SUCCESS.
 
 ## Carta nueva (15 platos, fuente `recetario-carta-15-preparaciones.md` en Desktop)
 - Entradas (1-6): Ceviche 28.000 · Empanadas maíz 14.000 · Tostones camarón 24.000 · Crema choclo 16.000 · Croquetas gallina 18.000 · Causa pechuga 20.000.
@@ -42,4 +50,4 @@ ng test --watch=false --browsers=ChromeHeadless --include="**/pos/pos.component.
 - Producción = Render (backend) + Vercel (frontend), auto-deploy por merge. El usuario prueba en `localhost:4200` contra Render.
 - Finanzas: cards `.pl-card` con icono 44px, `section-title` con borde inferior y `expense-bar-bg: var(--bg-input)`; `.card` con padding 1.25rem.
 - Documentación/SG-SST: claves LS `soupe-docs-v1` / `soupe-sgsst-v1`; módulos importan `FormsModule`.
-- Pendientes conocidos: deploy backend con últimos fixes; backfill de ventas viejas; commit/push a demanda.
+- Pendientes conocidos: deploy backend con últimos fixes; backfill de ventas viejas; commit/push a demanda (pendiente push: scroll independiente + fix dishes/finance 2026-10-02).
