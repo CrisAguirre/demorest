@@ -13,9 +13,12 @@ interface DocItem {
   paginas?: number;
   descripcion: string;
   contenido?: string;
+  archivoPdf?: string;
 }
 
 const SEED: DocItem[] = [
+  // ── Manual de operaciones de la app (descarga PDF) ──
+  { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v1.0', responsable: 'Administración', actualizado: '2026-10-03', estado: 'Vigente', descripcion: 'Guía por menús del sidebar con ejemplos de datos reales y accesos (Vercel + admin). Incluye descarga en PDF.', contenido: 'Secciones: acceso y roles, mesas, POS, eventos, inventario cocina/barra/servicio, platos C1..C15, caja, dashboard, proveedores, compras, tiqueteras, gastos, personal, financiero, reportes, documentación, SG-SST, domicilios y configuración. Ver PDF adjunto.', archivoPdf: 'assets/MANUAL_USUARIO.pdf' },
   // ── Manuales operativos ──
   { _id: 'd1', codigo: 'MAN-001', titulo: 'Manual de cocina y BPM', categoria: 'Cocina', tipo: 'manual', version: 'v3.2', responsable: 'Chef ejecutivo', actualizado: '2026-08-15', estado: 'Vigente', paginas: 48, descripcion: 'Buenas prácticas de manufactura, temperaturas, contaminación cruzada y mise en place.', contenido: '1. Higiene del personal\n2. Temperaturas (refrigeración 0-4°C, congelación -18°C)\n3. Contaminación cruzada: tablas por color\n4. Mise en place por turno\n5. Control de mermas' },
   { _id: 'd2', codigo: 'MAN-002', titulo: 'Manual de servicio a la mesa', categoria: 'Servicio', tipo: 'manual', version: 'v2.8', responsable: 'Jefe de servicio', actualizado: '2026-07-20', estado: 'Vigente', paginas: 36, descripcion: 'Secuencia de servicio, montaje, atención de quejas y ventas sugeridas.', contenido: '1. Bienvenida en <2 min\n2. Secuencia: bebida → entrada → fuerte → postre\n3. Montaje básico y de eventos\n4. Manejo de quejas (escuchar, disculparse, compensar)\n5. Venta sugerida' },
@@ -94,6 +97,7 @@ const LS_KEY = 'soupe-docs-v1';
           <div class="doc-meta">👤 {{ d.responsable }} · 📅 {{ d.actualizado }} · 📄 {{ d.paginas }} pág.</div>
           <div class="doc-actions">
             <button class="btn-secondary btn-sm" (click)="ver(d)">👁️ Ver</button>
+            <a *ngIf="d.archivoPdf" class="btn-secondary btn-sm" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
             <button class="btn-secondary btn-sm" (click)="descargar(d)">⬇️ Plantilla</button>
             <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
             <button class="btn-icon btn-icon-danger" (click)="eliminar(d)" title="Eliminar">🗑️</button>
@@ -118,6 +122,7 @@ const LS_KEY = 'soupe-docs-v1';
               <td><span class="badge" [ngClass]="badge(d.estado)">{{ d.estado }}</span></td>
               <td class="actions">
                 <button class="btn-icon" (click)="ver(d)" title="Ver">👁️</button>
+                <a *ngIf="d.archivoPdf" class="btn-icon" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf" title="Descargar PDF">📕</a>
                 <button class="btn-icon" (click)="descargar(d)" title="Descargar plantilla">⬇️</button>
                 <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
                 <button class="btn-icon btn-icon-danger" (click)="eliminar(d)" title="Eliminar">🗑️</button>
@@ -135,6 +140,7 @@ const LS_KEY = 'soupe-docs-v1';
           <p style="margin:.75rem 0">{{ seleccionado.descripcion }}</p>
           <pre class="preview">{{ seleccionado.contenido || 'Contenido ficticio de demostración.' }}</pre>
           <div class="modal-actions">
+            <a *ngIf="seleccionado.archivoPdf" class="btn-secondary" [href]="seleccionado.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
             <button class="btn-secondary" (click)="descargar(seleccionado)">⬇️ Descargar plantilla</button>
             <button class="btn-outline" (click)="seleccionado=null">Cerrar</button>
           </div>
@@ -212,7 +218,15 @@ export class DocumentacionComponent implements OnInit {
   cargar(): void {
     try {
       const raw = localStorage.getItem(LS_KEY);
-      if (raw) { this.docs = JSON.parse(raw); return; }
+      if (raw) {
+        this.docs = JSON.parse(raw);
+        // Migración: garantiza el manual de operaciones aunque hubiera caché vieja.
+        if (!this.docs.some(d => d._id === 'd0' || d.codigo === 'MAN-USU')) {
+          const seed = SEED.find(s => s._id === 'd0');
+          if (seed) { this.docs = [seed, ...this.docs]; this.persistir(); }
+        }
+        return;
+      }
     } catch { /* semilla */ }
     this.docs = SEED;
     this.persistir();
