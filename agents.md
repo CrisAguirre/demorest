@@ -35,13 +35,20 @@ Backend: API REST + Socket.IO en Render (`demorestbknd`). Frontend desplegado en
 ng serve
 ng build --configuration development
 npx ng build # prod, igual que Vercel (npm run build)
+ng test --watch=false --browsers=ChromeHeadless # suite completa front
 ng test --watch=false --browsers=ChromeHeadless --include="**/pos/pos.component.spec.ts"
 ng test --watch=false --browsers=ChromeHeadless --include="**/dishes/dishes.component.spec.ts"
+npx stylelint "src/**/*.scss" # lint estilos front
 ```
+
+## QA impecable + ESLint (2026-10-03)
+- Front: suite Karma/Jasmine completa en ChromeHeadless + `stylelint` en `src/**/*.scss`. Sin `eslint` en front (solo `stylelint` v17).
+- Back (`../demorestbknd`): `npm test` = `jest --forceExit --detectOpenHandles` (con `@shelf/jest-mongodb`) + `npx eslint .` (airbnb-base v15). Requiere `npm install` previo y `.env` con `MONGODB_URI` para seeds (no para unitarias con mongo en memoria).
+- Tras editar: `ng build` + specs del módulo afectado en verde + `stylelint` sin errores; back: `jest` en verde + `eslint` sin errores.
 
 ## Manual usuario + PDF (2026-10-03)
 - Fuente: `MANUAL_USUARIO.md` estructurado por sidebar admin (Mesas, POS, Eventos, Inventario>Cocina/Barra/Servicio, Platos C1..C15, Caja, Dashboard, Proveedores, Compras, Tiqueteras, Gastos, Personal, Financiero, Reportes, Documentación, SG-SST, Domicilios, Configuración) + anexos (Insumos, Bodega, KDS, Alertas, Deudores). Con ejemplos reales de datos.
-- PDF: `MANUAL_USUARIO.pdf` generado con reportlab (portada + tabla accesos + secciones con regla dorada, tablas header charcoal). Regenerar con `python "C:\Users\USUARIO\AppData\Local\Temp\opencode\gen_manual_pdf.py"`. Incluye accesos Vercel + admin.
+- PDF: `MANUAL_USUARIO.pdf` generado con reportlab (portada + tabla accesos + secciones con regla dorada, tablas header charcoal). Regenerar con `python "C:\Users\USUARIO\AppData\Local\Temp\opencode\gen_manual_pdf.py"`. Incluye accesos Vercel + admin. v1.1 (2026-10-03): logo circular `src/assets/logo.png` en portada (42mm) y cabecera de páginas 2+ (12mm + línea dorada); MD con `![Logo]` en cabecera. Copia servida en `src/assets/MANUAL_USUARIO.pdf` para descarga desde Documentación (MAN-USU).
 - Sidebar 2026-10-03: submenús (Cocina/Barra/Servicio, General/Categorías) alineados y centrados en móvil (64px) y colapsado; `*ngIf="item.expanded"` sin exigir `!collapsed`; tooltip `fixed` con nombre en hover/touch (`showTip/hideTip/scheduleHideTip`), sin duplicar label en expandido.
 
 ## Fixes deploy Vercel (2026-10-02, build prod en verde)
@@ -63,4 +70,4 @@ ng test --watch=false --browsers=ChromeHeadless --include="**/dishes/dishes.comp
 - Producción = Render (backend) + Vercel (frontend), auto-deploy por merge. El usuario prueba en `localhost:4200` contra Render.
 - Finanzas: cards `.pl-card` con icono 44px, `section-title` con borde inferior y `expense-bar-bg: var(--bg-input)`; `.card` con padding 1.25rem.
 - Documentación/SG-SST: claves LS `soupe-docs-v1` / `soupe-sgsst-v1`; módulos importan `FormsModule`.
-- Pendientes conocidos: deploy backend con últimos fixes; backfill de ventas viejas; commit/push a demanda (pendiente push: scroll independiente + fix dishes/finance + sidebar tooltip + manual/PDF + paleta clara 2026-10-03).
+- Pendientes conocidos: deploy backend con últimos fixes; backfill de ventas viejas; commit/push a demanda (pendiente push: scroll independiente + fix dishes/finance + sidebar tooltip + manual/PDF + paleta clara + doc MAN-USU 2026-10-03).

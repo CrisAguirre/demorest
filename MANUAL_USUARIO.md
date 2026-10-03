@@ -1,5 +1,7 @@
 # Manual de Usuario — La Soupe à l'Oignon (demorest)
 
+![Logo La Soupe à l'Oignon](src/assets/logo.png)
+
 Sistema de gestión del restaurante: mesas, POS, inventario por áreas, eventos, caja, domicilios y finanzas.
 Frontend Angular 16. Backend API REST + Socket.IO en Render.
 
