@@ -4,21 +4,21 @@
    🎨 DESIGN TOKENS — Restaurant Theme
    ══════════════════════════════════════════════════ */
 :root {
-  /* Fondos claros */
-  --bg-primary: #FDFBF7;
+  /* Fondos claros — blancos y grises metalizados (elegante/moderno) */
+  --bg-primary: #F2F3F5;
   --bg-card: #FFF;
-  --bg-sidebar: #F9F6F0;
-  --bg-input: #F0EBE1;
+  --bg-sidebar: #E8EAED;
+  --bg-input: #E8EAED;
   --bg-input-focus: #FFF;
 
   /* Texto */
-  --text-primary: #1A1D26;
-  --text-main: #1A1D26;
-  --text-secondary: #5A4A3A;
-  --text-muted: #9CA3AF;
+  --text-primary: #1E2430;
+  --text-main: #1E2430;
+  --text-secondary: #5C6575;
+  --text-muted: #9AA3B2;
 
   /* Bordes */
-  --border: #EAE0CF;
+  --border: #D5DBE3;
 
   /* Colores Corporativos */
   --brand-gold: #D4AF37; /* Oro */
@@ -32,7 +32,7 @@
   --shadow-gold: 0 0 8px rgb(212 175 55 / 20%), 0 0 20px rgb(212 175 55 / 5%);
   --shadow-gold-strong: 0 0 14px rgb(212 175 55 / 40%), 0 0 30px rgb(212 175 55 / 10%);
   --shadow-violet: 0 0 8px rgb(139 90 43 / 20%), 0 0 20px rgb(139 90 43 / 5%);
-  --shadow-card: 0 1px 3px rgb(0 0 0 / 4%), 0 4px 12px rgb(0 0 0 / 3%);
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 6%), 0 8px 24px rgb(16 24 40 / 8%);
 
   /* Spacing */
   --radius-sm: 8px;
