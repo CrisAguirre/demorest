@@ -504,7 +504,7 @@ interface CartItem {
     .catalog-item.in-cart .ci-check { background:var(--brand-gold); border-color:var(--brand-gold); }
     .ci-tick { color:#1a1a1a; font-size:.75rem; font-weight:900; }
     .ci-body { flex:1; min-width:0; }
-    .ci-name { font-weight:600; font-size:.875rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ci-name { font-weight:600; font-size:.875rem; min-width:0; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3; }
     .ci-meta { display:flex; justify-content:space-between; align-items:center; margin-top:.2rem; }
     .ci-stock { font-size:.75rem; color:var(--text-muted); }
     .ci-stock.low-stock { color:#e74c3c; }
@@ -518,9 +518,9 @@ interface CartItem {
     .cart-list { flex:1; overflow-y:auto; padding:0 1rem .5rem; display:flex; flex-direction:column; gap:.75rem; }
 
     .cart-item { background:var(--bg-input); border:1px solid var(--border); border-radius:12px; padding:.85rem; }
-    .ci-row-top { display:flex; align-items:center; gap:.6rem; margin-bottom:.65rem; }
+    .ci-row-top { display:flex; align-items:center; gap:.6rem; margin-bottom:.65rem; min-width:0; }
     .type-dot { font-size:.9rem; flex-shrink:0; }
-    .ci-item-name { flex:1; font-weight:600; font-size:.875rem; }
+    .ci-item-name { flex:1; min-width:0; font-weight:600; font-size:.875rem; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3; }
     .rm-btn { background:none; border:none; color:var(--text-muted); cursor:pointer; padding:.15rem .35rem; border-radius:5px; font-size:.85rem; transition:all .2s; }
     .rm-btn:hover { background:rgba(231,76,60,.12); color:#e74c3c; }
 

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { PosComponent } from './pos.component';
 import { ApiService } from '../../core/services/api.service';
 
@@ -267,6 +267,47 @@ describe('PosComponent', () => {
       expect(component.cobrarDisabled()).toBeTrue();
       component.cart = [];
       expect(component.cobrarDisabled()).toBeFalse();
+    });
+
+    it('should show the spinner only on Comandar while comandando', () => {
+      component.comandando = true;
+      component.cobrando = false;
+      fixture.detectChanges();
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('.cart-actions .btn-info')!.textContent).toContain('⏳');
+      expect(el.querySelector('.cart-actions .btn-success')!.textContent).not.toContain('⏳');
+      expect(el.querySelector('.cart-actions .btn-success')!.textContent).toContain('Cobrar');
+    });
+
+    it('should show the spinner only on Cobrar while cobrando', () => {
+      component.comandando = false;
+      component.cobrando = true;
+      fixture.detectChanges();
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.querySelector('.cart-actions .btn-success')!.textContent).toContain('⏳');
+      expect(el.querySelector('.cart-actions .btn-info')!.textContent).toContain('Comandar');
+      expect(el.querySelector('.cart-actions .btn-info')!.textContent).not.toContain('⏳');
+    });
+
+    it('should dispatch cobrar as a cobro action, not comandar', () => {
+      const fin = spyOn(component, 'finalizeSale');
+      component.selectedTable = 1;
+      component.cobrar();
+      expect(fin).toHaveBeenCalledWith('cobrar', 'cobrar');
+      component.selectedTable = null;
+      component.cobrar();
+      expect(fin).toHaveBeenCalledWith('abrir', 'cobrar');
+    });
+
+    it('should keep the Comandar button calm during ejecutarCobro', () => {
+      const gate = new Subject<any>();
+      api.paySale.and.returnValue(gate.asObservable());
+      (component as any).ejecutarCobro({ number: 2 }, 's1', false);
+      expect(component.cobrando).toBeTrue();
+      expect(component.comandando).toBeFalse();
+      gate.next({ _id: 's1', items: [], dishItems: [] });
+      expect(component.cobrando).toBeFalse();
+      expect(component.processing).toBeFalse();
     });
   });
 

@@ -168,6 +168,7 @@ import { environment } from '../../../environments/environment';
                   <div class="ing-qty-wrap">
                     <input class="field-input ing-qty" type="number" [(ngModel)]="ing.quantity"
                            placeholder="Cant." min="0" step="0.01">
+                    <span class="ing-unit" [attr.title]="'Unidad del insumo en Inventarios'">{{ unidadIngrediente(ing.ingredient) }}</span>
                   </div>
                   <button class="ing-remove" (click)="removeIngredient(i)" title="Quitar">✕</button>
                 </div>
@@ -206,30 +207,23 @@ Paso 2: ..."></textarea>
 
       <div class="modal-overlay" *ngIf="showRecipe" (click)="showRecipe = false">
         <div class="modal" (click)="$event.stopPropagation()">
-          <!-- Cabecera con foto en modal receta -->
-          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" style="border-radius:12px 12px 0 0;overflow:hidden;margin-bottom:0.5rem;cursor:zoom-in" (click)="ampliarFoto()" title="Ver completa">
-            <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" style="max-height:180px" alt="Foto del plato">
+          <div class="dish-photo-header" *ngIf="recipeDish?.imageUrl && !recetaFotoError" (click)="ampliarFoto()" title="Clic para ampliar">
+            <img [src]="fotoUrl(recipeDish!.imageUrl)" (error)="recetaFotoError = true" class="dish-photo-img" alt="Foto del plato">
           </div>
           <h2 class="modal-title">📋 {{ recipeDish?.name }}</h2>
-          <div class="recipe-detail" *ngIf="loadingRecipe">Calculando costo de la receta...</div>
+          <div class="recipe-detail" *ngIf="loadingRecipe">Cargando receta...</div>
           <div class="recipe-detail" *ngIf="!loadingRecipe && recipeError" style="color:#e74c3c">{{ recipeError }}</div>
-          <div class="recipe-detail" *ngIf="!loadingRecipe && recipeCost">
-            <div class="recipe-cost-summary">
-              <div><strong>Precio venta:</strong> {{ recipeCost.salePrice | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
-              <div><strong>Costo receta:</strong> {{ recipeCost.recipeCost | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
-              <div><strong>Margen:</strong> <span [class.badge-green]="recipeCost.margin >= 40" [class.badge-yellow]="recipeCost.margin >= 20 && recipeCost.margin < 40" [class.badge-red]="recipeCost.margin < 20">{{ recipeCost.margin }}%</span></div>
-            </div>
-            <table class="data-table" style="margin-top:1rem">
+          <div class="recipe-detail" *ngIf="!loadingRecipe && !recipeError">
+            <p class="recipe-hint">Ingredientes con cantidades de la receta. El precio del plato es informativo.</p>
+            <table class="data-table" style="margin-top:0.75rem">
               <thead>
-                <tr><th>Ingrediente</th><th>Cant.</th><th>Und</th><th>Costo Und</th><th>Subtotal</th></tr>
+                <tr><th>Ingrediente</th><th>Cant.</th><th>Und</th></tr>
               </thead>
               <tbody>
-                <tr *ngFor="let ing of recipeCost.ingredients">
+                <tr *ngFor="let ing of recipeItems">
                   <td>{{ ing.name }}</td>
                   <td>{{ ing.quantity }}</td>
                   <td>{{ ing.unit }}</td>
-                  <td>{{ ing.costPerUnit | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
-                  <td>{{ ing.subtotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -374,8 +368,9 @@ Paso 2: ..."></textarea>
     }
     .ing-select { flex: 2; background: transparent; border: none; padding: 0.2rem 0.4rem; }
     .ing-select:focus { box-shadow: none; border-color: transparent; }
-    .ing-qty-wrap { flex: 0 0 80px; }
+    .ing-qty-wrap { flex: 0 0 80px; display: flex; align-items: center; gap: 0.25rem; }
     .ing-qty { padding: 0.25rem 0.5rem !important; text-align: center; }
+    .ing-unit { font-size: 0.72rem; color: var(--text-muted); flex-shrink: 0; max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .ing-remove {
       background: none; border: none; cursor: pointer;
       color: #e74c3c; font-size: 0.85rem; padding: 0.2rem 0.4rem;
@@ -439,7 +434,14 @@ Paso 2: ..."></textarea>
 
     /* Modal receta */
     .recipe-detail { padding: 0.5rem 0; min-width:0; max-width:100%; }
-    .recipe-cost-summary { display:flex; gap:2rem; padding:0.75rem; background:var(--bg-input); border-radius:8px; flex-wrap:wrap; min-width:0; }
+    .recipe-hint { font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.75rem; }
+    .dish-photo-header {
+      position: relative; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; background: var(--bg-input);
+      border-radius: 12px; overflow: hidden; cursor: zoom-in;
+      min-height: 220px; max-height: 320px; margin-bottom: 0.75rem;
+    }
+    .dish-photo-img { width: 100%; height: 100%; min-height: 220px; max-height: 320px; object-fit: cover; display: block; }
     .dish-photo-header {
       position: relative; display: flex; flex-direction: column; align-items: center;
       justify-content: center; background: var(--bg-input);
@@ -452,6 +454,7 @@ Paso 2: ..."></textarea>
       .dish-modal-photo { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 1rem; }
       .photo-frame { width: 120px; height: 120px; }
       .field-row { grid-template-columns: 1fr; }
+      .dish-photo-header, .dish-photo-img { min-height: 180px; max-height: 240px; }
     }
   `]
 })
@@ -464,7 +467,7 @@ export class DishesComponent implements OnInit {
   showRecipe = false;
   showFoto = false;
   recipeDish: Dish | null = null;
-  recipeCost: any = null;
+  recipeItems: { name: string; quantity: number; unit: string; stock: number | null; minStock: number | null }[] = [];
   loadingRecipe = false;
   recipeError = '';
   photoFile: File | null = null;
@@ -570,6 +573,14 @@ export class DishesComponent implements OnInit {
     this.form.ingredients.push({ ingredient: '', quantity: 0 });
   }
 
+  // Unidad del insumo según Inventarios: la cantidad de la receta va en esa
+  // unidad (ej. 1 = 1 porción de 100g si el insumo está en unidades).
+  unidadIngrediente(id: string): string {
+    if (!id) return '';
+    const found = this.availableIngredients.find(i => i._id === id);
+    return found?.unit || '';
+  }
+
   removeIngredient(index: number) {
     this.form.ingredients.splice(index, 1);
   }
@@ -629,15 +640,33 @@ export class DishesComponent implements OnInit {
     });
   }
 
-  viewRecipe(dish: Dish) {    this.recipeDish = dish;
-    this.recipeCost = null;
+  viewRecipe(dish: Dish) {
+    this.recipeDish = dish;
     this.recipeError = '';
     this.recetaFotoError = false;
     this.loadingRecipe = true;
     this.showRecipe = true;
-    this.api.getRecipeCost(dish._id).subscribe({
-      next: (data) => { this.recipeCost = data; this.loadingRecipe = false; },
-      error: (err) => { this.loadingRecipe = false; this.recipeError = 'No se pudo calcular el costo: ' + (err.error?.message || err.message); }
-    });
+    try {
+      this.recipeItems = (dish.ingredients || []).map((item: any) => {
+        const ref = item.ingredient;
+        const resolved: any = typeof ref === 'string'
+          ? this.availableIngredients.find(i => i._id === ref)
+          : ref;
+        return {
+          name: resolved?.name || 'Ingrediente',
+          quantity: item.quantity,
+          unit: resolved?.unit || 'unidades',
+          stock: resolved?.stock ?? null,
+          minStock: resolved?.minStock ?? null
+        };
+      });
+      if (this.recipeItems.length === 0) {
+        this.recipeError = 'Este plato aún no tiene ingredientes en su receta.';
+      }
+    } catch {
+      this.recipeError = 'No se pudo mostrar la receta.';
+      this.recipeItems = [];
+    }
+    this.loadingRecipe = false;
   }
 }

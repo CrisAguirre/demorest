@@ -121,13 +121,13 @@ import Swal from 'sweetalert2';
               <option value="mixto">🔄 Mixto</option>
             </select>
           </div>
-          <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
-            <button class="btn-danger" style="flex:1" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
-            <button class="btn-info" style="flex:1" (click)="comandar()" [disabled]="processing || cart.length === 0" title="Envía a cocina lo nuevo del carrito">
-              {{ processing ? '⏳' : '🖨️ Comandar' }}
+          <div class="cart-actions" style="display:flex;gap:0.5rem;margin-top:0.75rem">
+            <button class="btn-danger" style="flex:1 1 0;min-width:0" (click)="clearCart()" [disabled]="cart.length === 0">🗑️ Limpiar</button>
+            <button class="btn-info" style="flex:1 1 0;min-width:0" (click)="comandar()" [disabled]="comandando || cobrando || cart.length === 0" title="Envía a cocina lo nuevo del carrito">
+              {{ comandando ? '⏳' : '🖨️ Comandar' }}
             </button>
-            <button class="btn-success" style="flex:1" (click)="cobrar()" [disabled]="cobrarDisabled()" title="Cobra la cuenta">
-              💵 Cobrar
+            <button class="btn-success" style="flex:1 1 0;min-width:0" (click)="cobrar()" [disabled]="cobrarDisabled()" title="Cobra la cuenta">
+              {{ cobrando ? '⏳' : '💵 Cobrar' }}
             </button>
           </div>
         </div>
@@ -162,16 +162,17 @@ import Swal from 'sweetalert2';
       max-height: calc(100vh - 240px); overflow-y: auto;
     }
     .product-tile:hover { transform: translateY(-2px); border-color: var(--brand-gold); }
-    .product-tile-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.375rem; line-height: 1.3; }
+    .product-tile { min-width: 0; }
+    .product-tile-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.375rem; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .product-tile-price { font-family: 'Outfit'; font-weight: 700; color: var(--brand-bronze); }
     .pos-cart { display: flex; flex-direction: column; position: sticky; top: 76px; max-height: calc(100vh - 100px); }
     .cart-items { flex: 1; overflow-y: auto; }
     .cart-item {
       padding: 0.6rem 0; border-bottom: 1px solid var(--bg-input);
     }
-    .cart-item-info { display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
-    .cart-item-name { font-size: 0.82rem; font-weight: 600; }
-    .cart-item-price { font-size: 0.75rem; color: var(--text-secondary); }
+    .cart-item-info { display: flex; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.25rem; min-width: 0; }
+    .cart-item-name { font-size: 0.82rem; font-weight: 600; flex: 1; min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+    .cart-item-price { font-size: 0.75rem; color: var(--text-secondary); flex-shrink: 0; }
     .cart-item-controls { display: flex; align-items: center; gap: 0.5rem; }
     .qty-btn {
       width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--bg-input);
@@ -190,6 +191,10 @@ import Swal from 'sweetalert2';
       color: var(--brand-gold);
     }
     .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
+    .cart-actions .btn-danger, .cart-actions .btn-info, .cart-actions .btn-success {
+      min-width: 0; padding: 0.55rem 0.35rem; font-size: 0.8rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     @media (max-width: 768px) {
       .pos-layout { grid-template-columns: 1fr; min-width: 0; }
       .pos-cart { position: relative; top: 0; max-height: none; }
@@ -197,8 +202,8 @@ import Swal from 'sweetalert2';
       .pos-toolbar { gap: 0.5rem; }
       .pos-context { font-size: 0.82rem; width: 100%; }
       .cart-item-controls { flex-wrap: wrap; row-gap: 0.35rem; }
-      .cart-item-info { min-width: 0; }
-      .cart-item-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+      .cart-item-info { min-width: 0; gap: 0.5rem; }
+      .cart-item-name { min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
     }
     @media (max-width: 480px) {
       .product-grid { grid-template-columns: repeat(2, 1fr); }
@@ -224,7 +229,10 @@ export class PosComponent implements OnInit, OnDestroy {
   searchTerm = '';
   selectedCategory = '';
   paymentMethod = 'efectivo';
-  processing = false;
+  comandando = false;
+  cobrando = false;
+  // Compat: antes un solo flag; ahora el reloj va solo en el botón de la acción en curso.
+  get processing(): boolean { return this.comandando || this.cobrando; }
   tables: any[] = [];
   selectedTable: number | null = null;
   reservaId: string | null = null;
@@ -507,7 +515,7 @@ export class PosComponent implements OnInit, OnDestroy {
   }
 
   cobrarDisabled(): boolean {
-    if (this.processing) return true;
+    if (this.comandando || this.cobrando) return true;
     if (this.isTableOccupied()) return this.cart.length > 0;
     return this.cart.length === 0;
   }
@@ -516,14 +524,15 @@ export class PosComponent implements OnInit, OnDestroy {
     if (this.isTableOccupied()) {
       this.payTableSale();
     } else if (this.esAperturaMesa) {
-      this.finalizeSale('cobrar');
+      this.finalizeSale('cobrar', 'cobrar');
     } else {
-      this.finalizeSale();
+      this.finalizeSale('abrir', 'cobrar');
     }
   }
 
-  finalizeSale(modo: 'abrir' | 'cobrar' = 'abrir'): void {
-    this.processing = true;
+  finalizeSale(modo: 'abrir' | 'cobrar' = 'abrir', accion: 'comandar' | 'cobrar' = 'comandar'): void {
+    if (accion === 'cobrar') this.cobrando = true;
+    else this.comandando = true;
     const payload: any = {
       items: this.cart.map(i => ({ product: i.product, quantity: i.quantity })),
       paymentMethod: this.paymentMethod
@@ -543,7 +552,7 @@ export class PosComponent implements OnInit, OnDestroy {
       const saleId = (t.currentSale as any)?._id || t.currentSale;
       this.api.addItemsToSale(saleId, payload).subscribe({
         next: () => {
-          this.processing = false;
+          this.comandando = false; this.cobrando = false;
           this.cart = [];
           this.completarReservaSiHay();
           this.ngOnInit();
@@ -552,7 +561,7 @@ export class PosComponent implements OnInit, OnDestroy {
           if (nuevos.length > 0) this.printComanda(nuevos, tableNum, 'adicional');
         },
         error: (err: any) => {
-          this.processing = false;
+          this.comandando = false; this.cobrando = false;
           Swal.fire('❌ Error', err.error?.message || 'Error al agregar ítems', 'error');
         }
       });
@@ -561,7 +570,7 @@ export class PosComponent implements OnInit, OnDestroy {
       const tableNum = this.selectedTable;
       this.api.createSale(payload).subscribe({
         next: (vendida: any) => {
-          this.processing = false;
+          this.comandando = false; this.cobrando = false;
           const abreMesa = this.selectedTable !== null && modo === 'abrir';
           this.cart = [];
           // La reserva se completa DESPUÉS de crear la venta para que quede enlazada a la mesa.
@@ -577,7 +586,7 @@ export class PosComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          this.processing = false;
+          this.comandando = false; this.cobrando = false;
           Swal.fire('❌ Error', err.error?.message || 'Error al procesar venta', 'error');
         }
       });
@@ -634,10 +643,10 @@ export class PosComponent implements OnInit, OnDestroy {
   }
 
   private ejecutarCobro(t: any, saleId: string, imprimir: boolean): void {
-    this.processing = true;
+    this.cobrando = true;
     this.api.paySale(saleId, { paymentMethod: this.paymentMethod }).subscribe({
       next: (res: any) => {
-        this.processing = false;
+        this.cobrando = false;
         this.selectedTable = null;
         this.ventaActual = null;
         this.limpiarBorradorMesa();
@@ -652,10 +661,10 @@ export class PosComponent implements OnInit, OnDestroy {
 
         if (allItems.length > 0) this.printComanda(allItems, t.number, 'venta');
       },
-      error: (err: any) => {
-        this.processing = false;
-        Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
-      }
+        error: (err: any) => {
+          this.cobrando = false;
+          Swal.fire('❌ Error', err.error?.message || 'Error al cobrar la cuenta', 'error');
+        }
     });
   }
 

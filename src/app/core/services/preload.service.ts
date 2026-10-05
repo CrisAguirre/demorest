@@ -32,9 +32,10 @@ const TTL = {
   categories:   10 * 60 * 1000,  // 10 min
   products:      5 * 60 * 1000,  //  5 min — stock fluctuates
   alerts:        2 * 60 * 1000,  //  2 min — time-sensitive
-  salesSummary:  5 * 60 * 1000,  //  5 min
-  topProducts:   5 * 60 * 1000,
-  currentCash:   3 * 60 * 1000,
+  salesSummary:  5  * 60 * 1000,  //  5 min
+  topProducts:   5  * 60 * 1000,
+  currentCash:   3  * 60 * 1000,
+  tables:        30 * 1000,       // 30s — cambia con cada venta/reserva
 } as const;
 
 // Keys that are persisted to localStorage for instant load
@@ -115,6 +116,11 @@ export class PreloadService {
         this.set('top-products:5',             payload.topProducts, TTL.topProducts);
         // Current cash
         this.set('current-cash',               payload.currentCash, TTL.currentCash);
+
+        // Tables: mapa de mesas listo para /mesas sin round-trip extra
+        if (payload.tables) {
+          this.set('tables', payload.tables, TTL.tables);
+        }
 
         console.log('✅ Preload complete — cache populated');
       })

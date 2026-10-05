@@ -113,6 +113,7 @@ import Swal from 'sweetalert2';
                 <button *ngFor="let ev of dia.eventos"
                         class="week-ev"
                         [ngClass]="['chip-' + ev.status, 'tipo-' + ev.eventType]"
+                        [attr.title]="(ev.theme || ev.customerName) + ' — ' + estadoLabel(ev.status)"
                         (click)="abrirEvento(ev); $event.stopPropagation()">
                   <strong>{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</strong>
                   <span>{{ ev.theme || ev.customerName }}</span>
@@ -133,6 +134,7 @@ import Swal from 'sweetalert2';
                 <button *ngFor="let ev of eventosEnHora(h)"
                         class="tl-ev"
                         [ngClass]="['chip-' + ev.status, 'tipo-' + ev.eventType]"
+                        [attr.title]="(ev.theme || ev.customerName) + ' — ' + estadoLabel(ev.status)"
                         (click)="abrirEvento(ev)">
                   <strong>{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</strong>
                   <span>{{ ev.theme || ev.customerName }}</span>
@@ -219,7 +221,7 @@ import Swal from 'sweetalert2';
         </div>
         <div class="chooser-list">
           <p class="chooser-hint">Hay {{ eventosChooser.length }} en este día. ¿Cuál desea ver?</p>
-          <button *ngFor="let ev of eventosChooser" class="chooser-item" (click)="abrirEvento(ev)">
+          <button *ngFor="let ev of eventosChooser" class="chooser-item" (click)="abrirEvento(ev)" [attr.title]="ev.theme || ev.customerName">
             <span class="chooser-time">{{ horaCorta(ev.eventDate) }}{{ ev.endDate ? ' → ' + horaCorta(ev.endDate) : '' }}</span>
             <span class="chooser-name">{{ ev.theme || ev.customerName }}</span>
             <span class="prop-pill" [ngClass]="'pill-' + ev.status">{{ estadoLabel(ev.status) }}</span>
@@ -440,7 +442,7 @@ import Swal from 'sweetalert2';
     }
     .chooser-item:hover { border-color: var(--brand-gold); }
     .chooser-time { font-weight: 800; flex-shrink: 0; }
-    .chooser-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chooser-name { flex: 1; min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
     .prop-pill {
       font-size: 0.78rem; font-weight: 600; border-radius: 4px; padding: 1px 8px;
       background: #eee; color: #666; flex-shrink: 0;
@@ -505,6 +507,7 @@ import Swal from 'sweetalert2';
     .week-ev {
       border: none; border-radius: 6px; padding: 0.35rem 0.45rem; font-size: 0.7rem;
       cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; color: inherit;
+      min-width: 0; overflow-wrap: anywhere; line-height: 1.3;
     }
     .week-vacio { font-size: 0.68rem; color: #c4c4c4; font-style: italic; text-align: center; padding: 0.8rem 0.2rem; cursor: pointer; border-radius: 6px; }
     .week-vacio:hover { background: rgba(0, 0, 0, 0.04); color: var(--text-muted); }
@@ -518,6 +521,7 @@ import Swal from 'sweetalert2';
     .tl-ev {
       border: none; border-radius: 8px; padding: 0.45rem 0.7rem; font-size: 0.78rem;
       cursor: pointer; display: flex; align-items: center; gap: 0.6rem; color: inherit; text-align: left;
+      min-width: 0; flex-wrap: wrap; overflow-wrap: anywhere; line-height: 1.35;
     }
     /* Drawer lateral */
     .drawer-overlay {
