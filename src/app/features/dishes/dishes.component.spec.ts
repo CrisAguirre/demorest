@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { DishesComponent } from './dishes.component';
 import { ApiService } from '../../core/services/api.service';
 
@@ -19,11 +19,12 @@ describe('DishesComponent', () => {
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ApiService', [
-      'getDishes', 'getIngredients', 'getRecipeCost', 'deleteDish', 'updateDish'
+      'getDishes', 'getIngredients', 'deleteDish', 'updateDish'
     ]);
     api.getDishes.and.returnValue(of([plato(), plato({ _id: 'd2', name: 'Bandeja', isAvailable: false })]));
-    api.getIngredients.and.returnValue(of([]));
-    api.getRecipeCost.and.returnValue(of({ salePrice: 28000, recipeCost: 8000, margin: 71, ingredients: [] }));
+    api.getIngredients.and.returnValue(of([
+      { _id: 'i1', name: 'Papa', unit: 'g', stock: 500, minStock: 100 }
+    ]));
     api.deleteDish.and.returnValue(of({}));
     api.updateDish.and.returnValue(of({}));
 
@@ -75,18 +76,28 @@ describe('DishesComponent', () => {
     expect(component.items.find(i => i._id === 'd2')!.isAvailable).toBeTrue();
   });
 
-  it('should show loading then cost in recipe view', () => {
+  it('should show ingredients with quantities in recipe view without costs', () => {
     component.viewRecipe(component.items[0]);
     expect(component.showRecipe).toBeTrue();
     expect(component.loadingRecipe).toBeFalse();
-    expect(component.recipeCost.margin).toBe(71);
+    expect(component.recipeError).toBe('');
+    expect(component.recipeItems.length).toBe(1);
+    expect(component.recipeItems[0].name).toBe('Papa');
+    expect(component.recipeItems[0].quantity).toBe(100);
+    expect(api.getRecipeCost).toBeUndefined();
   });
 
-  it('should show error when recipe cost fails', () => {
-    api.getRecipeCost.and.returnValue(throwError(() => ({ error: { message: 'caído' } })));
-    component.viewRecipe(component.items[0]);
+  it('should show notice when the dish has no recipe ingredients', () => {
+    component.viewRecipe(plato({ _id: 'd3', ingredients: [] }));
     expect(component.loadingRecipe).toBeFalse();
-    expect(component.recipeError).toContain('caído');
+    expect(component.recipeItems.length).toBe(0);
+    expect(component.recipeError).toContain('aún no tiene ingredientes');
+  });
+
+  it('should echo the inventory unit next to each recipe quantity', () => {
+    expect(component.unidadIngrediente('i1')).toBe('g');
+    expect(component.unidadIngrediente('')).toBe('');
+    expect(component.unidadIngrediente('no-existe')).toBe('');
   });
 
   it('should open and close full photo viewer', () => {

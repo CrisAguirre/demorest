@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../core/services/api.service';
 import { enviarRequisicion } from '../purchases/requisiciones.store';
@@ -22,8 +24,13 @@ interface ItemServicio {
         <div>
           <h1 class="page-title">🛎️ Servicio</h1>
           <p class="page-subtitle">Ítems del área de servicio</p>
+          <p class="page-subtitle" *ngIf="cargandoInventario" style="font-style:italic">⏳ Cargando inventario central...</p>
+          <p class="page-subtitle" *ngIf="!cargandoInventario && !usandoBackend" style="font-style:italic" title="Sin conexión al inventario central: los cambios son locales">
+            ⚠️ Modo local — los cambios no llegan a las recetas
+          </p>
         </div>
-        <div style="display:flex;gap:0.5rem">
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn-outline" (click)="openForm()">➕ Agregar ítem</button>
           <button class="btn-outline" (click)="openExistencias()">🔄 Actualizar inventario</button>
           <button class="btn-outline" (click)="iniciarOrden()">🧾 Requisición</button>
         </div>
@@ -36,26 +43,26 @@ interface ItemServicio {
       </div>
 
       <div class="card table-card">
-        <table class="data-table">
+        <table class="data-table inv-table">
           <thead>
             <tr>
-              <th>Código</th>
-              <th>Producto</th>
-              <th>Categoría</th>
-              <th>Ubicación</th>
-              <th>Unidad</th>
-              <th>Cantidad actual</th>
-              <th>Stock mínimo</th>
-              <th>Necesita pedido</th>
-              <th>Acciones</th>
+              <th class="nowrap">Código</th>
+              <th class="col-prod">Producto</th>
+              <th class="col-cat">Categoría</th>
+              <th class="col-ubi">Ubicación</th>
+              <th class="nowrap">Unidad</th>
+              <th title="Cantidad actual">Cantidad</th>
+              <th title="Stock mínimo">Mínimo</th>
+              <th title="Necesita pedido">Pedido</th>
+              <th class="nowrap">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of items; let idx = index">
-              <td><span class="badge badge-cyan">{{ item.codigo }}</span></td>
-              <td><strong>{{ item.nombre }}</strong></td>
-              <td><span class="badge badge-gold">{{ item.categoria }}</span></td>
-              <td>{{ item.ubicacion || '—' }}</td>
+              <td class="nowrap"><span class="badge badge-cyan" [attr.title]="item.codigo">{{ item.codigo }}</span></td>
+              <td class="col-prod"><strong class="prod-name" [attr.title]="item.nombre">{{ item.nombre }}</strong></td>
+              <td class="col-cat"><span class="badge badge-gold cat-badge" [attr.title]="item.categoria">{{ item.categoria }}</span></td>
+              <td class="col-ubi"><span class="ubi-text" [attr.title]="item.ubicacion || '—'">{{ item.ubicacion || '—' }}</span></td>
               <td>{{ item.unidad }}</td>
               <td>
                 <span class="badge" [ngClass]="{'badge-red': necesitaPedido(item), 'badge-green': !necesitaPedido(item)}">
@@ -70,6 +77,7 @@ interface ItemServicio {
               </td>
               <td class="actions">
                 <button class="btn-icon" title="Editar" (click)="edit(idx)">✏️</button>
+                <button class="btn-icon btn-icon-danger" title="Eliminar" (click)="eliminar(idx)">🗑️</button>
               </td>
             </tr>
           </tbody>
@@ -81,8 +89,8 @@ interface ItemServicio {
           <h2 class="modal-title">{{ editing ? '✏️ Editar Ítem' : '➕ Nuevo Ítem de Servicio' }}</h2>
           <div class="form-grid">
             <div class="form-group">
-              <label>Código</label>
-              <input class="form-input" [(ngModel)]="form.codigo" placeholder="Ej. S-021" />
+              <label>Código (automático)</label>
+              <input class="form-input code-input" [value]="editing ? form.codigo : siguienteCodigo(form.categoria || 'Desechables')" readonly title="Se asigna según la categoría, reutilizando el primer número libre" />
             </div>
             <div class="form-group">
               <label>Categoría</label>
@@ -94,7 +102,7 @@ interface ItemServicio {
             </div>
             <div class="form-group full-width">
               <label>Nombre *</label>
-              <input class="form-input" [(ngModel)]="form.nombre" />
+              <input class="form-input" [(ngModel)]="form.nombre" placeholder="Ej. Jabón" />
             </div>
             <div class="form-group full-width">
               <label>Ubicación</label>
@@ -112,12 +120,21 @@ interface ItemServicio {
               </select>
             </div>
             <div class="form-group">
-              <label>Stock Actual</label>
-              <input class="form-input" type="number" [(ngModel)]="form.stock" />
+              <label>Cantidad actual</label>
+              <input class="form-input" type="number" min="0" [(ngModel)]="form.stock" />
             </div>
             <div class="form-group">
               <label>Stock Mínimo</label>
-              <input class="form-input" type="number" [(ngModel)]="form.minStock" />
+              <input class="form-input" type="number" min="0" [(ngModel)]="form.minStock" />
+            </div>
+            <div class="form-group">
+              <label>Pedido (según cantidad / mínimo)</label>
+              <div style="display:flex;align-items:center;gap:0.5rem;min-height:42px">
+                <span class="badge" [ngClass]="{'badge-red': (form.stock ?? 0) < (form.minStock ?? 0), 'badge-green': (form.stock ?? 0) >= (form.minStock ?? 0)}">
+                  {{ (form.stock ?? 0) < (form.minStock ?? 0) ? 'PEDIR' : 'OK' }}
+                </span>
+                <small *ngIf="(form.stock ?? 0) < (form.minStock ?? 0)" style="color:var(--text-muted)">Faltan {{ ((form.minStock ?? 0) - (form.stock ?? 0)) | number:'1.0-2' }}</small>
+              </div>
             </div>
           </div>
           <div class="modal-actions">
@@ -282,7 +299,15 @@ interface ItemServicio {
     </div>
   `,
   styles: [`
-    .data-table th { text-transform: none; }
+    .data-table th { text-transform: none; white-space: normal; overflow-wrap: anywhere; font-size: 0.72rem; line-height: 1.3; vertical-align: bottom; }
+    .data-table td { white-space: normal; overflow-wrap: anywhere; vertical-align: middle; }
+    .data-table th.nowrap, .data-table td.nowrap { white-space: nowrap; }
+    .col-prod { min-width: 140px; max-width: 230px; }
+    .prod-name { display: block; line-height: 1.3; overflow-wrap: anywhere; }
+    .col-cat { min-width: 90px; max-width: 140px; }
+    .cat-badge { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+    .col-ubi { min-width: 90px; max-width: 150px; }
+    .ubi-text { display: block; line-height: 1.3; overflow-wrap: anywhere; font-size: 0.82rem; }
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; min-width:0; }
     .full-width { grid-column: 1 / -1; }
     .actions { display:flex; gap:.4rem; flex-wrap:wrap; }
@@ -316,8 +341,64 @@ interface ItemServicio {
     .agregar-linea .form-input:disabled { opacity: 0.45; }
   `]
 })
-export class ServicioComponent {
+export class ServicioComponent implements OnInit {
   constructor(private api: ApiService) {}
+
+  // —— Inventario central (backend) con respaldo local ———————————
+  // La lista de ejemplo solo se usa sin conexión o con inventario vacío.
+  // Todo cambio (nombre, ubicación, unidad, stocks) se guarda en el API,
+  // por eso las recetas —que referencian el insumo por id— lo ven al instante.
+  cargandoInventario = false;
+  usandoBackend = false;
+
+  ngOnInit(): void {
+    this.cargarInventario();
+  }
+
+  // Respaldo para documentos antiguos sin categoría (el paso v7 de seeds
+  // ya la rellena en todos los insumos de servicio).
+  private categoriaPorDefecto(_codigo: string): string {
+    return 'Desechables';
+  }
+
+  private desdeBackend(doc: any): ItemServicio {
+    return {
+      _id: doc._id,
+      codigo: doc.code || '',
+      nombre: doc.name || '',
+      categoria: doc.categoria || this.categoriaPorDefecto(doc.code),
+      ubicacion: doc.ubicacion || '',
+      unidad: doc.unit || 'unidades',
+      stock: Number(doc.stock) || 0,
+      minStock: Number(doc.minStock) || 0
+    };
+  }
+
+  private esIdLocal(id: string): boolean {
+    return !id || id.startsWith('local-') || /^[a-z]+\d+$/i.test(id);
+  }
+
+  cargarInventario(): void {
+    this.cargandoInventario = true;
+    this.api.getIngredients({ area: 'servicio' }).pipe(
+      catchError(() => of(null))
+    ).subscribe({
+      next: (docs: any) => {
+        this.cargandoInventario = false;
+        const lista = Array.isArray(docs) ? docs : (docs?.ingredients || []);
+        if (lista.length > 0) {
+          this.items = lista.map((d: any) => this.desdeBackend(d));
+          this.usandoBackend = true;
+        } else {
+          this.usandoBackend = false;
+        }
+      },
+      error: () => {
+        this.cargandoInventario = false;
+        this.usandoBackend = false;
+      }
+    });
+  }
   items: ItemServicio[] = [
     { _id: 's1', codigo: 'S-001', nombre: 'Servilletas', categoria: 'Desechables', ubicacion: 'Bodega', unidad: 'paquete', stock: 12, minStock: 10 },
     { _id: 's2', codigo: 'S-002', nombre: 'Vasos desechables 7oz', categoria: 'Desechables', ubicacion: 'Barra', unidad: 'paquete', stock: 5, minStock: 8 },
@@ -375,6 +456,38 @@ export class ServicioComponent {
   }
 
   guardarExistencias(): void {
+    if (!this.usandoBackend) {
+      this.aplicarExistenciasLocal();
+      this.showExistencias = false;
+      return;
+    }
+    const cambios = this.existencias.filter(e => {
+      const item = this.items.find(x => x._id === e._id);
+      return item && !this.esIdLocal(String(e._id)) &&
+        (Number(e.stock) !== Number(item.stock) || Number(e.minStock) !== Number(item.minStock));
+    });
+    if (cambios.length === 0) {
+      this.showExistencias = false;
+      return;
+    }
+    forkJoin(
+      cambios.map(e => this.api.updateIngredient(e._id, {
+        stock: Math.max(0, Number(e.stock) || 0),
+        minStock: Math.max(0, Number(e.minStock) || 0)
+      }).pipe(catchError(() => of(null))))
+    ).subscribe({
+      next: () => {
+        this.aplicarExistenciasLocal();
+        this.showExistencias = false;
+      },
+      error: () => {
+        this.aplicarExistenciasLocal();
+        this.showExistencias = false;
+      }
+    });
+  }
+
+  private aplicarExistenciasLocal(): void {
     this.existencias.forEach(e => {
       const item = this.items.find(x => x._id === e._id);
       if (item) {
@@ -382,7 +495,6 @@ export class ServicioComponent {
         item.minStock = Math.max(0, Number(e.minStock) || 0);
       }
     });
-    this.showExistencias = false;
   }
 
   resetNuevoItem(): void {
@@ -395,12 +507,14 @@ export class ServicioComponent {
   }
 
   siguienteCodigo(categoria: string): string {
-    let max = 0;
+    const usados = new Set<number>();
     this.items.forEach(i => {
       const m = /^S-(\d+)$/.exec(i.codigo || '');
-      if (m) max = Math.max(max, parseInt(m[1], 10));
+      if (m) usados.add(parseInt(m[1], 10));
     });
-    return `S-${String(max + 1).padStart(3, '0')}`;
+    let n = 1;
+    while (usados.has(n)) n++;
+    return `S-${String(n).padStart(3, '0')}`;
   }
 
   confirmarNuevoItem(): void {
@@ -408,15 +522,37 @@ export class ServicioComponent {
     if (!nombre) return;
     const categoria = this.nuevoItem.categoria || 'Desechables';
     const codigo = this.siguienteCodigo(categoria);
-    const nuevo: ItemServicio = {
-      _id: 'local-' + Date.now(),
-      codigo,
+    const datos = {
       nombre,
       categoria,
       ubicacion: this.nuevoItem.ubicacion || '',
       unidad: this.nuevoItem.unidad || 'unidades',
       stock: Math.max(0, Number(this.nuevoItem.stock) || 0),
       minStock: Math.max(0, Number(this.nuevoItem.minStock) || 0)
+    };
+    if (this.usandoBackend) {
+      this.api.createIngredient({
+        name: datos.nombre, code: codigo, categoria: datos.categoria, area: 'servicio',
+        ubicacion: datos.ubicacion, unit: datos.unidad,
+        stock: datos.stock, minStock: datos.minStock, cost: 0
+      }).subscribe({
+        next: (doc: any) => {
+          const nuevo = this.desdeBackend(doc);
+          this.items.push(nuevo);
+          this.existencias.push({
+            _id: nuevo._id, nombre: nuevo.nombre, unidad: nuevo.unidad,
+            stock: nuevo.stock, minStock: nuevo.minStock
+          });
+          this.resetNuevoItem();
+        },
+        error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'No se pudo crear en el inventario central', 'error')
+      });
+      return;
+    }
+    const nuevo: ItemServicio = {
+      _id: 'local-' + Date.now(),
+      codigo,
+      ...datos
     };
     this.items.push(nuevo);
     this.existencias.push({
@@ -439,14 +575,86 @@ export class ServicioComponent {
   closeForm(): void { this.showForm = false; }
 
   save(): void {
-    if (!this.form.nombre) return;
+    const nombre = (this.form.nombre || '').trim();
+    if (!nombre) return;
+    const categoria = this.form.categoria || 'Desechables';
+    const datos = {
+      nombre,
+      categoria,
+      ubicacion: this.form.ubicacion || '',
+      unidad: this.form.unidad || 'unidades',
+      stock: Math.max(0, Number(this.form.stock) || 0),
+      minStock: Math.max(0, Number(this.form.minStock) || 0)
+    };
     if (this.editing) {
       const i = this.items.findIndex(x => x._id === this.editingId);
-      if (i >= 0) this.items[i] = { ...this.items[i], ...this.form };
+      if (i < 0) { this.closeForm(); return; }
+      const original = this.items[i];
+      const codigo = original.categoria === categoria ? original.codigo : this.siguienteCodigo(categoria);
+      if (this.usandoBackend && !this.esIdLocal(original._id)) {
+        this.api.updateIngredient(original._id, {
+          name: datos.nombre, code: codigo, categoria: datos.categoria,
+          ubicacion: datos.ubicacion, unit: datos.unidad,
+          stock: datos.stock, minStock: datos.minStock
+        }).subscribe({
+          next: (doc: any) => { this.items[i] = this.desdeBackend(doc); this.closeForm(); },
+          error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'No se pudo guardar en el inventario central', 'error')
+        });
+        return;
+      }
+      this.items[i] = { ...original, ...datos, codigo };
     } else {
-      this.items.push({ _id: 'local-' + Date.now(), ...this.form });
+      const codigo = this.siguienteCodigo(categoria);
+      if (this.usandoBackend) {
+        this.api.createIngredient({
+          name: datos.nombre, code: codigo, categoria: datos.categoria, area: 'servicio',
+          ubicacion: datos.ubicacion, unit: datos.unidad,
+          stock: datos.stock, minStock: datos.minStock, cost: 0
+        }).subscribe({
+          next: (doc: any) => { this.items.push(this.desdeBackend(doc)); this.closeForm(); },
+          error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'No se pudo crear en el inventario central', 'error')
+        });
+        return;
+      }
+      this.items.push({ _id: 'local-' + Date.now(), ...datos, codigo });
     }
     this.closeForm();
+  }
+
+  eliminar(index: number): void {
+    const item = this.items[index];
+    if (!item) return;
+    Swal.fire({
+      title: '¿Eliminar ítem?',
+      html: `<strong>${item.nombre}</strong><br><small style="color:var(--text-muted)">${item.codigo} · ${item.categoria}</small><br>El código <strong>${item.codigo}</strong> quedará libre y se reutilizará en el próximo ítem de esa categoría.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#D32F2F',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((res) => {
+      if (!res.isConfirmed) return;
+      if (this.usandoBackend && !this.esIdLocal(item._id)) {
+        this.api.deleteIngredient(item._id).subscribe({
+          next: () => {
+            this.items.splice(index, 1);
+            Swal.fire({
+              icon: 'success', title: 'Ítem eliminado',
+              text: `El código ${item.codigo} quedó libre.`,
+              confirmButtonColor: '#D4AF37', confirmButtonText: 'Entendido'
+            });
+          },
+          error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'No se pudo eliminar del inventario central', 'error')
+        });
+        return;
+      }
+      this.items.splice(index, 1);
+      Swal.fire({
+        icon: 'success', title: 'Ítem eliminado',
+        text: `El código ${item.codigo} quedó libre.`,
+        confirmButtonColor: '#D4AF37', confirmButtonText: 'Entendido'
+      });
+    });
   }
 
   private lineaDe(i: any): any {
@@ -507,19 +715,52 @@ export class ServicioComponent {
       confirmButtonText: 'Sí',
       cancelButtonText: 'No'
     }).then((res) => {
-      if (res.isConfirmed) {
-        self.items.push({
-          _id: 'local-' + Date.now(), codigo: '', nombre,
-          categoria: 'General', ubicacion: '', unidad,
-          stock: 0, minStock: 0
-        });
-      }
-      if (res.isConfirmed || res.dismiss === Swal.DismissReason.cancel) {
+      const agregarSoloAOrden = () => {
         self.lineas.push({
           _id: 'manual-' + Date.now(), nombre, unidad,
           stock: 0, minStock: 0, qty, incluir: true, manual: true
         });
         self.resetNuevaLinea();
+      };
+      if (res.isConfirmed) {
+        Swal.fire({
+          title: 'Categoría del nuevo ítem',
+          html: `¿A qué categoría pertenece <strong>"${nombre}"</strong>?<br><small style="color:var(--text-muted)">Se le asignará el código automáticamente según la categoría.</small>`,
+          icon: 'question',
+          input: 'select',
+          inputOptions: {
+            'Desechables': 'Desechables',
+            'Baño': 'Baño',
+            'Limpieza': 'Limpieza'
+          },
+          inputValue: 'Desechables',
+          showCancelButton: true,
+          confirmButtonColor: '#D4AF37',
+          confirmButtonText: 'Guardar en inventario',
+          cancelButtonText: 'Solo a la orden'
+        }).then((resCat: any) => {
+          if (resCat.isConfirmed) {
+            const categoria = resCat.value || 'Desechables';
+            if (self.usandoBackend) {
+              self.api.createIngredient({
+                name: nombre, code: self.siguienteCodigo(categoria), categoria,
+                area: 'servicio', ubicacion: '', unit: unidad, stock: 0, minStock: 0, cost: 0
+              }).subscribe({
+                next: (doc: any) => self.items.push(self.desdeBackend(doc)),
+                error: (err: any) => Swal.fire('❌ Error', err.error?.message || 'Quedó en la orden, pero no se pudo guardar en el inventario', 'error')
+              });
+            } else {
+              self.items.push({
+                _id: 'local-' + Date.now(), codigo: self.siguienteCodigo(categoria), nombre,
+                categoria, ubicacion: '', unidad,
+                stock: 0, minStock: 0
+              });
+            }
+          }
+          agregarSoloAOrden();
+        });
+      } else if (res.dismiss === Swal.DismissReason.cancel) {
+        agregarSoloAOrden();
       }
     });
   }

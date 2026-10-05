@@ -119,8 +119,8 @@ import { AuthService } from '../../../core/services/auth.service';
       background: rgba(212,175,55,0.1); color: var(--brand-gold);
       font-weight: 600; border-left: 3px solid var(--brand-gold);
     }
-    .nav-icon { font-size: 1.2rem; min-width: 24px; text-align: center; }
-    .nav-label { transition: opacity 0.2s; }
+    .nav-icon { font-size: 1.2rem; min-width: 24px; text-align: center; flex-shrink: 0; }
+    .nav-label { transition: opacity 0.2s; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
     .collapsed .nav-item { justify-content: center; padding: 0.65rem; }
     .collapsed .nav-item-group { display: flex; flex-direction: column; align-items: stretch; }

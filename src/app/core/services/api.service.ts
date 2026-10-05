@@ -23,6 +23,8 @@ const TTL = {
   suppliers:         5  * 60 * 1000,
   expenseCategories: 60 * 60 * 1000,
   finance:           3  * 60 * 1000,
+  tables:            30 * 1000,
+  reservations:      30 * 1000,
 } as const;
 
 @Injectable({ providedIn: 'root' })
@@ -142,6 +144,8 @@ export class ApiService {
         this.preload.invalidatePrefix('alerts');
         this.preload.invalidate('current-cash');
         this.preload.invalidatePrefix('finance');
+        this.preload.invalidate('tables');
+        this.preload.invalidatePrefix('reservations');
       })
     );
   }
@@ -643,15 +647,22 @@ export class ApiService {
   // ── Tables ────────────────────────────────────────────────────────────
 
   getTables(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/tables`);
+    return this.cachedGet('tables', this.http.get(`${this.baseUrl}/tables`), TTL.tables);
   }
 
   occupyTable(id: string, saleId: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/tables/${id}/occupy`, { saleId });
+    return this.http.patch(`${this.baseUrl}/tables/${id}/occupy`, { saleId }).pipe(
+      tap(() => this.preload.invalidate('tables'))
+    );
   }
 
   freeTable(id: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/tables/${id}/free`, {});
+    return this.http.patch(`${this.baseUrl}/tables/${id}/free`, {}).pipe(
+      tap(() => {
+        this.preload.invalidate('tables');
+        this.preload.invalidatePrefix('reservations');
+      })
+    );
   }
 
   // ── Deliveries ─────────────────────────────────────────────────────────
@@ -679,19 +690,35 @@ export class ApiService {
   // ── Reservations ───────────────────────────────────────────────────────
 
   createReservation(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/reservations`, data);
+    return this.http.post(`${this.baseUrl}/reservations`, data).pipe(
+      tap(() => {
+        this.preload.invalidate('tables');
+        this.preload.invalidatePrefix('reservations');
+      })
+    );
   }
-  
+
   getReservations(params?: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reservations`, { params });
+    const k = this.key('reservations', params);
+    return this.cachedGet(k, this.http.get(`${this.baseUrl}/reservations`, { params }), TTL.reservations);
   }
-  
+
   cancelReservation(id: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/reservations/${id}/cancel`, {});
+    return this.http.patch(`${this.baseUrl}/reservations/${id}/cancel`, {}).pipe(
+      tap(() => {
+        this.preload.invalidate('tables');
+        this.preload.invalidatePrefix('reservations');
+      })
+    );
   }
-  
+
   completeReservation(id: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/reservations/${id}/complete`, {});
+    return this.http.patch(`${this.baseUrl}/reservations/${id}/complete`, {}).pipe(
+      tap(() => {
+        this.preload.invalidate('tables');
+        this.preload.invalidatePrefix('reservations');
+      })
+    );
   }
 
   // ── Events & Catering ──────────────────────────────────────────────────

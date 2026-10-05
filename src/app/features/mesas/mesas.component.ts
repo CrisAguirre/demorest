@@ -128,6 +128,11 @@ import Swal from 'sweetalert2';
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+      text-align: center;
+      min-width: 0;
+      max-width: 100%;
     }
     .table-order {
       font-size: 0.65rem;
@@ -139,7 +144,11 @@ import Swal from 'sweetalert2';
       font-size: 0.65rem;
       margin-top: 0.4rem;
       font-weight: 500;
-      line-height: 1.2;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+      text-align: center;
+      min-width: 0;
+      max-width: 100%;
     }
     @media (max-width: 900px) {
       .tables-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
@@ -163,6 +172,8 @@ export class MesasComponent implements OnInit {
   tables: any[] = [];
   filtro: '' | 'libre' | 'ocupada' | 'reservada' = '';
   conteoReservas: Record<string, number> = {};
+  cargando = false;
+  cargandoReservaId: string | null = null;
 
   constructor(
     private api: ApiService,
@@ -197,8 +208,16 @@ export class MesasComponent implements OnInit {
   }
 
   loadTables(): void {
+    this.cargando = true;
     this.api.getTables().subscribe({
-      next: (res: any) => this.tables = res
+      next: (res: any) => {
+        this.tables = res;
+        this.cargando = false;
+      },
+      error: () => {
+        this.cargando = false;
+        Swal.fire('❌ Error', 'No se pudieron cargar las mesas. Revisa tu conexión.', 'error');
+      }
     });
   }
 
@@ -305,8 +324,48 @@ export class MesasComponent implements OnInit {
   }
 
   verReservasMesa(table: any): void {
+    // Evita doble toque mientras ya se está cargando esta mesa
+    if (this.cargandoReservaId === table._id) return;
+    this.cargandoReservaId = table._id;
+
+    // Feedback inmediato (<100ms): si ya tenemos la reserva en la tarjeta,
+    // la mostramos al instante sin esperar al backend (Render puede tardar).
+    const local = table.currentReservation && typeof table.currentReservation === 'object'
+      ? [table.currentReservation]
+      : [];
+    if (local.length > 0) {
+      this.cargandoReservaId = null;
+      this.mostrarDialogoReservas(table, local);
+      // Refresca en segundo plano por si hay más reservas (multi-reserva)
+      this.api.getReservations({ table: table._id }).subscribe({
+        next: (res: any) => {
+          const todas = Array.isArray(res) ? res : (res.reservations || []);
+          const lista = todas
+            .filter((r: any) => r.status !== 'cancelada' && r.status !== 'completada')
+            .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          const idsLocal = local.map((r: any) => String(r._id));
+          const idsFresh = lista.map((r: any) => String(r._id));
+          const cambio = JSON.stringify(idsLocal) !== JSON.stringify(idsFresh);
+          if (cambio && lista.length > 0) {
+            try { Swal.close(); } catch { /* sin diálogo visible */ }
+            this.mostrarDialogoReservas(table, lista);
+          }
+        },
+        error: () => { /* ya se mostró la reserva local, no molestar */ }
+      });
+      return;
+    }
+
+    // Sin dato local: muestra "cargando" de inmediato para que no parezca muerta
+    Swal.fire({
+      title: `Mesa ${table.number} - Mesa reservada`,
+      html: '<p>Buscando reservas…</p>',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
     this.api.getReservations({ table: table._id }).subscribe({
       next: (res: any) => {
+        this.cargandoReservaId = null;
         const todas = Array.isArray(res) ? res : (res.reservations || []);
         const lista = todas
           .filter((r: any) => r.status !== 'cancelada' && r.status !== 'completada')
@@ -316,6 +375,16 @@ export class MesasComponent implements OnInit {
           Swal.fire('Mesa reservada', 'No hay reservas activas para esta mesa.', 'info');
           return;
         }
+        this.mostrarDialogoReservas(table, lista);
+      },
+      error: () => {
+        this.cargandoReservaId = null;
+        Swal.fire('❌ Error', 'No se pudieron cargar las reservas', 'error');
+      }
+    });
+  }
+
+  private mostrarDialogoReservas(table: any, lista: any[]): void {
         const bloques = lista.map((r: any, i: number) => `
           <div style="border:1px solid #e0e0e0;border-radius:10px;padding:0.6rem 0.8rem;margin-bottom:0.6rem;text-align:left;">
             <div style="font-weight:800;margin-bottom:0.25rem;">📌 Reserva ${lista.length > 1 ? (i + 1) + ' de ' + lista.length : ''}</div>
@@ -354,9 +423,6 @@ export class MesasComponent implements OnInit {
         }).then((res) => {
           if (res.isDenied) this.showReservationForm(table);
         });
-      },
-      error: () => Swal.fire('❌ Error', 'No se pudieron cargar las reservas', 'error')
-    });
   }
 
   iniciarPedidoReserva(table: any, resData: any): void {
@@ -384,6 +450,9 @@ export class MesasComponent implements OnInit {
             this.loadTables();
             this.cargarConteos();
             Swal.fire({ icon: 'success', title: 'Reserva cancelada', timer: 1500, showConfirmButton: false });
+          },
+          error: (err: any) => {
+            Swal.fire('❌ Error', err.error?.message || 'No se pudo cancelar la reserva', 'error');
           }
         });
       }

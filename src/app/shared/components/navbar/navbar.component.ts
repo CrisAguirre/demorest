@@ -42,12 +42,12 @@ import { SettingsService } from '../../../core/services/settings.service';
       color: var(--text-primary);
     }
     .navbar-brand {
-      display: flex; align-items: center; gap: 0.75rem; cursor: pointer;
+      display: flex; align-items: center; gap: 0.75rem; cursor: pointer; min-width: 0; flex: 1;
     }
-    .navbar-logo { height: 36px; width: auto; border-radius: 6px; }
+    .navbar-logo { height: 36px; width: auto; border-radius: 6px; flex-shrink: 0; }
     .navbar-title {
       font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700;
-      color: var(--brand-gold);
+      color: var(--brand-gold); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .navbar-actions { display: flex; align-items: center; gap: 1rem; }
     .navbar-date {
@@ -62,7 +62,7 @@ import { SettingsService } from '../../../core/services/settings.service';
     .btn-theme:hover { background: rgba(212,175,55,0.08); }
     .user-menu {
       display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
-      padding: 0.375rem 0.75rem; border-radius: 8px;
+      padding: 0.375rem 0.75rem; border-radius: 8px; min-width: 0;
       transition: background 0.2s;
     }
     .user-menu:hover { background: var(--bg-input); }
@@ -72,7 +72,7 @@ import { SettingsService } from '../../../core/services/settings.service';
       color: #fff; display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 0.85rem;
     }
-    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
     .user-role { font-size: 0.65rem; }
     .dropdown {
       position: absolute; top: 56px; right: 1.5rem;
