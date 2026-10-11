@@ -35,19 +35,19 @@ Frontend desplegado en Vercel, Backend en Render.
 - **Sidebar Reorganizado & Retraído por Defecto (2026-10-11)**:
   - Inicia **retraído por defecto (`collapsed = true`)** en 60px para dar máxima amplitud visual al Dashboard, con botón toggle `☰` / `✕` centrado.
   - Almacena y respeta la preferencia del usuario en `localStorage` (`sidebar_collapsed`).
-  - Menú de administración jerarquizado en 8 grupos lógicos con acordeones:
+  - Menú de administración jerarquizado en 7 grupos lógicos con acordeones:
     1. `🏠 Inicio` (`/dashboard`)
     2. `🪑 Operaciones` (`/mesas`, `/domicilios`, `/events`)
     3. `🍽️ Cocina y Carta` (`/dishes`, `/cocina`, `/barra`, `/servicio`)
     4. `💰 Caja y Ventas` (`/cash`, `/ticket-books`)
     5. `🛒 Compras y Costos` (`/suppliers`, `/purchases`, `/expenses`)
-    6. `👥 Personal` (`/staff`)
-    7. `📈 Análisis` (`/finance`, `/reports`)
-    8. `💼 Administración` (`/documentacion`, `/sg-sst`, `/settings`)
+    6. `📈 Análisis` (`/finance`, `/reports`)
+    7. `💼 Administración` (`/staff`, `/documentacion`, `/sg-sst`, `/settings`)
   - Auto-despliegue del grupo padre al navegar a cualquier sub-ruta (`checkActiveRoutes()` con `NavigationEnd`) y resaltado visual `.has-active-child`.
   - Enlace de Landing exterior retirado del menú lateral para evitar distracciones.
 - **Configuración + Categorías Unificados (2026-10-11)**:
   - Módulo `/settings` con barra de pestañas: `⚙️ General` y `📂 Categorías`.
+  - **Gestión Visual del Logo**: Visualización enmarcada del logo oficial (fallback a `/assets/logo.png`), vista previa en tiempo real al seleccionar archivo (`PNG`, `JPG`, `SVG`, `WebP` hasta 2 MB), botón directo de guardado `💾 Guardar Logo` y refresco reactivo inmediato en Navbar, Login y favicons.
   - Pestaña Categorías incluye CRUD completo, tabla con ordenación por columnas, buscador en vivo, badges de estado activo/inactivo, modales de edición y confirmaciones seguras con SweetAlert2.
   - La ruta `/categories` redirige transparentemente hacia `/settings`.
 - **Mesas** (`/mesas`): mapa por salones; ocupada = `status` del backend. Diálogos: Venta/Reservar, Ver pedido/Anular/Liberar.

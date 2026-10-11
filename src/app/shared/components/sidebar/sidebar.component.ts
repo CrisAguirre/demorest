@@ -283,7 +283,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
             { icon: '💸', label: 'Gastos',      route: '/expenses' }
           ]
         },
-        { icon: '👥', label: 'Personal', route: '/staff' },
         {
           icon: '📈', label: 'Análisis', expanded: false,
           subItems: [
@@ -294,6 +293,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         {
           icon: '💼', label: 'Administración', expanded: false,
           subItems: [
+            { icon: '👥', label: 'Personal',      route: '/staff' },
             { icon: '📚', label: 'Documentación', route: '/documentacion' },
             { icon: '🦺', label: 'SG-SST',         route: '/sg-sst' },
             { icon: '⚙️', label: 'Configuración', route: '/settings' }
