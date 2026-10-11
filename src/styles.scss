@@ -689,7 +689,8 @@ table { max-width: 100%; }
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    font-size: 16px !important; // evita zoom iOS y mejora legibilidad
+    /* evita zoom iOS y mejora legibilidad */
+    font-size: 16px !important;
   }
 
   .btn, .btn-primary, .btn-secondary, .btn-outline, .btn-danger, .btn-info, .btn-success {
