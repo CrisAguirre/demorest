@@ -821,16 +821,80 @@
 
     .perm-check {
       color: var(--green);
-      font-weight: 700;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .perm-check svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--green);
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .perm-deny {
       color: rgba(255, 255, 255, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .perm-deny svg {
+      width: 12px;
+      height: 12px;
+      stroke: rgba(255, 255, 255, 0.25);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .perm-partial {
       color: var(--yellow);
       font-size: 11px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .perm-partial svg {
+      width: 13px;
+      height: 13px;
+      stroke: var(--yellow);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dot-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .dot-indicator.yellow {
+      background: var(--yellow);
+      box-shadow: 0 0 6px var(--yellow);
+    }
+
+    .dot-indicator.orange {
+      background: #F97316;
+      box-shadow: 0 0 6px #F97316;
+    }
+
+    .dot-indicator.red {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
     }
 
     /* ====== SIDEBAR GROUPS / ACCORDION ====== */
@@ -1809,131 +1873,131 @@
           <tbody>
             <tr>
               <td>Dashboard (Home)</td>
-              <td class="perm-check">✔ Completo</td>
-              <td class="perm-check">✔ Ventas</td>
-              <td class="perm-check">✔ KDS</td>
-              <td class="perm-partial">⚠ Adaptado</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Completo</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Ventas</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> KDS</td>
+              <td class="perm-partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Adaptado</td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Mapa de Mesas</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Punto de Venta (POS)</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Cocina (KDS)</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Barra</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Domicilios</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-partial">⚠ Lectura</td>
-              <td class="perm-partial">⚠ Aceptar</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Lectura</td>
+              <td class="perm-partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Aceptar</td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Caja y Turnos</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Talonarios</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Inventarios</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Platos y Recetas</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Proveedores y Compras</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Personal (Staff)</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Reportes y Análisis</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Alertas de Stock</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Finanzas (P&amp;L)</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
             </tr>
             <tr>
               <td>Configuración</td>
-              <td class="perm-check">✔</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-deny">✕</td>
-              <td class="perm-partial">⚠ Perfil</td>
+              <td class="perm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-deny"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+              <td class="perm-partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Perfil</td>
             </tr>
           </tbody>
         </table>
@@ -2016,9 +2080,9 @@
             </svg></span> El Sidebar Acordeón</h4>
         <ul>
           <li><strong>Estado inicial:</strong> Retraído a 60px mostrando solo iconos, para no saturar la pantalla</li>
-          <li><strong>Expandir:</strong> Presione el botón <code>☰</code> para abrir a 240px y ver los nombres de cada
+          <li><strong>Expandir:</strong> Presione el botón <code><svg style="vertical-align:middle;margin:0 2px" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg> Menú</code> para abrir a 240px y ver los nombres de cada
             sección</li>
-          <li><strong>Retraer:</strong> Presione <code>✕</code> para volver al modo compacto de iconos</li>
+          <li><strong>Retraer:</strong> Presione <code><svg style="vertical-align:middle;margin:0 2px" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Colapsar</code> para volver al modo compacto de iconos</li>
           <li><strong>Memoria:</strong> El sistema recuerda su preferencia (abierto/cerrado) en el navegador</li>
           <li><strong>Inteligente:</strong> Al navegar a una sección, el grupo correspondiente del acordeón se despliega
             automáticamente y la opción activa se resalta con una barra dorada</li>
@@ -2595,30 +2659,30 @@
 
       <div class="roles-grid reveal">
         <div class="role-card admin" style="border-left:3px solid var(--blue)">
-          <span class="role-emoji">📊</span>
+          <span class="role-emoji"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg></span>
           <div class="role-name">Ventas</div>
           <p class="role-desc">KPIs de facturación, ticket medio, tendencias por franja horaria y desglose por medio de
             pago.</p>
         </div>
         <div class="role-card cajero" style="border-left:3px solid var(--green)">
-          <span class="role-emoji">📦</span>
+          <span class="role-emoji"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg></span>
           <div class="role-name">Inventario</div>
           <p class="role-desc">Valoración monetaria total del inventario y potencial de ganancia estimada.</p>
         </div>
         <div class="role-card cocinero" style="border-left:3px solid var(--gold)">
-          <span class="role-emoji">🏆</span>
+          <span class="role-emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6" /><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" /></svg></span>
           <div class="role-name">Productos</div>
           <p class="role-desc">Top 10 de mayor venta, productos sin rotación en 30 días y márgenes por familia.</p>
         </div>
         <div class="role-card mesero" style="border-left:3px solid var(--red)">
-          <span class="role-emoji">⏱️</span>
+          <span class="role-emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
           <div class="role-name">Cocina</div>
           <p class="role-desc">Tiempos promedio de preparación y despacho por comanda.</p>
         </div>
       </div>
 
       <div class="alert-box tip reveal">
-        <span class="alert-icon">📥</span>
+        <span class="alert-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg></span>
         <div><strong>Exportación:</strong> Cada pestaña incluye un botón <strong>"Exportar a CSV"</strong> con
           codificación UTF-8 BOM, compatible con Microsoft Excel.</div>
       </div>
@@ -2632,7 +2696,7 @@
         <p class="section-desc">Estado de resultados mensual. Ruta: <code>/finance</code></p>
       </div>
       <div class="info-card reveal">
-        <h4><span class="card-icon">💹</span> ¿Qué muestra?</h4>
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg></span> ¿Qué muestra?</h4>
         <ul>
           <li><strong>Pérdidas y Ganancias:</strong> Ingresos brutos (−) COGS (−) Gastos operativos (=) Utilidad Neta
           </li>
@@ -2650,18 +2714,18 @@
       </div>
 
       <div class="info-card reveal">
-        <h4><span class="card-icon">🚦</span> Semaforización en tiempo real</h4>
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg></span> Semaforización en tiempo real</h4>
         <ul>
-          <li><span style="color:var(--yellow)">🟡 <strong>Bajo:</strong></span> Existencias entre el mínimo y el umbral
+          <li><span class="dot-indicator yellow"></span><strong>Bajo:</strong> Existencias entre el mínimo y el umbral
             de seguridad</li>
-          <li><span style="color:#F97316">🟠 <strong>Crítico:</strong></span> Menos del 50% del stock mínimo</li>
-          <li><span style="color:var(--red)">🔴 <strong>Agotado:</strong></span> Existencia en cero — bloquea la venta
+          <li><span class="dot-indicator orange"></span><strong>Crítico:</strong> Menos del 50% del stock mínimo</li>
+          <li><span class="dot-indicator red"></span><strong>Agotado:</strong> Existencia en cero — bloquea la venta
             en POS o advierte al cocinero</li>
         </ul>
       </div>
 
       <div class="alert-box info reveal">
-        <span class="alert-icon">📧</span>
+        <span class="alert-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg></span>
         <div>El botón <strong>"Verificar Stock"</strong> ejecuta un barrido inmediato y, si el servidor SMTP está
           configurado, envía correos automáticos con las alertas detectadas.</div>
       </div>
@@ -2675,7 +2739,7 @@
         <p class="section-desc">Gestión del equipo. Ruta: <code>/staff</code></p>
       </div>
       <div class="info-card reveal">
-        <h4><span class="card-icon">👥</span> Gestión de Personal y Turnos</h4>
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg></span> Gestión de Personal y Turnos</h4>
         <ul>
           <li>Registro de colaboradores: nombre, cargo, salario base y tipo de contratación</li>
           <li>Cargos disponibles: Chef, Cocinero, Cajero, Jefe de Sala, Mesero, Domiciliario</li>
@@ -2683,7 +2747,7 @@
         </ul>
       </div>
       <div class="info-card reveal">
-        <h4><span class="card-icon">🔑</span> Usuarios del Sistema (pestaña Usuarios)</h4>
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span> Usuarios del Sistema (pestaña Usuarios)</h4>
         <ul>
           <li>Creación de cuentas de acceso para el personal</li>
           <li>Asignación de rol: <code>admin</code>, <code>cajero</code>, <code>cocinero</code>, <code>mesero</code>,

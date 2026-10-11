@@ -442,17 +442,127 @@
       margin-bottom: 12px;
     }
 
-    .drift-emoji {
-      font-size: 38px;
-      display: block;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
-      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), filter 0.4s;
+    .drift-emoji, .feature-emoji {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      background: rgba(212, 168, 83, 0.08);
+      border: 1px solid rgba(212, 168, 83, 0.25);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
     }
 
-    .drift-card:hover .drift-emoji {
-      transform: scale(1.22) translateY(-4px);
-      filter: drop-shadow(0 0 18px rgba(220, 235, 255, 0.7));
+    .drift-emoji svg, .feature-emoji svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: all 0.3s ease;
+    }
+
+    .drift-card:hover .drift-emoji,
+    .feature-card:hover .feature-emoji {
+      transform: scale(1.12) translateY(-2px);
+      background: rgba(212, 168, 83, 0.16);
+      border-color: rgba(212, 168, 83, 0.6);
+      box-shadow: 0 0 24px rgba(212, 168, 83, 0.35);
+    }
+
+    .drift-card:hover .drift-emoji svg,
+    .feature-card:hover .feature-emoji svg {
+      stroke: #FFFFFF;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    }
+
+    .drift-action-hint svg {
+      width: 11px;
+      height: 11px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .compat-emoji {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(200, 215, 235, 0.06);
+      border: 1px solid rgba(200, 215, 235, 0.16);
+      flex-shrink: 0;
+    }
+
+    .compat-emoji svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-light);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .li-icon {
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .li-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .panel-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .modal-header-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(212, 168, 83, 0.1);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      flex-shrink: 0;
+    }
+
+    .modal-header-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .drift-card h4 {
@@ -1296,7 +1406,7 @@
         </div>
         <div class="driftwall-actions">
           <button class="drift-ctrl-btn" id="btnDriftPause" onclick="toggleDriftPause()">
-            <span id="pauseIcon">⏸</span> <span id="pauseText">Pausar Deriva</span>
+            <span id="pauseIcon"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:middle"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></span> <span id="pauseText">Pausar Deriva</span>
           </button>
           <button class="drift-ctrl-btn" onclick="resetDriftAngle()">
             <span>⟲</span> <span>Centrar Ángulo</span>
@@ -1310,7 +1420,7 @@
           <div class="driftwall-col driftwall-col-1">
             <div class="drift-card" onclick="openModuleModal('dashboard')">
               <span class="drift-badge">Operación en Vivo</span>
-              <span class="drift-emoji">📊</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
               <h4>Dashboard Inteligente</h4>
               <p>KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
               <div class="drift-tags">
@@ -1318,11 +1428,11 @@
                 <span class="drift-tag">KPIs</span>
                 <span class="drift-tag">Alertas</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('cocina')">
               <span class="drift-badge">Producción</span>
-              <span class="drift-emoji">🍽️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
               <h4>Cocina & KDS</h4>
               <p>Producción sincronizada de cocina, barra y servicio con pantallas Kanban y timbres de comanda.</p>
               <div class="drift-tags">
@@ -1330,11 +1440,11 @@
                 <span class="drift-tag">Web Audio</span>
                 <span class="drift-tag">Tiempos</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('compras')">
               <span class="drift-badge">Abastecimiento</span>
-              <span class="drift-emoji">🛒</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
               <h4>Compras & Proveedores</h4>
               <p>Requisiciones por área, órdenes de compra y catálogo con trazabilidad de costos e historial.</p>
               <div class="drift-tags">
@@ -1342,41 +1452,41 @@
                 <span class="drift-tag">Proveedores</span>
                 <span class="drift-tag">Costeo</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <!-- Loop Duplicates -->
             <div class="drift-card" onclick="openModuleModal('dashboard')">
               <span class="drift-badge">Operación en Vivo</span>
-              <span class="drift-emoji">📊</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
               <h4>Dashboard Inteligente</h4>
               <p>KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Tiempo Real</span>
                 <span class="drift-tag">KPIs</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('cocina')">
               <span class="drift-badge">Producción</span>
-              <span class="drift-emoji">🍽️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
               <h4>Cocina & KDS</h4>
               <p>Producción sincronizada de cocina, barra y servicio con pantallas Kanban y timbres de comanda.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Kanban</span>
                 <span class="drift-tag">Web Audio</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('compras')">
               <span class="drift-badge">Abastecimiento</span>
-              <span class="drift-emoji">🛒</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
               <h4>Compras & Proveedores</h4>
               <p>Requisiciones por área, órdenes de compra y catálogo con trazabilidad de costos e historial.</p>
               <div class="drift-tags">
                 <span class="drift-tag">OC Auto</span>
                 <span class="drift-tag">Costeo</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
           </div>
 
@@ -1384,7 +1494,7 @@
           <div class="driftwall-col driftwall-col-2">
             <div class="drift-card" onclick="openModuleModal('mesas')">
               <span class="drift-badge">Salones & Servicio</span>
-              <span class="drift-emoji">🪑</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/></svg></span>
               <h4>Mapa de Mesas</h4>
               <p>Visualización interactiva por salones con estados en vivo (libre, ocupada, reservada) y apertura ágil.</p>
               <div class="drift-tags">
@@ -1392,11 +1502,11 @@
                 <span class="drift-tag">Zonas</span>
                 <span class="drift-tag">Salones</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('domicilios')">
               <span class="drift-badge">Logística</span>
-              <span class="drift-emoji">🛵</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6.5-1.5 2H18.5"/><path d="M2 17.5h6.5l3-9.5h4.5"/></svg></span>
               <h4>Domicilios & Delivery</h4>
               <p>Delivery integrado con tracking de estados, tiempos de promesa y asignación de repartidores.</p>
               <div class="drift-tags">
@@ -1404,11 +1514,11 @@
                 <span class="drift-tag">Repartidores</span>
                 <span class="drift-tag">Tiempos</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('sgsst')">
               <span class="drift-badge">Seguridad Laboral</span>
-              <span class="drift-emoji">🛡️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
               <h4>SG-SST Ocupacional</h4>
               <p>Seguridad y salud en el trabajo con ciclo PHVA, capacitaciones, matriz de riesgos y dotación EPP.</p>
               <div class="drift-tags">
@@ -1416,41 +1526,41 @@
                 <span class="drift-tag">Normativa</span>
                 <span class="drift-tag">EPP</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <!-- Loop Duplicates -->
             <div class="drift-card" onclick="openModuleModal('mesas')">
               <span class="drift-badge">Salones & Servicio</span>
-              <span class="drift-emoji">🪑</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/></svg></span>
               <h4>Mapa de Mesas</h4>
               <p>Visualización interactiva por salones con estados en vivo (libre, ocupada, reservada) y apertura ágil.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Interactivo</span>
                 <span class="drift-tag">Zonas</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('domicilios')">
               <span class="drift-badge">Logística</span>
-              <span class="drift-emoji">🛵</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6.5-1.5 2H18.5"/><path d="M2 17.5h6.5l3-9.5h4.5"/></svg></span>
               <h4>Domicilios & Delivery</h4>
               <p>Delivery integrado con tracking de estados, tiempos de promesa y asignación de repartidores.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Tracking</span>
                 <span class="drift-tag">Rutas</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('sgsst')">
               <span class="drift-badge">Seguridad Laboral</span>
-              <span class="drift-emoji">🛡️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
               <h4>SG-SST Ocupacional</h4>
               <p>Seguridad y salud en el trabajo con ciclo PHVA, capacitaciones, matriz de riesgos y dotación EPP.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Ciclo PHVA</span>
                 <span class="drift-tag">EPP</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
           </div>
 
@@ -1458,7 +1568,7 @@
           <div class="driftwall-col driftwall-col-3">
             <div class="drift-card" onclick="openModuleModal('pos')">
               <span class="drift-badge">Facturación</span>
-              <span class="drift-emoji">🖥️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
               <h4>Punto de Venta (POS)</h4>
               <p>Comandas inteligentes ultra veloces, impresión selectiva, cuentas separadas y múltiples medios de pago.</p>
               <div class="drift-tags">
@@ -1466,11 +1576,11 @@
                 <span class="drift-tag">Cuentas</span>
                 <span class="drift-tag">Rápido</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('eventos')">
               <span class="drift-badge">Reservas Especiales</span>
-              <span class="drift-emoji">🎉</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
               <h4>Eventos & Banquetes</h4>
               <p>Calendario visual de reservas, plan de pagos por hitos, contratos de catering y BEO imprimible.</p>
               <div class="drift-tags">
@@ -1478,11 +1588,11 @@
                 <span class="drift-tag">Hitos</span>
                 <span class="drift-tag">Minuta</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('reportes')">
               <span class="drift-badge">Inteligencia</span>
-              <span class="drift-emoji">📈</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
               <h4>Reportes & Análisis</h4>
               <p>Informes financieros detallados, productos estrella, matriz BCG e ingeniería del menú para maximizar margen.</p>
               <div class="drift-tags">
@@ -1490,41 +1600,41 @@
                 <span class="drift-tag">Matriz BCG</span>
                 <span class="drift-tag">Márgenes</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <!-- Loop Duplicates -->
             <div class="drift-card" onclick="openModuleModal('pos')">
               <span class="drift-badge">Facturación</span>
-              <span class="drift-emoji">🖥️</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
               <h4>Punto de Venta (POS)</h4>
               <p>Comandas inteligentes ultra veloces, impresión selectiva, cuentas separadas y múltiples medios de pago.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Térmica POS</span>
                 <span class="drift-tag">Cuentas</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('eventos')">
               <span class="drift-badge">Reservas Especiales</span>
-              <span class="drift-emoji">🎉</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
               <h4>Eventos & Banquetes</h4>
               <p>Calendario visual de reservas, plan de pagos por hitos, contratos de catering y BEO imprimible.</p>
               <div class="drift-tags">
                 <span class="drift-tag">BEO 1-Clic</span>
                 <span class="drift-tag">Minuta</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('reportes')">
               <span class="drift-badge">Inteligencia</span>
-              <span class="drift-emoji">📈</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
               <h4>Reportes & Análisis</h4>
               <p>Informes financieros detallados, productos estrella, matriz BCG e ingeniería del menú para maximizar margen.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Finanzas</span>
                 <span class="drift-tag">Rentabilidad</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
           </div>
 
@@ -1532,7 +1642,7 @@
           <div class="driftwall-col driftwall-col-4">
             <div class="drift-card" onclick="openModuleModal('inventario')">
               <span class="drift-badge">Almacén & Stock</span>
-              <span class="drift-emoji">📦</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
               <h4>Inventario por Áreas</h4>
               <p>Control discriminado en cocina, barra y servicio con recetas estándar, mermas y alertas automáticas.</p>
               <div class="drift-tags">
@@ -1540,11 +1650,11 @@
                 <span class="drift-tag">Mermas</span>
                 <span class="drift-tag">Stock Mínimo</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('caja')">
               <span class="drift-badge">Control Financiero</span>
-              <span class="drift-emoji">💰</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
               <h4>Caja & Arqueos</h4>
               <p>Apertura con base, registro de movimientos, arqueos ciegos por turno y reconciliación Z auditada.</p>
               <div class="drift-tags">
@@ -1552,11 +1662,11 @@
                 <span class="drift-tag">Arqueo Ciego</span>
                 <span class="drift-tag">Auditoría</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('personal')">
               <span class="drift-badge">Talento Humano</span>
-              <span class="drift-emoji">👥</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
               <h4>Gestión de Personal</h4>
               <p>Administración de colaboradores, turnos, control de perfiles y matriz de permisos por rol de usuario.</p>
               <div class="drift-tags">
@@ -1564,41 +1674,41 @@
                 <span class="drift-tag">Permisos</span>
                 <span class="drift-tag">Seguridad</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <!-- Loop Duplicates -->
             <div class="drift-card" onclick="openModuleModal('inventario')">
               <span class="drift-badge">Almacén & Stock</span>
-              <span class="drift-emoji">📦</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
               <h4>Inventario por Áreas</h4>
               <p>Control discriminado en cocina, barra y servicio con recetas estándar, mermas y alertas automáticas.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Recetas</span>
                 <span class="drift-tag">Stock Mínimo</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('caja')">
               <span class="drift-badge">Control Financiero</span>
-              <span class="drift-emoji">💰</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
               <h4>Caja & Arqueos</h4>
               <p>Apertura con base, registro de movimientos, arqueos ciegos por turno y reconciliación Z auditada.</p>
               <div class="drift-tags">
                 <span class="drift-tag">Cierre Z</span>
                 <span class="drift-tag">Auditoría</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
             <div class="drift-card" onclick="openModuleModal('personal')">
               <span class="drift-badge">Talento Humano</span>
-              <span class="drift-emoji">👥</span>
+              <span class="drift-emoji"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
               <h4>Gestión de Personal</h4>
               <p>Administración de colaboradores, turnos, control de perfiles y matriz de permisos por rol de usuario.</p>
               <div class="drift-tags">
                 <span class="drift-tag">5 Roles</span>
                 <span class="drift-tag">Seguridad</span>
               </div>
-              <span class="drift-action-hint">Ver Detalles 🔍</span>
+              <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
             </div>
           </div>
         </div>
@@ -1616,149 +1726,149 @@
       <div class="carousel-track" id="featuresTrack">
         <!-- Set 1 -->
         <div class="feature-card" onclick="openModuleModal('dashboard')">
-          <span class="feature-emoji">📊</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
           <h4>Dashboard Inteligente</h4>
           <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('mesas')">
-          <span class="feature-emoji">🪑</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/></svg></span>
           <h4>Mapa de Mesas</h4>
           <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('pos')">
-          <span class="feature-emoji">🖥️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
           <h4>Punto de Venta (POS)</h4>
           <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('cocina')">
-          <span class="feature-emoji">🍽️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
           <h4>Cocina & KDS</h4>
           <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('domicilios')">
-          <span class="feature-emoji">🛵</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6.5-1.5 2H18.5"/><path d="M2 17.5h6.5l3-9.5h4.5"/></svg></span>
           <h4>Domicilios</h4>
           <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('eventos')">
-          <span class="feature-emoji">🎉</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
           <h4>Eventos & Banquetes</h4>
           <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('inventario')">
-          <span class="feature-emoji">📦</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
           <h4>Inventario por Áreas</h4>
           <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('caja')">
-          <span class="feature-emoji">💰</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
           <h4>Caja & Arqueos</h4>
           <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('compras')">
-          <span class="feature-emoji">🛒</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
           <h4>Compras & Proveedores</h4>
           <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('sgsst')">
-          <span class="feature-emoji">🛡️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
           <h4>SG-SST</h4>
           <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('reportes')">
-          <span class="feature-emoji">📈</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
           <h4>Reportes & Análisis</h4>
           <p>Informes financieros, productos estrella y tendencias de ventas</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('personal')">
-          <span class="feature-emoji">👥</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           <h4>Gestión de Personal</h4>
           <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <!-- Set 2 (duplicado para loop infinito) -->
         <div class="feature-card" onclick="openModuleModal('dashboard')">
-          <span class="feature-emoji">📊</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
           <h4>Dashboard Inteligente</h4>
           <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('mesas')">
-          <span class="feature-emoji">🪑</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/></svg></span>
           <h4>Mapa de Mesas</h4>
           <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('pos')">
-          <span class="feature-emoji">🖥️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
           <h4>Punto de Venta (POS)</h4>
           <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('cocina')">
-          <span class="feature-emoji">🍽️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
           <h4>Cocina & KDS</h4>
           <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('domicilios')">
-          <span class="feature-emoji">🛵</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6.5-1.5 2H18.5"/><path d="M2 17.5h6.5l3-9.5h4.5"/></svg></span>
           <h4>Domicilios</h4>
           <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('eventos')">
-          <span class="feature-emoji">🎉</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
           <h4>Eventos & Banquetes</h4>
           <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('inventario')">
-          <span class="feature-emoji">📦</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
           <h4>Inventario por Áreas</h4>
           <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('caja')">
-          <span class="feature-emoji">💰</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
           <h4>Caja & Arqueos</h4>
           <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('compras')">
-          <span class="feature-emoji">🛒</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
           <h4>Compras & Proveedores</h4>
           <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('sgsst')">
-          <span class="feature-emoji">🛡️</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
           <h4>SG-SST</h4>
           <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('reportes')">
-          <span class="feature-emoji">📈</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
           <h4>Reportes & Análisis</h4>
           <p>Informes financieros, productos estrella y tendencias de ventas</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
         <div class="feature-card" onclick="openModuleModal('personal')">
-          <span class="feature-emoji">👥</span>
+          <span class="feature-emoji"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           <h4>Gestión de Personal</h4>
           <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
-          <span class="drift-action-hint">Ver Detalles 🔍</span>
+          <span class="drift-action-hint">Ver Detalles <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
         </div>
       </div>
     </div>
@@ -1772,35 +1882,35 @@
 
     <div class="compat-grid">
       <div class="compat-card" data-reveal>
-        <span class="compat-emoji">🖨️</span>
+        <span class="compat-emoji"><svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span>
         <div class="compat-info">
           <h4>Impresoras Térmicas POS</h4>
           <p>Compatible con impresoras estándar de 80mm y 58mm. Impresión directa de comandas, facturas y reportes.</p>
         </div>
       </div>
       <div class="compat-card" data-reveal>
-        <span class="compat-emoji">🌐</span>
+        <span class="compat-emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
         <div class="compat-info">
           <h4>Cualquier Navegador Moderno</h4>
           <p>Chrome, Edge, Firefox y Safari. Sin instalación de software adicional — 100% basado en web.</p>
         </div>
       </div>
       <div class="compat-card" data-reveal>
-        <span class="compat-emoji">📱</span>
+        <span class="compat-emoji"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
         <div class="compat-info">
           <h4>Diseño Responsive</h4>
           <p>Optimizado para PC, tablet y dispositivos móviles. Interfaz adaptativa para cada tamaño de pantalla.</p>
         </div>
       </div>
       <div class="compat-card" data-reveal>
-        <span class="compat-emoji">⚡</span>
+        <span class="compat-emoji"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
         <div class="compat-info">
           <h4>Conexión en Tiempo Real</h4>
           <p>WebSocket para sincronización instantánea entre múltiples terminales y estaciones de trabajo.</p>
         </div>
       </div>
       <div class="compat-card" data-reveal>
-        <span class="compat-emoji">🔗</span>
+        <span class="compat-emoji"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
         <div class="compat-info">
           <h4>API REST Abierta</h4>
           <p>Integración con cualquier sistema existente, pasarelas de pago o plataformas de terceros.</p>
@@ -1817,60 +1927,60 @@
 
     <div class="dual-section">
       <div class="info-panel" data-reveal-panel>
-        <h3><span class="panel-icon">⚙️</span> Tecnología de Vanguardia</h3>
+        <h3><span class="panel-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Tecnología de Vanguardia</h3>
         <ul class="tech-list">
           <li>
-            <span class="li-icon">🅰️</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Angular 16</span> <span class="tech-desc">— Frontend moderno y robusto</span></span>
           </li>
           <li>
-            <span class="li-icon">🟢</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Node.js + Express</span> <span class="tech-desc">— Backend escalable</span></span>
           </li>
           <li>
-            <span class="li-icon">🍃</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">MongoDB</span> <span class="tech-desc">— Base de datos NoSQL flexible</span></span>
           </li>
           <li>
-            <span class="li-icon">🔌</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Socket.IO</span> <span class="tech-desc">— Comunicación en tiempo real</span></span>
           </li>
           <li>
-            <span class="li-icon">☁️</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Cloud Deploy</span> <span class="tech-desc">— Vercel + Render</span></span>
           </li>
           <li>
-            <span class="li-icon">🔄</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Frameworks Vigentes</span> <span class="tech-desc">— Actualizados y con soporte activo</span></span>
           </li>
         </ul>
       </div>
 
       <div class="info-panel license from-right" data-reveal-panel>
-        <h3><span class="panel-icon">🏛️</span> Licenciamiento</h3>
+        <h3><span class="panel-icon"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V10"/><path d="M19 21V10"/><path d="M9 21V10"/><path d="M15 21V10"/><path d="M2 10l10-7 10 7"/></svg></span> Licenciamiento</h3>
         <ul class="tech-list">
           <li>
-            <span class="li-icon">📜</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">GNU GPL v3.0</span> <span class="tech-desc">— Licencia Pública General</span></span>
           </li>
           <li>
-            <span class="li-icon">💎</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Pago Único</span> <span class="tech-desc">— Sin suscripciones mensuales</span></span>
           </li>
           <li>
-            <span class="li-icon">🏆</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Propiedad Intelectual</span> <span class="tech-desc">— Derechos de uso completos</span></span>
           </li>
           <li>
-            <span class="li-icon">🔓</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Código Abierto</span> <span class="tech-desc">— Software libre y transparente</span></span>
           </li>
           <li>
-            <span class="li-icon">🚫</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Sin Dependencia</span> <span class="tech-desc">— Independencia de proveedores</span></span>
           </li>
           <li>
-            <span class="li-icon">🔄</span>
+            <span class="li-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span><span class="tech-label">Actualizaciones</span> <span class="tech-desc">— Incluidas con la licencia</span></span>
           </li>
         </ul>
@@ -1882,7 +1992,7 @@
   <section class="section">
     <div class="scale-banner">
       <div class="scale-inner" data-reveal-scale>
-        <h3><span>🚀</span> Software Escalable</h3>
+        <h3><span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Software Escalable</h3>
         <p>Diseñado para crecer con su negocio. Desde un pequeño café hasta una cadena de restaurantes,
            este sistema se adapta a las necesidades operativas de cualquier establecimiento gastronómico.</p>
       </div>
@@ -1905,7 +2015,7 @@
           <span class="modal-category-badge" id="modalCategoryBadge">OPERACIÓN EN VIVO</span>
         </div>
         <div class="modal-header-title-row">
-          <span class="modal-header-icon" id="modalIcon">📊</span>
+          <span class="modal-header-icon" id="modalIcon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
           <div>
             <h2 id="modalTitle">Dashboard Inteligente</h2>
             <p class="modal-header-tagline" id="modalTagline">KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
@@ -1927,26 +2037,26 @@
         <!-- Grid con información relevante -->
         <div class="modal-details-grid">
           <div class="modal-detail-block">
-            <h4><span>🎯</span> Propósito & Alcance</h4>
+            <h4><span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span> Propósito & Alcance</h4>
             <p id="modalPurpose" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;"></p>
           </div>
 
           <div class="modal-detail-block">
-            <h4><span>⚙️</span> Funcionalidades Clave</h4>
+            <h4><span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Funcionalidades Clave</h4>
             <ul class="modal-feature-list" id="modalFeaturesList">
               <!-- Lista inyectada -->
             </ul>
           </div>
 
           <div class="modal-detail-block">
-            <h4><span>💡</span> Impacto & ROI</h4>
+            <h4><span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg></span> Impacto & ROI</h4>
             <ul class="modal-feature-list" id="modalRoiList">
               <!-- Lista inyectada -->
             </ul>
           </div>
 
           <div class="modal-detail-block">
-            <h4><span>🔄</span> Flujo Operativo</h4>
+            <h4><span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span> Flujo Operativo</h4>
             <p id="modalWorkflow" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;"></p>
           </div>
         </div>
@@ -2125,7 +2235,7 @@
         if (driftStage) driftStage.classList.add('is-paused');
         if (driftDot) driftDot.classList.add('paused');
         if (driftStatusText) driftStatusText.textContent = 'Deriva en Pausa Manual';
-        if (pauseIcon) pauseIcon.textContent = '▶';
+        if (pauseIcon) pauseIcon.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:middle"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
         if (pauseText) pauseText.textContent = 'Reanudar Deriva';
       } else {
         if (driftStage) driftStage.classList.remove('is-paused');
@@ -2133,7 +2243,7 @@
           driftDot.classList.remove('paused');
           driftStatusText.textContent = 'Deriva 3D Activa · 12 Módulos';
         }
-        if (pauseIcon) pauseIcon.textContent = '⏸';
+        if (pauseIcon) pauseIcon.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:middle"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
         if (pauseText) pauseText.textContent = 'Pausar Deriva';
       }
     }
@@ -2177,7 +2287,7 @@
       dashboard: {
         num: 'MÓDULO 01 DE 12',
         badge: 'OPERACIÓN EN VIVO',
-        icon: '📊',
+        icon: `<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
         title: 'Dashboard Inteligente',
         tagline: 'Centro de control integral con métricas en tiempo real, ventas del día, ocupación de salones y alertas operativas.',
         purpose: 'Proveer al administrador y gerencia una vista unificada y en tiempo real de la salud del negocio, integrando facturación por franjas, mesas activas, ticket promedio y alertas críticas inmediatas.',
@@ -2215,9 +2325,9 @@
                 </div>
                 <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:10px;">
                   <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;">Alertas de Stock & Cocina</div>
-                  <div style="font-size:12px;color:#ffd166;margin-bottom:4px;">⚠️ Salmón Ahumado: Quedan 3 porciones (Mínimo: 8)</div>
+                  <div style="font-size:12px;color:#ffd166;margin-bottom:4px;">ALERTA STOCK: Salmón Ahumado: Quedan 3 porciones (Mínimo: 8)</div>
                   <div style="font-size:12px;color:#73f089;margin-bottom:4px;">✓ Estación KDS Barra: 0 comandas pendientes</div>
-                  <div style="font-size:12px;color:#9bc5ff;">ℹ️ Turno Tarde abierto por: Carlos M. (Caja 1)</div>
+                  <div style="font-size:12px;color:#9bc5ff;">INFO: Turno Tarde abierto por: Carlos M. (Caja 1)</div>
                 </div>
               </div>
             </div>
@@ -2226,7 +2336,7 @@
       mesas: {
         num: 'MÓDULO 02 DE 12',
         badge: 'SALONES & SERVICIO',
-        icon: '🪑',
+        icon: `<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/></svg>`,
         title: 'Mapa de Mesas & Salones',
         tagline: 'Plano visual interactivo por salones y terrazas con estados en vivo y control de tiempos.',
         purpose: 'Optimizar el servicio en sala permitiendo a meseros y capitanes verificar disponibilidad, aperturar cuentas y asociar pedidos con un solo clic.',
@@ -2283,7 +2393,7 @@
       pos: {
         num: 'MÓDULO 03 DE 12',
         badge: 'FACTURACIÓN & VENTA RÁPIDA',
-        icon: '🖥️',
+        icon: `<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
         title: 'Punto de Venta POS & Comandas',
         tagline: 'Terminal táctil ultrarrápida, división de cuentas en un clic y comanda electrónica directa.',
         purpose: 'Permitir la toma de pedidos más rápida y precisa posible, eliminando errores de anotación manual y agilizando la facturación al cierre.',
@@ -2343,7 +2453,7 @@
       cocina: {
         num: 'MÓDULO 04 DE 12',
         badge: 'PRODUCCIÓN & BARRA',
-        icon: '🍽️',
+        icon: `<svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
         title: 'Cocina & KDS en Tiempo Real',
         tagline: 'Kitchen Display System con columnas Kanban, alertas sonoras Web Audio y cronómetros de preparación.',
         purpose: 'Reemplazar comandas de papel por pantallas de cocina inteligentes que organizan los pedidos por estaciones de trabajo y alertan sobre tiempos de espera excesivos.',
@@ -2364,7 +2474,7 @@
           <div class="mockup-window">
             <div class="mockup-bar">
               <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <span>KDS Pantalla de Producción · Estación: Cocina Caliente · Web Audio Activo 🔔</span>
+              <span>KDS Pantalla de Producción · Estación: Cocina Caliente · Web Audio Activo [Alerta Sonora]</span>
             </div>
             <div class="mockup-content">
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
@@ -2396,7 +2506,7 @@
       domicilios: {
         num: 'MÓDULO 05 DE 12',
         badge: 'LOGÍSTICA & DESPACHO',
-        icon: '🛵',
+        icon: `<svg viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h4l3 6.5-1.5 2H18.5"/><path d="M2 17.5h6.5l3-9.5h4.5"/></svg>`,
         title: 'Domicilios & Delivery Tracking',
         tagline: 'Control centralizado de entregas, tiempos de promesa y liquidación de repartidores.',
         purpose: 'Monitorear en un solo tablero los pedidos para llevar y domicilios propios o de plataformas, controlando los tiempos de despacho y la cobranza de cada domiciliario.',
@@ -2445,7 +2555,7 @@
       eventos: {
         num: 'MÓDULO 06 DE 12',
         badge: 'RESERVAS ESPECIALES & CATERING',
-        icon: '🎉',
+        icon: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
         title: 'Eventos, Banquetes & BEO',
         tagline: 'Organización de eventos con minutas BEO formales, cronograma de pagos y bloqueo de salones.',
         purpose: 'Centralizar cotizaciones, pagos escalonados de anticipos y minutas técnicas de banquetes para garantizar la ejecución impecable de eventos corporativos y celebraciones.',
@@ -2483,7 +2593,7 @@
                 <div>
                   <div style="color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">Plan de Hitos</div>
                   <div style="color:#73f089;">✓ Hito 1 (Reserva): $3,250,000 (Pagado)</div>
-                  <div style="color:#ffd166;">⏳ Hito 2 (48h antes): $1,950,000 (Pendiente)</div>
+                  <div style="color:#ffd166;">Hito 2 (48h antes): $1,950,000 (Pendiente)</div>
                   <div style="color:var(--text-muted);">○ Saldo (Día Evento): $1,300,000</div>
                 </div>
               </div>
@@ -2493,7 +2603,7 @@
       inventario: {
         num: 'MÓDULO 07 DE 12',
         badge: 'ALMACÉN, STOCK & COSTOS',
-        icon: '📦',
+        icon: `<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
         title: 'Inventario por Áreas & Recetas',
         tagline: 'Control discriminado de existencias en cocina, barra y bodega con recetas estándar y costeo automático.',
         purpose: 'Blindar el restaurante contra mermas excesivas y pérdidas hormiga mediante el costeo exacto por receta y la deducción automática de insumos en cada venta.',
@@ -2534,7 +2644,7 @@
       caja: {
         num: 'MÓDULO 08 DE 12',
         badge: 'CONTROL FINANCIERO & AUDITORÍA',
-        icon: '💰',
+        icon: `<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
         title: 'Caja, Arqueos Ciegos & Cierre Z',
         tagline: 'Apertura con base, registro estricto de entradas/salidas, arqueo ciego y reconciliación Z auditada.',
         purpose: 'Garantizar la transparencia absoluta en el manejo del dinero en efectivo y medios electrónicos, evitando discrepancias entre las ventas registradas y lo recaudado en cada turno.',
@@ -2574,7 +2684,7 @@
       compras: {
         num: 'MÓDULO 09 DE 12',
         badge: 'ABASTECIMIENTO & CADENA DE SUMINISTRO',
-        icon: '🛒',
+        icon: `<svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`,
         title: 'Compras, Requisiciones & Proveedores',
         tagline: 'Ciclo formal de adquisiciones desde la requisición interna hasta la orden de compra y cotejo de factura.',
         purpose: 'Estructurar las compras del restaurante, comparar cotizaciones entre proveedores y garantizar que solo se liquide la mercancía que ingresó en óptimas condiciones.',
@@ -2620,7 +2730,7 @@
       sgsst: {
         num: 'MÓDULO 10 DE 12',
         badge: 'SEGURIDAD Y SALUD EN EL TRABAJO',
-        icon: '🛡️',
+        icon: `<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
         title: 'SG-SST Seguridad Ocupacional PHVA',
         tagline: 'Sistema de Gestión de Seguridad y Salud en el Trabajo con ciclo PHVA, matriz de riesgos, EPP y capacitaciones.',
         purpose: 'Asegurar el cumplimiento riguroso de la normativa laboral y de prevención de riesgos gastronómicos (quemaduras, cortes, caídas), protegiendo al personal y evitando sanciones legales.',
@@ -2651,7 +2761,7 @@
               </div>
               <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:8px;font-size:11px;">
                 <strong style="color:var(--accent-light);">Próxima Capacitación Programada:</strong>
-                <span style="color:var(--text-muted);display:block;margin-top:3px;">📅 Manejo Seguro de Cuchillos y Primeros Auxilios en Cocina · Jueves 15:00 · 18 Asistentes Convocados</span>
+                <span style="color:var(--text-muted);display:block;margin-top:3px;">Sesión: Manejo Seguro de Cuchillos y Primeros Auxilios en Cocina · Jueves 15:00 · 18 Asistentes Convocados</span>
               </div>
             </div>
           </div>`
@@ -2659,7 +2769,7 @@
       reportes: {
         num: 'MÓDULO 11 DE 12',
         badge: 'INTELIGENCIA DE NEGOCIO & RENTABILIDAD',
-        icon: '📈',
+        icon: `<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
         title: 'Reportes Financieros & Matriz BCG',
         tagline: 'Análisis de rentabilidad por producto, matriz BCG del menú (Estrellas, Vacas, Perros) y exportación a Excel/PDF.',
         purpose: 'Transformar las ventas transaccionales en decisiones estratégicas de carta e ingeniería del menú, descubriendo los platos más rentables y los que deben modificarse o salir del catálogo.',
@@ -2685,19 +2795,19 @@
             <div class="mockup-content">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                 <div style="background:rgba(39,201,63,0.08);border:1px solid rgba(39,201,63,0.25);border-radius:8px;padding:10px;">
-                  <div style="font-weight:700;font-size:12px;color:#73f089;">⭐ PLATOS ESTRELLA (Alto Margen + Alta Venta)</div>
+                  <div style="font-weight:700;font-size:12px;color:#73f089;">PLATOS ESTRELLA (Alto Margen + Alta Venta)</div>
                   <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Hamburguesa Angus Especial (Margen: 68%)<br>• Lomo al Trapo Grill (Margen: 64%)</div>
                 </div>
                 <div style="background:rgba(80,160,255,0.08);border:1px solid rgba(80,160,255,0.25);border-radius:8px;padding:10px;">
-                  <div style="font-weight:700;font-size:12px;color:#9bc5ff;">🐄 VACAS LECHERAS (Bajo Margen + Alta Venta)</div>
+                  <div style="font-weight:700;font-size:12px;color:#9bc5ff;">● GENERADORES DE VOLUMEN (VACAS) (Bajo Margen + Alta Venta)</div>
                   <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Cerveza Artesanal IPA (Margen: 45%)<br>• Papas Cascos Rústicas (Margen: 48%)</div>
                 </div>
                 <div style="background:rgba(255,189,46,0.08);border:1px solid rgba(255,189,46,0.25);border-radius:8px;padding:10px;">
-                  <div style="font-weight:700;font-size:12px;color:#ffd166;">❓ INCÓGNITAS (Alto Margen + Baja Venta)</div>
+                  <div style="font-weight:700;font-size:12px;color:#ffd166;">✦ ALTO MARGEN / BAJA ROTACIÓN (INCÓGNITAS) (Alto Margen + Baja Venta)</div>
                   <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Salmón en Salsa de Cítricos (Promocionar)</div>
                 </div>
                 <div style="background:rgba(255,95,86,0.08);border:1px solid rgba(255,95,86,0.25);border-radius:8px;padding:10px;">
-                  <div style="font-weight:700;font-size:12px;color:#ff9994;">🐕 PERROS (Bajo Margen + Baja Venta)</div>
+                  <div style="font-weight:700;font-size:12px;color:#ff9994;">■ BAJO RENDIMIENTO (PERROS) (Bajo Margen + Baja Venta)</div>
                   <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Sopa Fría Gazpacho (Sugerir Retiro)</div>
                 </div>
               </div>
@@ -2707,7 +2817,7 @@
       personal: {
         num: 'MÓDULO 12 DE 12',
         badge: 'TALENTO HUMANO & CONTROL DE ACCESOS',
-        icon: '👥',
+        icon: `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
         title: 'Gestión de Personal & Roles',
         tagline: 'Administración de colaboradores, credenciales seguras y matriz de 5 roles con permisos granulares.',
         purpose: 'Controlar de forma estricta los accesos del equipo a funciones sensibles (anulaciones de cuentas, descuentos, apertura de cajón monedero y reportes financieros).',
@@ -2754,7 +2864,7 @@
                 </div>
               </div>
               <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(220,235,255,0.08);border-radius:8px;padding:8px;font-size:11px;color:var(--text-muted);">
-                🔒 <strong>Matriz de Permisos:</strong> Anulación de ítems (Requiere Supervisor) · Descuentos (Requiere Admin) · Cierre Z (Requiere Cajero + Supervisor)
+                <strong>Matriz de Permisos:</strong> Anulación de ítems (Requiere Supervisor) · Descuentos (Requiere Admin) · Cierre Z (Requiere Cajero + Supervisor)
               </div>
             </div>
           </div>`
@@ -2782,7 +2892,7 @@
 
       if (numEl) numEl.textContent = data.num;
       if (badgeEl) badgeEl.textContent = data.badge;
-      if (iconEl) iconEl.textContent = data.icon;
+      if (iconEl) iconEl.innerHTML = data.icon;
       if (titleEl) titleEl.textContent = data.title;
       if (taglineEl) taglineEl.textContent = data.tagline;
       if (showcaseEl) showcaseEl.innerHTML = data.mockupHtml;
