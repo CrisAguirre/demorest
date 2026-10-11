@@ -2,7 +2,10 @@
 
 ![Logo La Soupe à l'Oignon](src/assets/logo.png)
 
-Sistema de gestión del restaurante: mesas, POS, inventario por áreas, eventos, caja, domicilios y finanzas.
+> **El sistema que pone a su restaurante a facturar en orden.** Controle mesas, cocina, barra, inventario, caja, domicilios y eventos desde una sola pantalla, en computador, tableta o celular. Sin papeles sueltos, sin fugas, sin excusas.
+> Versión comercial v2.0 — Octubre 2026. Incluye últimos cambios: inventario conectado al backend, recetas locales, reservas instantáneas y experiencia móvil sin scroll lateral.
+
+Sistema de gestión integral para restaurantes: mesas, POS, inventario por áreas, carta de 15 platos, eventos con BEO, caja, domicilios, finanzas, documentación y SG-SST.
 Frontend Angular 16. Backend API REST + Socket.IO en Render.
 
 ## 0. Acceso a la aplicación
@@ -12,10 +15,21 @@ Frontend Angular 16. Backend API REST + Socket.IO en Render.
 - **Backend API (Render):** https://demorestbknd.onrender.com/api
 - **Landing:** https://www.restmarieantoinette.com/
 
-**Administrador:**
+**Administrador demo:**
 - Correo: `krontroth@gmail.com`
 - Contraseña: `@dmin26`
 - Fuente: `demorestbknd/src/utils/seedAdmin.js:16-21`. Cambia la contraseña tras el primer ingreso.
+
+> **¿Por qué le conviene?** Usted prueba hoy con este acceso y mañana opera su restaurante con usuarios y roles propios. Todo lo que ve aquí es lo que recibe: sin maquetas, sistema real en producción.
+
+## 0.1 Lo nuevo en esta versión (Octubre 2026) — léame en 1 minuto
+
+- **Inventario conectado al backend con modo local:** Cocina, Barra y Servicio leen del inventario central; si no hay internet, siguen operando en modo local y sincronizan después. Código automático por ítem y semáforo PEDIR/OK por stock mínimo.
+- **Mesas con reserva instantánea:** reservar, iniciar pedido o cancelar sin recargar. Estados de carga visibles y caché de mesas/reservas para abrir en segundos.
+- **POS con reloj por botón:** los botones muestran `Comandando… / Cobrando…` mientras procesan, evitan doble clic y cada comanda imprime solo lo nuevo.
+- **Platos con receta local detallada:** cada insumo muestra cantidad + unidad (ej. `200 g`, `1.5 und`), foto ampliable y costo/margen siempre visibles.
+- **Text-fit global + móvil sin scroll lateral:** tablas con scroll interno, grids a 1 columna, modales tipo hoja inferior e inputs de 16px para no hacer zoom en iPhone.
+- **Arranque 2x más rápido:** precarga de catálogos y caché inteligente en `ApiService`.
 
 ## 1. Acceso y roles
 
@@ -51,18 +65,18 @@ Ejemplo: `ana@c.com / •••••••• → /mesas`. El menú filtra solo
 ## 4. Operaciones
 
 ### 4.1 Mesas (`/mesas`, pantalla inicial)
-Mapa por salones + Para llevar. Filtros: Todas/Libres/Ocupadas/Reservadas con conteo sobre 16 mesas.
-- Libre → Venta / Reservar.
+Mapa por salones + Para llevar. Filtros: Todas/Libres/Ocupadas/Reservadas con conteo sobre 16 mesas. Carga instantánea con caché: al volver a Mesas no espera al servidor.
+- Libre → Venta / Reservar (reserva instantánea sin recargar, con confirmación inmediata).
 - Ocupada → Ver pedido / Anular (admin-cajero) / Liberar.
-- Reservada → Iniciar pedido / Cancelar reserva.
-- Ocupada = `status` del backend.
+- Reservada → Iniciar pedido / Cancelar reserva / Agregar nueva reserva junto a Cerrar.
+- Ocupada = `status` del backend. Estados de carga visibles en cada tarjeta.
 
 Ejemplo: `Mesa 5 - Ocupada $45.000`, `Mesa 2 - Libre`, `Para llevar (0)`.
 Tip: usa ← Mesas en POS para atender varias mesas en paralelo.
 
 ### 4.2 POS (`/pos`, se abre desde Mesas)
-Busca por nombre o código, filtra por categoría, suma/resta cantidad.
-- Mesa libre: [Limpiar] [Comandar: registra, abre mesa e imprime] [Cobrar: factura inmediata `pagoInmediato` sin abrir cuenta].
+Busca por nombre o código, filtra por categoría, suma/resta cantidad. Textos siempre legibles (text-fit): nunca se cortan ni generan scroll lateral.
+- Mesa libre: [Limpiar] [Comandar: registra, abre mesa e imprime] [Cobrar: factura inmediata `pagoInmediato` sin abrir cuenta]. Botones con reloj: `Comandando… / Cobrando…` bloquean doble clic.
 - Mesa ocupada: ves Venta Actual (acumulado + lo nuevo). Cada comanda imprime **solo lo nuevo** por tandas.
 - Cobro: muestra consumidos + total → *Imprimir factura* / *Aceptar y liberar*.
 - Borradores por mesa en `localStorage` (`pos-borradores`), sobreviven recargas.
@@ -76,8 +90,8 @@ Crea/edita/elimina, cambia estado pendiente/confirmado/realizado/cancelado, carg
 Ejemplo: `Cumpleaños Pérez 50 pax - Total $2.500.000 Abonado $1.250.000 - BEO impreso`.
 Secciones del formulario: cliente, cronograma, menú cocina/bar/otros, servicio.
 
-### 4.4 Inventario (📦 acordeón)
-Padre `Inventario`. Toca para expandir. Verás 3 iconos alineados:
+### 4.4 Inventario (📦 acordeón) — conectado al backend
+Padre `Inventario`. Toca para expandir. Verás 3 iconos alineados. **Novedad:** lee del inventario central del backend; si falla la red opera en modo local y sincroniza al volver. Código automático al crear y semáforo PEDIR/OK por mínimo.
 
 #### Cocina (`/cocina` 🍲, 55 ítems)
 Tabla con código, nombre, ubicación, stock/mínimo y estado PEDIR/OK.
@@ -103,8 +117,8 @@ Ejemplo: `S-001 Servilletas 12 paq`, `S-002 Vasos 7oz 5/8 → PEDIR`.
 Tip móvil: toca 📦 para abrir, verás 🍲 🍹 🛎️ centrados. El tooltip dice el nombre.
 
 ### 4.5 Platos (`/dishes` 🍲)
-Carta con receta, foto y costo.
-Crea/edita/desactiva/reactiva, sube foto JPG/PNG/WebP máx 3MB, agrega insumos, ve costo/margen/preparación. Clic en foto para ampliar.
+Carta con receta, foto y costo. Precios en formato COP sin errores de encoding.
+Crea/edita/desactiva/reactiva, sube foto JPG/PNG/WebP máx 3MB, agrega insumos con cantidad + unidad visible, ve costo/margen/preparación. Clic en foto para ampliar (visor siempre al frente, cierra por fuera o con X).
 
 Carta nueva 15 platos (C1..C15):
 Entradas: `Ceviche 28.000, Empanadas maíz 14.000, Tostones camarón 24.000, Crema choclo 16.000, Croquetas gallina 18.000, Causa pechuga 20.000`.
@@ -208,3 +222,13 @@ Toca para expandir General/Categorías (iconos alineados en móvil).
 - Mesa no se marca ocupada: verifica backend Render actualizado.
 - Foto no carga: revisa `/uploads/...` en Render o usa URL absoluta.
 - Descuento inventario desactivado por ahora (`DESCONTAR_INVENTARIO=false` backend).
+
+## 12. El poder funcional en una página — para decidir hoy
+
+- **Vende sin freno:** Mesas + POS + Domicilios + Eventos trabajando juntos. De la comanda a la factura en segundos, incluso con internet inestable.
+- **Cero fugas:** inventario central con mínimos y PEDIR/OK, requisiciones a Compras, caja con esperado vs real, reportes por periodo y centro financiero con P&G.
+- **Equipo alineado:** KDS en cocina, barra y servicio separados, roles por usuario, documentación y SG-SST incluidos para auditorías.
+- **Dueño tranquilo:** dashboard diario, productos estrella, alertas de stock y deudores con mora. Todo consultable desde el celular.
+- **Escalable:** carta de 15 platos lista para crecer, categorías, proveedores, tiqueteras prepago y gastos controlados. Multi-sede por diseño.
+
+> Pruébelo con el acceso demo de la sección 0. Si le gusta cómo se ve aquí, le encantará cómo se opera en su local.
