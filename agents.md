@@ -11,7 +11,7 @@ Frontend desplegado en Vercel, Backend en Render.
 - Backend API (Render): https://demorestbknd.onrender.com/api
 - Local Backend: http://localhost:5000
 - Landing: https://www.restmarieantoinette.com/
-- Admin seed: `krontroth@gmail.com` (clave en `MANUAL_USUARIO.pdf` / `demorestbknd/src/utils/seedAdmin.js`). Cambiar tras primer ingreso.
+- Admin seed: `krontroth@gmail.com` (clave en `MANUAL_DE_USUARIO.md` / `demorestbknd/src/utils/seedAdmin.js`). Cambiar tras primer ingreso.
 
 ## Estructura
 - `src/app/core/` — servicios (`ApiService`, `AuthService`, `PreloadService`, `WebSocketService`), guards (`AuthGuard`, `RoleGuard`), modelos e interfaces.
