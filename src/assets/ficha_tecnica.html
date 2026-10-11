@@ -212,43 +212,6 @@
     }
 
     /* ====== FEATURES & DRIFT WALL ====== */
-    .view-switcher-bar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .view-pill-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-accent);
-      color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .view-pill-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--text-white);
-      border-color: rgba(200, 210, 225, 0.35);
-    }
-
-    .view-pill-btn.active {
-      background: linear-gradient(135deg, rgba(200, 215, 235, 0.18), rgba(255, 255, 255, 0.06));
-      color: var(--accent-light);
-      border-color: rgba(220, 230, 245, 0.45);
-      box-shadow: 0 0 20px rgba(200, 210, 225, 0.12);
-    }
-
     /* ====== REACTBITS DRIFT WALL (3D PERSPECTIVE & LIFTING ON HOVER) ====== */
     .driftwall-wrapper {
       position: relative;
@@ -538,107 +501,6 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
-
-    /* ====== CLASSIC CAROUSEL (OPCIÓN ALTERNATIVA) ====== */
-    .carousel-container {
-      position: relative;
-      overflow: hidden;
-      padding: 20px 0;
-      display: none;
-    }
-
-    .carousel-container.active {
-      display: block;
-    }
-
-    .carousel-track {
-      display: flex;
-      gap: 24px;
-      animation: carouselScroll 40s linear infinite;
-      width: max-content;
-    }
-
-    .carousel-track:hover {
-      animation-play-state: paused;
-    }
-
-    @keyframes carouselScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .feature-card {
-      flex-shrink: 0;
-      width: 280px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-accent);
-      border-radius: 16px;
-      padding: 32px 24px;
-      text-align: center;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      cursor: default;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-
-    .feature-card:hover {
-      background: var(--bg-card-hover);
-      transform: translateY(-8px);
-      border-color: rgba(200, 210, 225, 0.3);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px var(--glow);
-    }
-
-    .feature-card:hover::before {
-      opacity: 1;
-    }
-
-    .feature-card:hover .feature-emoji {
-      transform: scale(1.2);
-      filter: drop-shadow(0 0 12px rgba(200, 210, 225, 0.4));
-    }
-
-    .feature-emoji {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 16px;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    .feature-card:nth-child(2n) .feature-emoji { animation-delay: -0.5s; }
-    .feature-card:nth-child(3n) .feature-emoji { animation-delay: -1s; }
-    .feature-card:nth-child(4n) .feature-emoji { animation-delay: -1.5s; }
-    .feature-card:nth-child(5n) .feature-emoji { animation-delay: -2s; }
-
-    @keyframes iconFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .feature-card h4 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-white);
-      margin-bottom: 8px;
-    }
-
-    .feature-card p {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
     }
 
     /* ====== COMPATIBILITY GRID ====== */
@@ -1424,16 +1286,6 @@
     <h2 class="section-title reveal">Funcionalidades Principales</h2>
     <div class="section-line"></div>
     <p class="section-subtitle reveal">Todos los módulos que necesita para operar su restaurante</p>
-
-    <!-- Barra de selección de vista -->
-    <div class="view-switcher-bar reveal">
-      <button class="view-pill-btn active" id="btnViewDrift" onclick="switchFeaturesView('drift')">
-        <span>🌀 Vista 3D Drift Wall</span>
-      </button>
-      <button class="view-pill-btn" id="btnViewCarousel" onclick="switchFeaturesView('carousel')">
-        <span>⟷ Carrusel Clásico</span>
-      </button>
-    </div>
 
     <!-- ====== DRIFT WALL 3D PERSPECTIVE (REACTBITS) ====== -->
     <div class="driftwall-wrapper" id="driftWallView">
