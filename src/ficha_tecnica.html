@@ -999,6 +999,383 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+    /* ====== MODAL CARD DE FUNCIONALIDADES ====== */
+    .drift-action-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-light);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-top: 10px;
+      transition: all 0.25s ease;
+    }
+
+    .drift-card:hover .drift-action-hint,
+    .feature-card:hover .drift-action-hint {
+      background: rgba(220, 235, 255, 0.2);
+      border-color: rgba(220, 235, 255, 0.5);
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(200, 220, 250, 0.3);
+    }
+
+    .module-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 14, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .module-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .module-modal-card {
+      background: linear-gradient(150deg, rgba(16, 24, 40, 0.98), rgba(8, 12, 22, 0.99));
+      border: 1px solid rgba(220, 235, 255, 0.35);
+      border-radius: 24px;
+      max-width: 980px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 
+        0 30px 100px rgba(0, 0, 0, 0.95),
+        0 0 60px rgba(200, 220, 250, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      position: relative;
+      transform: scale(0.92) translateY(24px);
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(200, 215, 235, 0.3) transparent;
+    }
+
+    .module-modal-overlay.active .module-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-white);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      z-index: 10;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: rotate(90deg) scale(1.08);
+    }
+
+    .modal-header-hero {
+      padding: 36px 36px 20px;
+      border-bottom: 1px solid rgba(200, 215, 235, 0.12);
+      position: relative;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200, 215, 235, 0.08) 0%, transparent 80%);
+    }
+
+    .modal-header-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-module-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .modal-category-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(220, 230, 245, 0.12);
+      border: 1px solid rgba(220, 230, 245, 0.25);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .modal-header-title-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .modal-header-icon {
+      font-size: 48px;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.4));
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    .modal-header-title-row h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 3.2vw, 34px);
+      color: var(--accent-light);
+      line-height: 1.2;
+    }
+
+    .modal-header-tagline {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      max-width: 720px;
+      line-height: 1.6;
+    }
+
+    /* Modal Body Layout */
+    .modal-body {
+      padding: 28px 36px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Visual Showcase Box */
+    .modal-showcase-box {
+      background: rgba(10, 14, 24, 0.9);
+      border: 1px solid rgba(200, 215, 235, 0.18);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .showcase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    /* Grid layout for detailed info */
+    .modal-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .modal-detail-block {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-accent);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .modal-detail-block h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-feature-list li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .modal-feature-list li strong {
+      color: var(--text-white);
+      font-weight: 600;
+    }
+
+    .modal-feature-list li::before {
+      content: '✦';
+      color: var(--accent);
+      font-size: 10px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .modal-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(200, 215, 235, 0.12);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .modal-nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-accent);
+      color: var(--text-white);
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .modal-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(220, 235, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .modal-header-hero { padding: 24px 20px 16px; }
+      .modal-body { padding: 20px; gap: 20px; }
+      .modal-details-grid { grid-template-columns: 1fr; }
+      .modal-header-title-row h2 { font-size: 22px; }
+      .modal-header-icon { font-size: 36px; }
+    }
+
+    /* Mockup Showcase Components */
+    .mockup-window {
+      background: rgba(12, 18, 30, 0.95);
+      border: 1px solid rgba(220, 235, 255, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .mockup-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(220, 235, 255, 0.1);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    .mockup-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .mockup-dot.red { background: #ff5f56; }
+    .mockup-dot.yellow { background: #ffbd2e; }
+    .mockup-dot.green { background: #27c93f; }
+    .mockup-content {
+      padding: 16px;
+    }
+    .mockup-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .mockup-kpi-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(220, 235, 255, 0.15);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .mockup-kpi-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+    }
+    .mockup-kpi-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-light);
+      margin-top: 4px;
+      font-family: 'Playfair Display', serif;
+    }
+    .mockup-grid-visual {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .mockup-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .mockup-badge.success { background: rgba(39, 201, 63, 0.15); color: #73f089; border: 1px solid rgba(39, 201, 63, 0.3); }
+    .mockup-badge.warning { background: rgba(255, 189, 46, 0.15); color: #ffd166; border: 1px solid rgba(255, 189, 46, 0.3); }
+    .mockup-badge.info { background: rgba(80, 160, 255, 0.15); color: #9bc5ff; border: 1px solid rgba(80, 160, 255, 0.3); }
+    .mockup-badge.danger { background: rgba(255, 95, 86, 0.15); color: #ff9994; border: 1px solid rgba(255, 95, 86, 0.3); }
+    .mockup-table-mini {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .mockup-table-mini th {
+      text-align: left;
+      padding: 6px 8px;
+      color: var(--text-dim);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(220, 235, 255, 0.15);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mockup-table-mini td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(220, 235, 255, 0.06);
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -1079,7 +1456,7 @@
         <div class="driftwall-stage" id="driftStage">
           <!-- Columna 1 -->
           <div class="driftwall-col driftwall-col-1">
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('dashboard')">
               <span class="drift-badge">Operación en Vivo</span>
               <span class="drift-emoji">📊</span>
               <h4>Dashboard Inteligente</h4>
@@ -1089,8 +1466,9 @@
                 <span class="drift-tag">KPIs</span>
                 <span class="drift-tag">Alertas</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('cocina')">
               <span class="drift-badge">Producción</span>
               <span class="drift-emoji">🍽️</span>
               <h4>Cocina & KDS</h4>
@@ -1100,8 +1478,9 @@
                 <span class="drift-tag">Web Audio</span>
                 <span class="drift-tag">Tiempos</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('compras')">
               <span class="drift-badge">Abastecimiento</span>
               <span class="drift-emoji">🛒</span>
               <h4>Compras & Proveedores</h4>
@@ -1111,9 +1490,10 @@
                 <span class="drift-tag">Proveedores</span>
                 <span class="drift-tag">Costeo</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
             <!-- Loop Duplicates -->
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('dashboard')">
               <span class="drift-badge">Operación en Vivo</span>
               <span class="drift-emoji">📊</span>
               <h4>Dashboard Inteligente</h4>
@@ -1122,8 +1502,9 @@
                 <span class="drift-tag">Tiempo Real</span>
                 <span class="drift-tag">KPIs</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('cocina')">
               <span class="drift-badge">Producción</span>
               <span class="drift-emoji">🍽️</span>
               <h4>Cocina & KDS</h4>
@@ -1132,8 +1513,9 @@
                 <span class="drift-tag">Kanban</span>
                 <span class="drift-tag">Web Audio</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('compras')">
               <span class="drift-badge">Abastecimiento</span>
               <span class="drift-emoji">🛒</span>
               <h4>Compras & Proveedores</h4>
@@ -1142,12 +1524,13 @@
                 <span class="drift-tag">OC Auto</span>
                 <span class="drift-tag">Costeo</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
           </div>
 
           <!-- Columna 2 -->
           <div class="driftwall-col driftwall-col-2">
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('mesas')">
               <span class="drift-badge">Salones & Servicio</span>
               <span class="drift-emoji">🪑</span>
               <h4>Mapa de Mesas</h4>
@@ -1157,8 +1540,9 @@
                 <span class="drift-tag">Zonas</span>
                 <span class="drift-tag">Salones</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('domicilios')">
               <span class="drift-badge">Logística</span>
               <span class="drift-emoji">🛵</span>
               <h4>Domicilios & Delivery</h4>
@@ -1168,8 +1552,9 @@
                 <span class="drift-tag">Repartidores</span>
                 <span class="drift-tag">Tiempos</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('sgsst')">
               <span class="drift-badge">Seguridad Laboral</span>
               <span class="drift-emoji">🛡️</span>
               <h4>SG-SST Ocupacional</h4>
@@ -1179,9 +1564,10 @@
                 <span class="drift-tag">Normativa</span>
                 <span class="drift-tag">EPP</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
             <!-- Loop Duplicates -->
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('mesas')">
               <span class="drift-badge">Salones & Servicio</span>
               <span class="drift-emoji">🪑</span>
               <h4>Mapa de Mesas</h4>
@@ -1190,8 +1576,9 @@
                 <span class="drift-tag">Interactivo</span>
                 <span class="drift-tag">Zonas</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('domicilios')">
               <span class="drift-badge">Logística</span>
               <span class="drift-emoji">🛵</span>
               <h4>Domicilios & Delivery</h4>
@@ -1200,8 +1587,9 @@
                 <span class="drift-tag">Tracking</span>
                 <span class="drift-tag">Rutas</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('sgsst')">
               <span class="drift-badge">Seguridad Laboral</span>
               <span class="drift-emoji">🛡️</span>
               <h4>SG-SST Ocupacional</h4>
@@ -1210,12 +1598,13 @@
                 <span class="drift-tag">Ciclo PHVA</span>
                 <span class="drift-tag">EPP</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
           </div>
 
           <!-- Columna 3 -->
           <div class="driftwall-col driftwall-col-3">
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('pos')">
               <span class="drift-badge">Facturación</span>
               <span class="drift-emoji">🖥️</span>
               <h4>Punto de Venta (POS)</h4>
@@ -1225,8 +1614,9 @@
                 <span class="drift-tag">Cuentas</span>
                 <span class="drift-tag">Rápido</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('eventos')">
               <span class="drift-badge">Reservas Especiales</span>
               <span class="drift-emoji">🎉</span>
               <h4>Eventos & Banquetes</h4>
@@ -1236,8 +1626,9 @@
                 <span class="drift-tag">Hitos</span>
                 <span class="drift-tag">Minuta</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('reportes')">
               <span class="drift-badge">Inteligencia</span>
               <span class="drift-emoji">📈</span>
               <h4>Reportes & Análisis</h4>
@@ -1247,9 +1638,10 @@
                 <span class="drift-tag">Matriz BCG</span>
                 <span class="drift-tag">Márgenes</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
             <!-- Loop Duplicates -->
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('pos')">
               <span class="drift-badge">Facturación</span>
               <span class="drift-emoji">🖥️</span>
               <h4>Punto de Venta (POS)</h4>
@@ -1258,8 +1650,9 @@
                 <span class="drift-tag">Térmica POS</span>
                 <span class="drift-tag">Cuentas</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('eventos')">
               <span class="drift-badge">Reservas Especiales</span>
               <span class="drift-emoji">🎉</span>
               <h4>Eventos & Banquetes</h4>
@@ -1268,8 +1661,9 @@
                 <span class="drift-tag">BEO 1-Clic</span>
                 <span class="drift-tag">Minuta</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('reportes')">
               <span class="drift-badge">Inteligencia</span>
               <span class="drift-emoji">📈</span>
               <h4>Reportes & Análisis</h4>
@@ -1278,12 +1672,13 @@
                 <span class="drift-tag">Finanzas</span>
                 <span class="drift-tag">Rentabilidad</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
           </div>
 
           <!-- Columna 4 -->
           <div class="driftwall-col driftwall-col-4">
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('inventario')">
               <span class="drift-badge">Almacén & Stock</span>
               <span class="drift-emoji">📦</span>
               <h4>Inventario por Áreas</h4>
@@ -1293,8 +1688,9 @@
                 <span class="drift-tag">Mermas</span>
                 <span class="drift-tag">Stock Mínimo</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('caja')">
               <span class="drift-badge">Control Financiero</span>
               <span class="drift-emoji">💰</span>
               <h4>Caja & Arqueos</h4>
@@ -1304,8 +1700,9 @@
                 <span class="drift-tag">Arqueo Ciego</span>
                 <span class="drift-tag">Auditoría</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('personal')">
               <span class="drift-badge">Talento Humano</span>
               <span class="drift-emoji">👥</span>
               <h4>Gestión de Personal</h4>
@@ -1315,9 +1712,10 @@
                 <span class="drift-tag">Permisos</span>
                 <span class="drift-tag">Seguridad</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
             <!-- Loop Duplicates -->
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('inventario')">
               <span class="drift-badge">Almacén & Stock</span>
               <span class="drift-emoji">📦</span>
               <h4>Inventario por Áreas</h4>
@@ -1326,8 +1724,9 @@
                 <span class="drift-tag">Recetas</span>
                 <span class="drift-tag">Stock Mínimo</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('caja')">
               <span class="drift-badge">Control Financiero</span>
               <span class="drift-emoji">💰</span>
               <h4>Caja & Arqueos</h4>
@@ -1336,8 +1735,9 @@
                 <span class="drift-tag">Cierre Z</span>
                 <span class="drift-tag">Auditoría</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
-            <div class="drift-card">
+            <div class="drift-card" onclick="openModuleModal('personal')">
               <span class="drift-badge">Talento Humano</span>
               <span class="drift-emoji">👥</span>
               <h4>Gestión de Personal</h4>
@@ -1346,6 +1746,7 @@
                 <span class="drift-tag">5 Roles</span>
                 <span class="drift-tag">Seguridad</span>
               </div>
+              <span class="drift-action-hint">Ver Detalles 🔍</span>
             </div>
           </div>
         </div>
@@ -1362,126 +1763,150 @@
     <div class="carousel-container" id="carouselView">
       <div class="carousel-track" id="featuresTrack">
         <!-- Set 1 -->
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('dashboard')">
           <span class="feature-emoji">📊</span>
           <h4>Dashboard Inteligente</h4>
           <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('mesas')">
           <span class="feature-emoji">🪑</span>
           <h4>Mapa de Mesas</h4>
           <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('pos')">
           <span class="feature-emoji">🖥️</span>
           <h4>Punto de Venta (POS)</h4>
           <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('cocina')">
           <span class="feature-emoji">🍽️</span>
           <h4>Cocina & KDS</h4>
           <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('domicilios')">
           <span class="feature-emoji">🛵</span>
           <h4>Domicilios</h4>
           <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('eventos')">
           <span class="feature-emoji">🎉</span>
           <h4>Eventos & Banquetes</h4>
           <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('inventario')">
           <span class="feature-emoji">📦</span>
           <h4>Inventario por Áreas</h4>
           <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('caja')">
           <span class="feature-emoji">💰</span>
           <h4>Caja & Arqueos</h4>
           <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('compras')">
           <span class="feature-emoji">🛒</span>
           <h4>Compras & Proveedores</h4>
           <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('sgsst')">
           <span class="feature-emoji">🛡️</span>
           <h4>SG-SST</h4>
           <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('reportes')">
           <span class="feature-emoji">📈</span>
           <h4>Reportes & Análisis</h4>
           <p>Informes financieros, productos estrella y tendencias de ventas</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('personal')">
           <span class="feature-emoji">👥</span>
           <h4>Gestión de Personal</h4>
           <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
         <!-- Set 2 (duplicado para loop infinito) -->
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('dashboard')">
           <span class="feature-emoji">📊</span>
           <h4>Dashboard Inteligente</h4>
           <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('mesas')">
           <span class="feature-emoji">🪑</span>
           <h4>Mapa de Mesas</h4>
           <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('pos')">
           <span class="feature-emoji">🖥️</span>
           <h4>Punto de Venta (POS)</h4>
           <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('cocina')">
           <span class="feature-emoji">🍽️</span>
           <h4>Cocina & KDS</h4>
           <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('domicilios')">
           <span class="feature-emoji">🛵</span>
           <h4>Domicilios</h4>
           <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('eventos')">
           <span class="feature-emoji">🎉</span>
           <h4>Eventos & Banquetes</h4>
           <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('inventario')">
           <span class="feature-emoji">📦</span>
           <h4>Inventario por Áreas</h4>
           <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('caja')">
           <span class="feature-emoji">💰</span>
           <h4>Caja & Arqueos</h4>
           <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('compras')">
           <span class="feature-emoji">🛒</span>
           <h4>Compras & Proveedores</h4>
           <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('sgsst')">
           <span class="feature-emoji">🛡️</span>
           <h4>SG-SST</h4>
           <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('reportes')">
           <span class="feature-emoji">📈</span>
           <h4>Reportes & Análisis</h4>
           <p>Informes financieros, productos estrella y tendencias de ventas</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openModuleModal('personal')">
           <span class="feature-emoji">👥</span>
           <h4>Gestión de Personal</h4>
           <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
+          <span class="drift-action-hint">Ver Detalles 🔍</span>
         </div>
       </div>
     </div>
@@ -1616,6 +2041,77 @@
   <footer class="footer">
     <p>Software Escalable · Adaptable a Cualquier Restaurante · Tecnología Moderna y Vigente</p>
   </footer>
+
+  <!-- ====== MODAL CARD DE DETALLE DE FUNCIONALIDAD ====== -->
+  <div class="module-modal-overlay" id="moduleModalOverlay" onclick="handleModalBackdropClick(event)">
+    <div class="module-modal-card" id="moduleModalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close-btn" onclick="closeModuleModal()" title="Cerrar modal (Esc)">✕</button>
+      
+      <div class="modal-header-hero">
+        <div class="modal-header-meta">
+          <span class="modal-module-num" id="modalModuleNum">MÓDULO 01 DE 12</span>
+          <span class="modal-category-badge" id="modalCategoryBadge">OPERACIÓN EN VIVO</span>
+        </div>
+        <div class="modal-header-title-row">
+          <span class="modal-header-icon" id="modalIcon">📊</span>
+          <div>
+            <h2 id="modalTitle">Dashboard Inteligente</h2>
+            <p class="modal-header-tagline" id="modalTagline">KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Showcase Visual / Mockup Interactivo -->
+        <div class="modal-showcase-box">
+          <div class="showcase-badge">
+            <span>✦ VISTA PREVIA Y FLUJO OPERATIVO</span>
+          </div>
+          <div id="modalShowcaseContent">
+            <!-- Mockup inyectado dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Grid con información relevante -->
+        <div class="modal-details-grid">
+          <div class="modal-detail-block">
+            <h4><span>🎯</span> Propósito & Alcance</h4>
+            <p id="modalPurpose" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;"></p>
+          </div>
+
+          <div class="modal-detail-block">
+            <h4><span>⚙️</span> Funcionalidades Clave</h4>
+            <ul class="modal-feature-list" id="modalFeaturesList">
+              <!-- Lista inyectada -->
+            </ul>
+          </div>
+
+          <div class="modal-detail-block">
+            <h4><span>💡</span> Impacto & ROI</h4>
+            <ul class="modal-feature-list" id="modalRoiList">
+              <!-- Lista inyectada -->
+            </ul>
+          </div>
+
+          <div class="modal-detail-block">
+            <h4><span>🔄</span> Flujo Operativo</h4>
+            <p id="modalWorkflow" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;"></p>
+          </div>
+        </div>
+
+        <!-- Barra de navegación del modal -->
+        <div class="modal-nav-bar">
+          <button class="modal-nav-btn" onclick="navigateModule(-1)">
+            <span>←</span> Anterior Módulo
+          </button>
+          <span style="font-size: 12px; color: var(--text-dim);" id="modalCounter">1 / 12</span>
+          <button class="modal-nav-btn" onclick="navigateModule(1)">
+            Siguiente Módulo <span>→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     // ====== PARTICLES ======
@@ -1817,6 +2313,691 @@
         if (btnCarousel) btnCarousel.classList.add('active');
       }
     }
+
+    // ====== MODAL CARDS DE FUNCIONALIDADES ======
+    const MODULE_KEYS = [
+      'dashboard', 'mesas', 'pos', 'cocina',
+      'domicilios', 'eventos', 'inventario', 'caja',
+      'compras', 'sgsst', 'reportes', 'personal'
+    ];
+
+    const MODULE_DATA = {
+      dashboard: {
+        num: 'MÓDULO 01 DE 12',
+        badge: 'OPERACIÓN EN VIVO',
+        icon: '📊',
+        title: 'Dashboard Inteligente',
+        tagline: 'Centro de control integral con métricas en tiempo real, ventas del día, ocupación de salones y alertas operativas.',
+        purpose: 'Proveer al administrador y gerencia una vista unificada y en tiempo real de la salud del negocio, integrando facturación por franjas, mesas activas, ticket promedio y alertas críticas inmediatas.',
+        features: [
+          '<strong>Métricas en Vivo:</strong> Facturación bruta/neta, número de órdenes cerradas, propinas y ticket promedio.',
+          '<strong>Ocupación de Salones:</strong> Porcentaje de mesas ocupadas y tiempos medios de permanencia en sala.',
+          '<strong>Alertas Críticas:</strong> Notificación automática de platos agotados o insumos por debajo del mínimo.',
+          '<strong>Tendencias del Día:</strong> Comparativa visual de ventas respecto a días y semanas anteriores.'
+        ],
+        roi: [
+          '<strong>90% menos tiempo</strong> en recopilación y auditoría gerencial de cifras diarias.',
+          '<strong>Detección al instante</strong> de desvíos en caja o demoras de cocina.',
+          '<strong>Decisiones estratégicas</strong> basadas en datos sincronizados con Socket.IO.'
+        ],
+        workflow: 'Cada comanda y pago se consolida automáticamente en la base de datos. El panel actualiza los widgets en pantalla cada segundo sin necesidad de recargar la página.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Panel de Control Gerencial · Sincronización en Vivo (Socket.IO)</span>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-kpi-row">
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Ventas Hoy</div><div class="mockup-kpi-val">$4,850,000</div><span class="mockup-badge success">+18.4% vs ayer</span></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Mesas Activas</div><div class="mockup-kpi-val">18 / 24</div><span class="mockup-badge info">75% Ocupación</span></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Ticket Promedio</div><div class="mockup-kpi-val">$68,500</div><span class="mockup-badge success">4.2 Clientes/Mesa</span></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Tiempo Prep.</div><div class="mockup-kpi-val">12 min</div><span class="mockup-badge warning">Óptimo &lt; 15m</span></div>
+              </div>
+              <div class="mockup-grid-visual">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;">Top Ventas Hoy</div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>1. Hamburguesa Angus Doble</span><strong style="color:var(--accent-light);">42 und</strong></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>2. Lomo al Trapo Grill</span><strong style="color:var(--accent-light);">28 und</strong></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;"><span>3. Cerveza Artesanal IPA</span><strong style="color:var(--accent-light);">65 und</strong></div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;">Alertas de Stock & Cocina</div>
+                  <div style="font-size:12px;color:#ffd166;margin-bottom:4px;">⚠️ Salmón Ahumado: Quedan 3 porciones (Mínimo: 8)</div>
+                  <div style="font-size:12px;color:#73f089;margin-bottom:4px;">✓ Estación KDS Barra: 0 comandas pendientes</div>
+                  <div style="font-size:12px;color:#9bc5ff;">ℹ️ Turno Tarde abierto por: Carlos M. (Caja 1)</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      mesas: {
+        num: 'MÓDULO 02 DE 12',
+        badge: 'SALONES & SERVICIO',
+        icon: '🪑',
+        title: 'Mapa de Mesas & Salones',
+        tagline: 'Plano visual interactivo por salones y terrazas con estados en vivo y control de tiempos.',
+        purpose: 'Optimizar el servicio en sala permitiendo a meseros y capitanes verificar disponibilidad, aperturar cuentas y asociar pedidos con un solo clic.',
+        features: [
+          '<strong>Múltiples Salones:</strong> Salón Principal, Terraza, Barra y Zona VIP con distribución configurable.',
+          '<strong>Codificación por Color:</strong> Verde (Libre), Naranja (Comanda en marcha), Azul (Cuenta pedida), Púrpura (Reservada).',
+          '<strong>Temporizador de Ocupación:</strong> Alerta visual cuando una mesa supera el tiempo estándar de consumo.',
+          '<strong>Unión y División:</strong> Permite agrupar mesas para banquetes o dividir comensales en cuentas separadas.'
+        ],
+        roi: [
+          '<strong>25% de incremento</strong> en rotación de mesas durante horarios pico de almuerzo y cena.',
+          '<strong>Cero pedidos extraviados</strong> o asignados a mesas equivocadas.',
+          '<strong>Atención fluida y rápida</strong> percibida de inmediato por los comensales.'
+        ],
+        workflow: 'El mesero toca la mesa libre en su tablet o pantalla táctil -> ingresa número de comensales -> añade los platos del menú digital -> la mesa pasa a naranja en todas las pantallas del restaurante.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Mapa de Salón · Salón Principal (8 Mesas) | Terraza (6 Mesas) | VIP (4 Mesas)</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;font-size:11px;">
+                <span style="color:#73f089;">● Libre (6)</span>
+                <span style="color:#ffd166;">● Ocupada (10)</span>
+                <span style="color:#9bc5ff;">● Cuenta Pedida (2)</span>
+                <span style="color:#d49bff;">● Reservada (2)</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+                <div style="background:rgba(39,201,63,0.1);border:1px solid rgba(39,201,63,0.3);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-weight:700;font-size:14px;color:#73f089;">Mesa 01</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin:4px 0;">4 Puestos · Libre</div>
+                  <span class="mockup-badge success">Disponible</span>
+                </div>
+                <div style="background:rgba(255,189,46,0.1);border:1px solid rgba(255,189,46,0.3);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-weight:700;font-size:14px;color:#ffd166;">Mesa 02</div>
+                  <div style="font-size:11px;color:var(--text-white);margin:4px 0;">Mesero: Andrés · $142,000</div>
+                  <span class="mockup-badge warning">34 min · En consumo</span>
+                </div>
+                <div style="background:rgba(80,160,255,0.1);border:1px solid rgba(80,160,255,0.3);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-weight:700;font-size:14px;color:#9bc5ff;">Mesa 03</div>
+                  <div style="font-size:11px;color:var(--text-white);margin:4px 0;">Total: $218,500</div>
+                  <span class="mockup-badge info">Cuenta Pedida (Efectivo)</span>
+                </div>
+                <div style="background:rgba(212,155,255,0.1);border:1px solid rgba(212,155,255,0.3);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-weight:700;font-size:14px;color:#d49bff;">Mesa 04 VIP</div>
+                  <div style="font-size:11px;color:var(--text-white);margin:4px 0;">Reserva: Fam. Gómez (8p)</div>
+                  <span class="mockup-badge" style="background:rgba(212,155,255,0.15);color:#d49bff;border:1px solid rgba(212,155,255,0.3);">8:00 PM (Confirmado)</span>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      pos: {
+        num: 'MÓDULO 03 DE 12',
+        badge: 'FACTURACIÓN & VENTA RÁPIDA',
+        icon: '🖥️',
+        title: 'Punto de Venta POS & Comandas',
+        tagline: 'Terminal táctil ultrarrápida, división de cuentas en un clic y comanda electrónica directa.',
+        purpose: 'Permitir la toma de pedidos más rápida y precisa posible, eliminando errores de anotación manual y agilizando la facturación al cierre.',
+        features: [
+          '<strong>Catálogo Táctil Rápido:</strong> Búsqueda instantánea y categorías (Entradas, Fuertes, Bebidas, Postres).',
+          '<strong>Modificadores de Cocina:</strong> Término de carne, sin ingredientes alérgenos, adiciones y salsas.',
+          '<strong>División de Cuentas:</strong> Facturación individual por puesto o reparto equitativo del total con 1 clic.',
+          '<strong>Múltiples Medios de Pago:</strong> Efectivo con cálculo de cambio, tarjetas, transferencias y propina sugerida.',
+          '<strong>Impresión Térmica:</strong> Compatible con impresoras de 80mm y 58mm ESC/POS por red o USB.'
+        ],
+        roi: [
+          '<strong>Reducción de 4 min a 45 seg</strong> en la emisión de cuenta y cobro por mesa.',
+          '<strong>Eliminación del 100%</strong> de pérdidas por productos servidos y no cobrados.',
+          '<strong>Sin cobros recurrentes</strong> de licencias por número de terminales o usuarios.'
+        ],
+        workflow: 'El mesero toca los platillos -> agrega notas de preparación -> envía la comanda al KDS y bar -> al finalizar presiona "Cobrar", selecciona el medio de pago y emite el ticket térmico.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Terminal POS Táctil · Mesa 02 (Salón Principal) · Ticket #1049</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px;">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">ITEMS DE LA COMANDA</div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span>2x Lomo al Trapo Grill <em style="font-size:10px;color:var(--text-dim);display:block;">Término medio / Sin sal marina</em></span>
+                    <strong>$76,000</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span>1x Risotto de Hongos Silvestres</span>
+                    <strong>$32,000</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;">
+                    <span>3x Limonada de Coco Natural</span>
+                    <strong>$28,500</strong>
+                  </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(220,235,255,0.15);border-radius:8px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);"><span>Subtotal:</span><span>$136,500</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin:4px 0;"><span>Propina Voluntaria (10%):</span><span>$13,650</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--accent-light);border-top:1px solid rgba(255,255,255,0.1);padding-top:6px;margin-top:6px;">
+                      <span>TOTAL:</span><span>$150,150</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:6px;margin-top:10px;">
+                    <button style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;padding:7px;font-size:11px;cursor:pointer;">Dividir Cuenta</button>
+                    <button style="flex:1;background:rgba(220,235,255,0.2);border:1px solid rgba(220,235,255,0.4);color:#fff;border-radius:6px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;">Cobrar / Facturar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      cocina: {
+        num: 'MÓDULO 04 DE 12',
+        badge: 'PRODUCCIÓN & BARRA',
+        icon: '🍽️',
+        title: 'Cocina & KDS en Tiempo Real',
+        tagline: 'Kitchen Display System con columnas Kanban, alertas sonoras Web Audio y cronómetros de preparación.',
+        purpose: 'Reemplazar comandas de papel por pantallas de cocina inteligentes que organizan los pedidos por estaciones de trabajo y alertan sobre tiempos de espera excesivos.',
+        features: [
+          '<strong>Estaciones Diferenciadas:</strong> Pantallas separadas para Cocina Caliente, Cocina Fría, Parrilla y Bar.',
+          '<strong>Columnas Kanban:</strong> Pendiente -> En Marcha -> Listo para Entrega -> Despachado.',
+          '<strong>Timbres Web Audio:</strong> Notificación sonora cada vez que entra un nuevo pedido desde el POS.',
+          '<strong>Semáforo de Tiempo:</strong> Contador verde (&lt;10m), amarillo (10-18m) y rojo (&gt;20m demorado).',
+          '<strong>Recuperación de Comandas:</strong> Botón de recall para restaurar pedidos despachados accidentalmente.'
+        ],
+        roi: [
+          '<strong>35% de disminución</strong> en tiempos de espera de platos en salón.',
+          '<strong>Ahorro absoluto</strong> en rollos de papel térmico para comandas internas de cocina.',
+          '<strong>Coordinación perfecta</strong> entre la preparación de bebidas y platos calientes.'
+        ],
+        workflow: 'POS envía la orden -> KDS emite timbrado sonoro -> orden entra a "Pendiente" con cronómetro -> cocinero pulsa "En Marcha" -> al finalizar marca "Listo" -> mesero recibe alerta visual para retirar.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>KDS Pantalla de Producción · Estación: Cocina Caliente · Web Audio Activo 🔔</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-bottom:6px;"><span>PENDIENTE</span><span class="mockup-badge info">03:45</span></div>
+                  <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;border-left:3px solid #50a0ff;">
+                    <div style="font-weight:700;font-size:13px;color:#fff;">Mesa 05 · Ticket #1051</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">1x Baby Beef 300g (3/4)<br>1x Papas Cascos Rústicas</div>
+                  </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="display:flex;justify-content:space-between;font-size:11px;color:#ffd166;margin-bottom:6px;"><span>EN MARCHA</span><span class="mockup-badge warning">12:20</span></div>
+                  <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;border-left:3px solid #ffbd2e;">
+                    <div style="font-weight:700;font-size:13px;color:#fff;">Mesa 02 · Ticket #1049</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">2x Lomo al Trapo (T. Medio)<br>1x Risotto Silvestre</div>
+                  </div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+                  <div style="display:flex;justify-content:space-between;font-size:11px;color:#73f089;margin-bottom:6px;"><span>LISTO / LLAMAR</span><span class="mockup-badge success">Completado</span></div>
+                  <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:8px;border-left:3px solid #27c93f;">
+                    <div style="font-weight:700;font-size:13px;color:#fff;">Mesa 08 · Ticket #1048</div>
+                    <div style="font-size:11px;color:#73f089;margin-top:4px;">✓ Retirar en pase de cocina</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      domicilios: {
+        num: 'MÓDULO 05 DE 12',
+        badge: 'LOGÍSTICA & DESPACHO',
+        icon: '🛵',
+        title: 'Domicilios & Delivery Tracking',
+        tagline: 'Control centralizado de entregas, tiempos de promesa y liquidación de repartidores.',
+        purpose: 'Monitorear en un solo tablero los pedidos para llevar y domicilios propios o de plataformas, controlando los tiempos de despacho y la cobranza de cada domiciliario.',
+        features: [
+          '<strong>Ficha de Clientes:</strong> Búsqueda por número celular con memoria de direcciones y preferencias.',
+          '<strong>Ciclo Logístico:</strong> Tomado -> En Cocina -> Empacado -> En Ruta -> Entregado.',
+          '<strong>Asignación de Repartidores:</strong> Control de base de cambio entregada y cobros por rendir.',
+          '<strong>Tiempos de Promesa:</strong> Cronómetro de alerta antes de que se cumpla el tiempo prometido al cliente.'
+        ],
+        roi: [
+          '<strong>Control del 100%</strong> del dinero en efectivo recibido por los repartidores en calle.',
+          '<strong>40% de incremento</strong> en satisfacción de clientes por cumplimiento de tiempos.',
+          '<strong>Construcción de base propia</strong> de clientes frecuentes sin pagar comisiones abusivas.'
+        ],
+        workflow: 'El cliente solicita pedido -> se registra dirección y teléfono -> comanda va a cocina con rótulo "Para Llevar" -> al empacarse se asigna al repartidor -> el repartidor cobra y liquida en caja al volver.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Monitor de Despachos · 4 En Ruta · 2 En Preparación · 14 Entregados Hoy</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:10px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span style="font-weight:700;font-size:12px;color:#fff;">#DOM-204 · Cra 15 #85-30</span>
+                    <span class="mockup-badge info">En Ruta (18/30m)</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-muted);">Cliente: Laura Restrepo · Tel: 315-8849201</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin:4px 0;">Repartidor: Camilo V. (Base $50k)</div>
+                  <div style="font-size:12px;font-weight:600;color:var(--accent-light);">Total a Cobrar: $58,900 (Efectivo)</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:10px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span style="font-weight:700;font-size:12px;color:#fff;">#DOM-205 · Calle 100 #19-61</span>
+                    <span class="mockup-badge warning">Empacando</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-muted);">Cliente: Roberto Silva · Tel: 320-1192840</div>
+                  <div style="font-size:11px;color:var(--text-dim);margin:4px 0;">Pago: Transferencia Aprobada (Nequi)</div>
+                  <div style="font-size:12px;font-weight:600;color:var(--accent-light);">Total: $84,200 (Pagado)</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      eventos: {
+        num: 'MÓDULO 06 DE 12',
+        badge: 'RESERVAS ESPECIALES & CATERING',
+        icon: '🎉',
+        title: 'Eventos, Banquetes & BEO',
+        tagline: 'Organización de eventos con minutas BEO formales, cronograma de pagos y bloqueo de salones.',
+        purpose: 'Centralizar cotizaciones, pagos escalonados de anticipos y minutas técnicas de banquetes para garantizar la ejecución impecable de eventos corporativos y celebraciones.',
+        features: [
+          '<strong>Generador de BEO 1-Clic:</strong> Banquet Event Order formal con menú pactado, tiempos y montaje.',
+          '<strong>Hitos de Pago:</strong> Registro de anticipo inicial (50%), abono previo (30%) y liquidación de saldo.',
+          '<strong>Bloqueo de Espacios:</strong> Reserva y protección automática de salones y áreas en el calendario.',
+          '<strong>Checklist Operativo:</strong> Asignación de requerimientos de sonido, mantelería y horarios de cocina.'
+        ],
+        roi: [
+          '<strong>100% de anticipos cobrados</strong> sin omisiones antes de la fecha del evento.',
+          '<strong>Eliminación de confusiones</strong> en el montaje y menú entre cliente, cocina y servicio.',
+          '<strong>Atracción de eventos de alta rentabilidad</strong> por cubierto corporativo.'
+        ],
+        workflow: 'Se registra cotización con cantidad de invitados y menú -> cliente abona anticipo -> sistema genera la minuta BEO -> cocina y montaje alistan requerimientos -> al finalizar se salda la cuenta.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Banquet Event Order (BEO #2026-08) · Salón Terraza + VIP</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(220,235,255,0.1);padding-bottom:8px;margin-bottom:10px;">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:#fff;">Cena Corporativa: Tech Solutions LATAM</div>
+                  <div style="font-size:11px;color:var(--text-muted);">Fecha: 24 Octubre 2026 · Asistentes: 65 Personas · Montaje: Imperial</div>
+                </div>
+                <span class="mockup-badge success">Anticipo 50% Recibido ($3,250,000)</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px;font-size:11px;">
+                <div>
+                  <div style="color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">Menú Concertado</div>
+                  <div style="color:var(--text-muted);line-height:1.5;">Entrada: Crema de Langostinos<br>Plato Fuerte: Solomillo al Malbec con Puré Trufado<br>Postre: Volcán de Chocolate 70%</div>
+                </div>
+                <div>
+                  <div style="color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">Plan de Hitos</div>
+                  <div style="color:#73f089;">✓ Hito 1 (Reserva): $3,250,000 (Pagado)</div>
+                  <div style="color:#ffd166;">⏳ Hito 2 (48h antes): $1,950,000 (Pendiente)</div>
+                  <div style="color:var(--text-muted);">○ Saldo (Día Evento): $1,300,000</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      inventario: {
+        num: 'MÓDULO 07 DE 12',
+        badge: 'ALMACÉN, STOCK & COSTOS',
+        icon: '📦',
+        title: 'Inventario por Áreas & Recetas',
+        tagline: 'Control discriminado de existencias en cocina, barra y bodega con recetas estándar y costeo automático.',
+        purpose: 'Blindar el restaurante contra mermas excesivas y pérdidas hormiga mediante el costeo exacto por receta y la deducción automática de insumos en cada venta.',
+        features: [
+          '<strong>Subalmacenes por Área:</strong> Stock independiente para Cocina Caliente, Barra de Licores y Bodega Central.',
+          '<strong>Recetas Estándar (Fichas Técnicas):</strong> Gramajes precisos, costo unitario y cálculo de Food Cost.',
+          '<strong>Deducción en Tiempo Real:</strong> Cada venta en el POS descuenta automáticamente las porciones de los insumos.',
+          '<strong>Control de Mermas:</strong> Registro auditado de pérdidas por vencimiento, cocción o daño.',
+          '<strong>Alertas de Reorden:</strong> Notificaciones tempranas antes de que un ingrediente clave se agote.'
+        ],
+        roi: [
+          '<strong>3% a 7% de reducción</strong> en el costo total de materia prima (Food Cost).',
+          '<strong>Cero compras de emergencia</strong> a precios inflados de supermercado.',
+          '<strong>Trazabilidad total</strong> de cada gramo de proteína y mililitro de licor.'
+        ],
+        workflow: 'Se ingresa factura de compra en Bodega -> se transfieren insumos a Cocina -> el POS vende el plato -> el sistema descuenta automáticamente cada ingrediente de la receta -> stock actualizado en vivo.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Control de Stock en Tiempo Real · Almacenes: Cocina (94 ítems) · Barra (42 ítems)</span>
+            </div>
+            <div class="mockup-content">
+              <table class="mockup-table-mini">
+                <thead>
+                  <tr><th>Insumo</th><th>Ubicación</th><th>Stock Actual</th><th>Mínimo</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Lomo de Res Premium</td><td>Cocina Principal</td><td>18.4 kg</td><td>8.0 kg</td><td><span class="mockup-badge success">Óptimo</span></td></tr>
+                  <tr><td>Queso Parmesano Reggiano</td><td>Cocina Fría</td><td>1.1 kg</td><td>2.5 kg</td><td><span class="mockup-badge warning">Reordenar</span></td></tr>
+                  <tr><td>Whisky 12 Años Reserva</td><td>Barra Principal</td><td>6 Botellas</td><td>3 Botellas</td><td><span class="mockup-badge success">Óptimo</span></td></tr>
+                  <tr><td>Crema de Leche Fresca</td><td>Pastelería</td><td>0.5 L</td><td>3.0 L</td><td><span class="mockup-badge danger">Crítico</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>`
+      },
+      caja: {
+        num: 'MÓDULO 08 DE 12',
+        badge: 'CONTROL FINANCIERO & AUDITORÍA',
+        icon: '💰',
+        title: 'Caja, Arqueos Ciegos & Cierre Z',
+        tagline: 'Apertura con base, registro estricto de entradas/salidas, arqueo ciego y reconciliación Z auditada.',
+        purpose: 'Garantizar la transparencia absoluta en el manejo del dinero en efectivo y medios electrónicos, evitando discrepancias entre las ventas registradas y lo recaudado en cada turno.',
+        features: [
+          '<strong>Apertura de Turno:</strong> Asignación de base de cambio, cajero y fecha de inicio.',
+          '<strong>Movimientos Menores:</strong> Registro de salidas menores de emergencia o pagos a proveedores con soporte.',
+          '<strong>Arqueo Ciego:</strong> El cajero declara lo contado sin ver el saldo teórico del sistema, previniendo alteraciones.',
+          '<strong>Reporte de Cierre Z:</strong> Cuadre definitivo entre ventas totales, propinas, efectivo y datáfonos.',
+          '<strong>Historial Inmutable:</strong> Auditoría completa con firma electrónica de supervisor y cajero.'
+        ],
+        roi: [
+          '<strong>Cero descuadres inexplicados</strong> en el recaudo diario de turnos.',
+          '<strong>Tranquilidad para dueños y empleados</strong> al disponer de reglas y registros transparentes.',
+          '<strong>Auditoría forense inmediata</strong> ante cualquier anomalía monetaria.'
+        ],
+        workflow: 'Cajero abre turno con $200k -> registra cobros -> al finalizar realiza el conteo de billetes y vouchers en arqueo ciego -> supervisor autoriza Cierre Z -> sistema calcula y emite el cuadre.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Arqueo de Caja & Conciliación Z · Turno Tarde · Cajero: Diana P.</span>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-kpi-row">
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Base Inicial</div><div class="mockup-kpi-val">$200,000</div></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Ventas Efectivo</div><div class="mockup-kpi-val">$1,840,000</div></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Ventas Tarjeta</div><div class="mockup-kpi-val">$2,450,000</div></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Diferencia</div><div class="mockup-kpi-val" style="color:#73f089;">$0.00</div><span class="mockup-badge success">Cuadre Perfecto</span></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:8px;font-size:11px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:var(--text-muted);">Conteo Físico Real: $2,040,000 | Salidas Menores: $0 | Propinas Registradas: $382,000</span>
+                <span class="mockup-badge success">Cierre Z Aprobado ✓</span>
+              </div>
+            </div>
+          </div>`
+      },
+      compras: {
+        num: 'MÓDULO 09 DE 12',
+        badge: 'ABASTECIMIENTO & CADENA DE SUMINISTRO',
+        icon: '🛒',
+        title: 'Compras, Requisiciones & Proveedores',
+        tagline: 'Ciclo formal de adquisiciones desde la requisición interna hasta la orden de compra y cotejo de factura.',
+        purpose: 'Estructurar las compras del restaurante, comparar cotizaciones entre proveedores y garantizar que solo se liquide la mercancía que ingresó en óptimas condiciones.',
+        features: [
+          '<strong>Requisiciones por Área:</strong> Chefs y bartenders solicitan insumos antes de llegar al quiebre de stock.',
+          '<strong>Órdenes de Compra (OC):</strong> Emisión formal con precios negociados, plazos de pago y fecha de entrega.',
+          '<strong>Directorio de Proveedores:</strong> Registro de NIT, contactos, condiciones comerciales y catálogo provisto.',
+          '<strong>Recepción Contra OC:</strong> Cotejo físico de cantidades recibidas vs cantidades ordenadas.',
+          '<strong>Historial de Precios:</strong> Comparativa histórica para identificar alzas de insumos y negociar mejores tarifas.'
+        ],
+        roi: [
+          '<strong>5% a 12% de ahorro</strong> anual en compras mediante cotizaciones comparativas y control de entregas.',
+          '<strong>Eliminación de compras duplicadas</strong> entre turnos de mañana y tarde.',
+          '<strong>Transparencia absoluta</strong> en pagos y relaciones con proveedores comerciales.'
+        ],
+        workflow: 'Cocina genera requisición -> administrador aprueba y genera Orden de Compra -> proveedor despacha -> almacén verifica y da ingreso al inventario -> se programa el pago según condiciones.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Orden de Compra Oficial (OC #1048) · Distribuidora Cárnicos del Norte</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:11px;">
+                <div>
+                  <strong style="color:#fff;font-size:13px;">OC #1048 · Entrega: Mañana 07:00 AM</strong>
+                  <div style="color:var(--text-muted);">Condición de Pago: Crédito 15 días · Factura Electrónica</div>
+                </div>
+                <span class="mockup-badge success">Aprobada · En Espera</span>
+              </div>
+              <table class="mockup-table-mini">
+                <thead>
+                  <tr><th>Ítem Solicitado</th><th>Cant.</th><th>Precio Unit.</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Lomo Fino Empacado al Vacío</td><td>30 kg</td><td>$28,000/kg</td><td>$840,000</td></tr>
+                  <tr><td>Costilla de Cerdo San Luis</td><td>20 kg</td><td>$18,500/kg</td><td>$370,000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>`
+      },
+      sgsst: {
+        num: 'MÓDULO 10 DE 12',
+        badge: 'SEGURIDAD Y SALUD EN EL TRABAJO',
+        icon: '🛡️',
+        title: 'SG-SST Seguridad Ocupacional PHVA',
+        tagline: 'Sistema de Gestión de Seguridad y Salud en el Trabajo con ciclo PHVA, matriz de riesgos, EPP y capacitaciones.',
+        purpose: 'Asegurar el cumplimiento riguroso de la normativa laboral y de prevención de riesgos gastronómicos (quemaduras, cortes, caídas), protegiendo al personal y evitando sanciones legales.',
+        features: [
+          '<strong>Ciclo PHVA:</strong> Módulos organizados en Planear, Hacer, Verificar y Actuar según directrices legales.',
+          '<strong>Matriz de Riesgos Gastronómicos:</strong> Identificación de peligros en cocina caliente, manipulación de cuchillos y resbalones.',
+          '<strong>Dotación & Entrega de EPP:</strong> Registro de entrega y renovación de calzado antideslizante, guantes térmicos y delantales.',
+          '<strong>Cronograma de Capacitaciones:</strong> Talleres de manipulación de alimentos, primeros auxilios y uso de extintores.',
+          '<strong>Reporte de Incidentes:</strong> Formato ágil de investigación interna y planes de acción preventivos.'
+        ],
+        roi: [
+          '<strong>100% de cumplimiento legal</strong> ante auditorías del Ministerio de Trabajo y Sanidad.',
+          '<strong>Disminución notable</strong> de incapacidades y accidentes laborales en cocina y sala.',
+          '<strong>Ambiente de trabajo seguro</strong> que reduce la rotación y fideliza a los colaboradores.'
+        ],
+        workflow: 'Se planifica actividad en el ciclo PHVA -> colaboradores asisten y firman asistencia -> se registran inspecciones de áreas y dotación -> el sistema genera indicadores de cumplimiento en tiempo real.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>SG-SST Dashboard · Cumplimiento Normativo: 94% · Ciclo PHVA</span>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-kpi-row">
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Peligros Evaluados</div><div class="mockup-kpi-val">28 Áreas</div><span class="mockup-badge success">Matriz Actualizada</span></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Dotación EPP</div><div class="mockup-kpi-val">100%</div><span class="mockup-badge success">Zapatos & Guantes</span></div>
+                <div class="mockup-kpi-card"><div class="mockup-kpi-label">Días Sin Accidentes</div><div class="mockup-kpi-val">142 días</div><span class="mockup-badge success">Meta: 365</span></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.1);border-radius:8px;padding:8px;font-size:11px;">
+                <strong style="color:var(--accent-light);">Próxima Capacitación Programada:</strong>
+                <span style="color:var(--text-muted);display:block;margin-top:3px;">📅 Manejo Seguro de Cuchillos y Primeros Auxilios en Cocina · Jueves 15:00 · 18 Asistentes Convocados</span>
+              </div>
+            </div>
+          </div>`
+      },
+      reportes: {
+        num: 'MÓDULO 11 DE 12',
+        badge: 'INTELIGENCIA DE NEGOCIO & RENTABILIDAD',
+        icon: '📈',
+        title: 'Reportes Financieros & Matriz BCG',
+        tagline: 'Análisis de rentabilidad por producto, matriz BCG del menú (Estrellas, Vacas, Perros) y exportación a Excel/PDF.',
+        purpose: 'Transformar las ventas transaccionales en decisiones estratégicas de carta e ingeniería del menú, descubriendo los platos más rentables y los que deben modificarse o salir del catálogo.',
+        features: [
+          '<strong>Matriz BCG del Menú:</strong> Clasificación matemática entre platos Estrella, Vacas Lecheras, Incógnitas y Perros.',
+          '<strong>Curva de Ventas Horarias:</strong> Mapa de calor para dimensionar meseros y cocineros en turnos valle vs picos.',
+          '<strong>Rendimiento por Canal:</strong> Desglose de ingresos por Sala, Domicilios Propios y Eventos Especiales.',
+          '<strong>Margen de Contribución:</strong> Cálculo automático de Food Cost real vs precio de venta sugerido.',
+          '<strong>Exportación Contable:</strong> Descarga instantánea en formatos Excel, CSV y PDF listos para contabilidad.'
+        ],
+        roi: [
+          '<strong>10% a 18% de aumento</strong> en margen neto rediseñando el menú con la matriz BCG.',
+          '<strong>Optimización de costos de nómina</strong> al ajustar turnos de meseros según afluencia horaria real.',
+          '<strong>Cierres contables mensuales</strong> en minutos en lugar de días de conciliación manual.'
+        ],
+        workflow: 'El sistema toma todas las comandas cerradas -> calcula automáticamente popularidad y margen de contribución -> proyecta la matriz BCG interactiva -> el gerente toma decisiones de carta.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Matriz BCG de Ingeniería del Menú · Análisis de Popularidad vs Margen</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div style="background:rgba(39,201,63,0.08);border:1px solid rgba(39,201,63,0.25);border-radius:8px;padding:10px;">
+                  <div style="font-weight:700;font-size:12px;color:#73f089;">⭐ PLATOS ESTRELLA (Alto Margen + Alta Venta)</div>
+                  <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Hamburguesa Angus Especial (Margen: 68%)<br>• Lomo al Trapo Grill (Margen: 64%)</div>
+                </div>
+                <div style="background:rgba(80,160,255,0.08);border:1px solid rgba(80,160,255,0.25);border-radius:8px;padding:10px;">
+                  <div style="font-weight:700;font-size:12px;color:#9bc5ff;">🐄 VACAS LECHERAS (Bajo Margen + Alta Venta)</div>
+                  <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Cerveza Artesanal IPA (Margen: 45%)<br>• Papas Cascos Rústicas (Margen: 48%)</div>
+                </div>
+                <div style="background:rgba(255,189,46,0.08);border:1px solid rgba(255,189,46,0.25);border-radius:8px;padding:10px;">
+                  <div style="font-weight:700;font-size:12px;color:#ffd166;">❓ INCÓGNITAS (Alto Margen + Baja Venta)</div>
+                  <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Salmón en Salsa de Cítricos (Promocionar)</div>
+                </div>
+                <div style="background:rgba(255,95,86,0.08);border:1px solid rgba(255,95,86,0.25);border-radius:8px;padding:10px;">
+                  <div style="font-weight:700;font-size:12px;color:#ff9994;">🐕 PERROS (Bajo Margen + Baja Venta)</div>
+                  <div style="font-size:11px;color:var(--text-white);margin-top:4px;">• Sopa Fría Gazpacho (Sugerir Retiro)</div>
+                </div>
+              </div>
+            </div>
+          </div>`
+      },
+      personal: {
+        num: 'MÓDULO 12 DE 12',
+        badge: 'TALENTO HUMANO & CONTROL DE ACCESOS',
+        icon: '👥',
+        title: 'Gestión de Personal & Roles',
+        tagline: 'Administración de colaboradores, credenciales seguras y matriz de 5 roles con permisos granulares.',
+        purpose: 'Controlar de forma estricta los accesos del equipo a funciones sensibles (anulaciones de cuentas, descuentos, apertura de cajón monedero y reportes financieros).',
+        features: [
+          '<strong>5 Roles Preconfigurados:</strong> Administrador, Supervisor, Capitán de Meseros, Mesero y Cocina/Barra.',
+          '<strong>Permisos Granulares:</strong> Control de quién puede anular ítems, hacer descuentos o registrar salidas de caja.',
+          '<strong>PIN de Acceso Rápido:</strong> Código de 4 dígitos para agilizar turnos en pantallas táctiles compartidas.',
+          '<strong>Auditoría por Usuario:</strong> Cada comanda, modificación o cobro queda vinculado al colaborador responsable.',
+          '<strong>Directorio de Colaboradores:</strong> Historial de cargos, contacto de emergencia y estado activo/inactivo.'
+        ],
+        roi: [
+          '<strong>Blindaje total contra fraudes</strong> y descuentos no autorizados por personal de sala.',
+          '<strong>Protección de secretos comerciales</strong> y métricas financieras ante personal temporal.',
+          '<strong>Servicio veloz</strong> gracias a autenticación rápida por PIN en pantallas de mesa.'
+        ],
+        workflow: 'El administrador da de alta al colaborador con su rol y PIN personal -> el mesero digita su PIN en la terminal para abrir comandas -> si requiere anular un plato, el sistema solicita autorización de supervisor.',
+        mockupHtml: `
+          <div class="mockup-window">
+            <div class="mockup-bar">
+              <div class="mockup-dots"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <span>Control de Usuarios & Seguridad de Roles · 5 Roles Activos · Autenticación PIN</span>
+            </div>
+            <div class="mockup-content">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:8px;text-align:center;">
+                  <div style="font-weight:700;color:#fff;font-size:12px;">Administrador</div>
+                  <div style="font-size:10px;color:var(--text-dim);">Acceso Total (100%)</div>
+                  <span class="mockup-badge success">2 Usuarios</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:8px;text-align:center;">
+                  <div style="font-weight:700;color:#fff;font-size:12px;">Supervisor</div>
+                  <div style="font-size:10px;color:var(--text-dim);">Autorizaciones PIN</div>
+                  <span class="mockup-badge info">3 Usuarios</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:8px;text-align:center;">
+                  <div style="font-weight:700;color:#fff;font-size:12px;">Mesero / Sala</div>
+                  <div style="font-size:10px;color:var(--text-dim);">Comandas & Mesas</div>
+                  <span class="mockup-badge warning">8 Usuarios</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(220,235,255,0.12);border-radius:8px;padding:8px;text-align:center;">
+                  <div style="font-weight:700;color:#fff;font-size:12px;">Cocina / KDS</div>
+                  <div style="font-size:10px;color:var(--text-dim);">Solo Producción</div>
+                  <span class="mockup-badge" style="background:rgba(255,255,255,0.1);color:#fff;">6 Usuarios</span>
+                </div>
+              </div>
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(220,235,255,0.08);border-radius:8px;padding:8px;font-size:11px;color:var(--text-muted);">
+                🔒 <strong>Matriz de Permisos:</strong> Anulación de ítems (Requiere Supervisor) · Descuentos (Requiere Admin) · Cierre Z (Requiere Cajero + Supervisor)
+              </div>
+            </div>
+          </div>`
+      }
+    };
+
+    let currentModuleIndex = 0;
+    let isModalOpen = false;
+
+    function renderModalContent(moduleId) {
+      const data = MODULE_DATA[moduleId];
+      if (!data) return;
+
+      const numEl = document.getElementById('modalModuleNum');
+      const badgeEl = document.getElementById('modalCategoryBadge');
+      const iconEl = document.getElementById('modalIcon');
+      const titleEl = document.getElementById('modalTitle');
+      const taglineEl = document.getElementById('modalTagline');
+      const showcaseEl = document.getElementById('modalShowcaseContent');
+      const purposeEl = document.getElementById('modalPurpose');
+      const featuresEl = document.getElementById('modalFeaturesList');
+      const roiEl = document.getElementById('modalRoiList');
+      const workflowEl = document.getElementById('modalWorkflow');
+      const counterEl = document.getElementById('modalCounter');
+
+      if (numEl) numEl.textContent = data.num;
+      if (badgeEl) badgeEl.textContent = data.badge;
+      if (iconEl) iconEl.textContent = data.icon;
+      if (titleEl) titleEl.textContent = data.title;
+      if (taglineEl) taglineEl.textContent = data.tagline;
+      if (showcaseEl) showcaseEl.innerHTML = data.mockupHtml;
+      if (purposeEl) purposeEl.textContent = data.purpose;
+      if (workflowEl) workflowEl.textContent = data.workflow;
+      if (counterEl) counterEl.textContent = (currentModuleIndex + 1) + ' / ' + MODULE_KEYS.length;
+
+      if (featuresEl) {
+        featuresEl.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
+      }
+      if (roiEl) {
+        roiEl.innerHTML = data.roi.map(r => `<li>${r}</li>`).join('');
+      }
+    }
+
+    function openModuleModal(moduleId) {
+      const idx = MODULE_KEYS.indexOf(moduleId);
+      if (idx === -1) return;
+      currentModuleIndex = idx;
+      renderModalContent(moduleId);
+
+      const overlay = document.getElementById('moduleModalOverlay');
+      if (overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      isModalOpen = true;
+
+      // Pause Drift Wall while modal is open
+      if (driftStage) driftStage.classList.add('is-paused');
+    }
+
+    function closeModuleModal() {
+      const overlay = document.getElementById('moduleModalOverlay');
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      isModalOpen = false;
+
+      // Resume Drift Wall unless manual pause was on
+      if (!isManualPaused && driftStage) {
+        driftStage.classList.remove('is-paused');
+      }
+    }
+
+    function handleModalBackdropClick(e) {
+      if (e.target && e.target.id === 'moduleModalOverlay') {
+        closeModuleModal();
+      }
+    }
+
+    function navigateModule(delta) {
+      currentModuleIndex = (currentModuleIndex + delta + MODULE_KEYS.length) % MODULE_KEYS.length;
+      const nextId = MODULE_KEYS[currentModuleIndex];
+      renderModalContent(nextId);
+      const modalCard = document.getElementById('moduleModalCard');
+      if (modalCard) modalCard.scrollTop = 0;
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if (!isModalOpen) return;
+      if (e.key === 'Escape') {
+        closeModuleModal();
+      } else if (e.key === 'ArrowLeft') {
+        navigateModule(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigateModule(1);
+      }
+    });
   </script>
 </body>
 </html>
