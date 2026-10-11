@@ -1,12 +1,25 @@
-// src/app/shared/components/sidebar/sidebar.component.ts  — REEMPLAZA el original
-import { Component } from '@angular/core';
+// src/app/shared/components/sidebar/sidebar.component.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
+
+interface MenuItem {
+  icon?: string;
+  label?: string;
+  route?: string;
+  divider?: string;
+  externalUrl?: string;
+  subItems?: { icon: string; label: string; route: string }[];
+  expanded?: boolean;
+}
 
 @Component({
   selector: 'app-sidebar',
   template: `
     <aside class="sidebar" [class.collapsed]="collapsed">
-      <button class="toggle-btn desktop-only" (click)="collapsed = !collapsed" aria-label="Colapsar menú">
+      <button class="toggle-btn desktop-only" (click)="toggleSidebar()" [attr.aria-label]="collapsed ? 'Expandir menú' : 'Colapsar menú'">
         {{ collapsed ? '☰' : '✕' }}
       </button>
       <nav class="sidebar-nav">
@@ -24,9 +37,10 @@ import { AuthService } from '../../../core/services/auth.service';
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
           </a>
 
-          <!-- Enlace con Submenú -->
+          <!-- Enlace con Submenú (Acordeón) -->
           <div *ngIf="!item.divider && item.subItems" class="nav-item-group">
-            <div class="nav-item nav-parent" (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [attr.aria-label]="item.label"
+            <div class="nav-item nav-parent" [class.has-active-child]="hasActiveChild(item)"
+                 (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [attr.aria-label]="item.label"
                  (mouseenter)="showTip($event, item.label)" (mouseleave)="hideTip()"
                  (focus)="showTip($event, item.label)" (blur)="hideTip()"
                  (touchstart)="showTip($event, item.label, true)" (touchend)="scheduleHideTip()">
@@ -71,6 +85,7 @@ import { AuthService } from '../../../core/services/auth.service';
       overflow: hidden;
     }
     .sidebar.collapsed { width: 60px; }
+    .sidebar.collapsed .toggle-btn { align-self: center; margin: 0 0 1rem; }
     .toggle-btn {
       align-self: flex-end; margin: 0 0.75rem 1rem;
       background: none; border: none; font-size: 1.1rem;
@@ -92,6 +107,11 @@ import { AuthService } from '../../../core/services/auth.service';
       color: var(--text-secondary); transition: all 0.15s;
       white-space: nowrap; overflow: hidden;
       user-select: none; position: relative;
+    }
+    .nav-parent.has-active-child {
+      color: var(--brand-gold);
+      background: rgba(212,175,55,0.06);
+      font-weight: 600;
     }
     .nav-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.2s; }
     .nav-arrow.rotated { transform: rotate(180deg); }
@@ -155,95 +175,136 @@ import { AuthService } from '../../../core/services/auth.service';
     }
   `]
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnDestroy {
   collapsed = false;
   tipText = '';
   tipX = 0;
   tipY = 0;
   tipVisible = false;
   private tipTimer: any = null;
-  menuItems: { icon?: string; label?: string; route?: string; divider?: string; externalUrl?: string; subItems?: any[]; expanded?: boolean }[] = [];
+  private routerSub: Subscription | null = null;
+  menuItems: MenuItem[] = [];
 
-  constructor(private auth: AuthService) {
+  constructor(
+    private auth: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.buildMenu();
+    this.checkActiveRoutes();
+    this.routerSub = this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => this.checkActiveRoutes());
+  }
+
+  ngOnDestroy(): void {
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+    if (this.tipTimer) {
+      clearTimeout(this.tipTimer);
+    }
+  }
+
+  buildMenu(): void {
     const role = this.auth.currentUser?.role;
 
     if (role === 'cliente') {
       this.menuItems = [
-        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
-        { icon: '📊', label: 'Mis Compras',    route: '/dashboard' },
+        { icon: '🏠', label: 'Inicio',         route: '/dashboard' },
+        { icon: '🪑', label: 'Mesas',          route: '/mesas' },
         { icon: '🛵', label: 'Domicilios',     route: '/domicilios' },
-        { icon: '🌍', label: 'Landing',        externalUrl: 'https://www.restmarieantoinette.com/' },
         { icon: '⚙️', label: 'Mi Perfil',      route: '/settings' }
       ];
     } else if (role === 'cocinero') {
       this.menuItems = [
-        { divider: 'Cocina' },
-        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
+        { icon: '🏠', label: 'Inicio',         route: '/dashboard' },
         { icon: '👨‍🍳', label: 'Cocina',         route: '/kitchen' },
-        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' }
+        { icon: '🪑', label: 'Mesas',          route: '/mesas' },
+        { icon: '🛵', label: 'Domicilios',     route: '/domicilios' }
       ];
     } else if (role === 'mesero') {
       this.menuItems = [
-        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
-        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' }
+        { icon: '🏠', label: 'Inicio',         route: '/dashboard' },
+        { icon: '🪑', label: 'Mesas',          route: '/mesas' },
+        { icon: '🛵', label: 'Domicilios',     route: '/domicilios' }
       ];
     } else if (role === 'cajero') {
       this.menuItems = [
-        { divider: 'Operaciones' },
-        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
-        { icon: '💰', label: 'Caja',            route: '/cash' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        { divider: 'Gestión' },
-        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' }
+        { icon: '🏠', label: 'Inicio',         route: '/dashboard' },
+        { icon: '💰', label: 'Caja',           route: '/cash' },
+        { icon: '🪑', label: 'Mesas',          route: '/mesas' },
+        { icon: '🛵', label: 'Domicilios',     route: '/domicilios' },
+        { icon: '🎟️', label: 'Tiqueteras',     route: '/ticket-books' }
       ];
-    } else if (role === 'admin') {
+    } else {
+      // admin por defecto
       this.menuItems = [
-        // Operaciones diarias
-        { divider: 'Operaciones' },
-        { icon: '🪑', label: 'Mesas',           route: '/mesas' },
-        { icon: '📅', label: 'Eventos y Catering', route: '/events' },
+        { icon: '🏠', label: 'Inicio', route: '/dashboard' },
         {
-          icon: '📦', label: 'Inventario', expanded: false,
+          icon: '🪑', label: 'Operaciones', expanded: false,
           subItems: [
-            { icon: '🍲', label: 'Cocina', route: '/cocina' },
-            { icon: '🍹', label: 'Barra', route: '/barra' },
-            { icon: '🛎️', label: 'Servicio', route: '/servicio' }
+            { icon: '🪑', label: 'Mesas',      route: '/mesas' },
+            { icon: '🛵', label: 'Domicilios', route: '/domicilios' },
+            { icon: '📅', label: 'Eventos',    route: '/events' }
           ]
         },
-        { icon: '🍲', label: 'Platos',          route: '/dishes' },
-        { icon: '💰', label: 'Caja',            route: '/cash' },
-        { icon: '📊', label: 'Dashboard',       route: '/dashboard' },
-        // Compras y proveedores
-        { divider: 'Compras' },
-        { icon: '🏭', label: 'Proveedores',     route: '/suppliers' },
-        { icon: '🛍️', label: 'Compras',         route: '/purchases' },
-        { icon: '🎟️', label: 'Tiqueteras',      route: '/ticket-books' },
-        // Gastos y Personal
-        { divider: 'Gastos y Personal' },
-        { icon: '💸', label: 'Gastos Operativos', route: '/expenses' },
-        { icon: '👨‍🍳', label: 'Personal',        route: '/staff' },
-        // Inteligencia
-        { divider: 'Inteligencia' },
-        { icon: '🧠', label: 'Centro Financiero', route: '/finance' },
-        { icon: '📈', label: 'Reportes',        route: '/reports' },
-        // Documentación
-        { divider: 'Documentación' },
-        { icon: '📚', label: 'Documentación',   route: '/documentacion' },
-        { icon: '🦺', label: 'SG-SST',          route: '/sg-sst' },
-        // Configuración y Enlaces Externos
-        { divider: 'Sistema' },
-        { icon: '🛵', label: 'Domicilios',      route: '/domicilios' },
-        { icon: '🌍', label: 'Landing',         externalUrl: 'https://www.restmarieantoinette.com/' },
-        { 
-          icon: '⚙️', label: 'Configuración', expanded: false,
+        {
+          icon: '🍽️', label: 'Cocina y Carta', expanded: false,
           subItems: [
-            { icon: '⚙️', label: 'General', route: '/settings' },
-            { icon: '📂', label: 'Categorías', route: '/categories' }
+            { icon: '🍲', label: 'Platos',    route: '/dishes' },
+            { icon: '🍲', label: 'Cocina',    route: '/cocina' },
+            { icon: '🍹', label: 'Barra',     route: '/barra' },
+            { icon: '🛎️', label: 'Servicio',  route: '/servicio' }
+          ]
+        },
+        {
+          icon: '💰', label: 'Caja y Ventas', expanded: false,
+          subItems: [
+            { icon: '💰', label: 'Caja',        route: '/cash' },
+            { icon: '🎟️', label: 'Tiqueteras', route: '/ticket-books' }
+          ]
+        },
+        {
+          icon: '🛒', label: 'Compras y Costos', expanded: false,
+          subItems: [
+            { icon: '🏭', label: 'Proveedores', route: '/suppliers' },
+            { icon: '🛍️', label: 'Compras',     route: '/purchases' },
+            { icon: '💸', label: 'Gastos',      route: '/expenses' }
+          ]
+        },
+        { icon: '👥', label: 'Equipo', route: '/staff' },
+        {
+          icon: '📈', label: 'Inteligencia', expanded: false,
+          subItems: [
+            { icon: '🧠', label: 'Financiero', route: '/finance' },
+            { icon: '📈', label: 'Reportes',   route: '/reports' }
+          ]
+        },
+        {
+          icon: '⚙️', label: 'Administración', expanded: false,
+          subItems: [
+            { icon: '📚', label: 'Documentación', route: '/documentacion' },
+            { icon: '🦺', label: 'SG-SST',         route: '/sg-sst' },
+            { icon: '⚙️', label: 'Configuración', route: '/settings' }
           ]
         }
       ];
+    }
+  }
+
+  hasActiveChild(item: MenuItem): boolean {
+    if (!item.subItems) return false;
+    const currentUrl = this.router.url;
+    return item.subItems.some(sub => sub.route && (currentUrl === sub.route || currentUrl.startsWith(sub.route + '/') || currentUrl.startsWith(sub.route + '?')));
+  }
+
+  private checkActiveRoutes(): void {
+    for (const item of this.menuItems) {
+      if (item.subItems && this.hasActiveChild(item)) {
+        item.expanded = true;
+      }
     }
   }
 
@@ -264,7 +325,6 @@ export class SidebarComponent {
       x = r.right;
       y = r.top + r.height / 2;
     }
-    // En escritorio expandido el label ya es visible: no mostrar tip para no duplicar.
     const isMobile = window.innerWidth <= 768;
     if (!isMobile && !this.collapsed && !isTouch) return;
     this.tipText = label;
