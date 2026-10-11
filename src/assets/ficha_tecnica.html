@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha Técnica — Sistema de Gestión Integral para Restaurantes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-main: #080C14;
+      --bg-section: #0D1220;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.09);
+      --accent: #C8CDD6;
+      --accent-light: #E8ECF2;
+      --accent-dim: #6B7280;
+      --text-white: #F0F0F0;
+      --text-muted: #8892A4;
+      --border-accent: rgba(200, 210, 225, 0.15);
+      --glow: rgba(200, 210, 225, 0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ====== HERO SECTION ====== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 40px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,210,225,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(100,120,180,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(100,120,180,0.04) 0%, transparent 60%);
+      animation: heroPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroPulse {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    /* Animated particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% { opacity: 0; transform: translateY(100vh) scale(0); }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-20vh) scale(1); }
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      color: var(--accent-light);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out both;
+    }
+
+    .hero h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.2s both;
+    }
+
+    .hero .tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(14px, 1.5vw, 18px);
+      color: var(--accent);
+      opacity: 0.75;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.4s both;
+    }
+
+    .hero .diamond {
+      color: var(--accent-dim);
+      font-size: 12px;
+      letter-spacing: 12px;
+      margin: 20px 0;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.3s both;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-dim);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: fadeSlideUp 1s ease-out 0.8s both;
+      cursor: pointer;
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--accent-dim);
+      border-bottom: 2px solid var(--accent-dim);
+      transform: rotate(45deg);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(8px); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ====== SECTIONS ====== */
+    .section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 60px;
+      position: relative;
+    }
+
+    .section-alt {
+      background: var(--bg-section);
+    }
+
+    .section-wide {
+      max-width: 100%;
+      padding: 80px 0;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 700;
+      color: var(--accent-light);
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      letter-spacing: 1px;
+    }
+
+    .section-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 16px auto 12px;
+    }
+
+    /* ====== FEATURES & DRIFT WALL ====== */
+    .view-switcher-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .view-pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-accent);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .view-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-white);
+      border-color: rgba(200, 210, 225, 0.35);
+    }
+
+    .view-pill-btn.active {
+      background: linear-gradient(135deg, rgba(200, 215, 235, 0.18), rgba(255, 255, 255, 0.06));
+      color: var(--accent-light);
+      border-color: rgba(220, 230, 245, 0.45);
+      box-shadow: 0 0 20px rgba(200, 210, 225, 0.12);
+    }
+
+    /* ====== REACTBITS DRIFT WALL (3D PERSPECTIVE & LIFTING ON HOVER) ====== */
+    .driftwall-wrapper {
+      position: relative;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .driftwall-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 0 10px;
+    }
+
+    .driftwall-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-accent);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ADE80;
+      box-shadow: 0 0 10px #4ADE80;
+      animation: pulseDot 2s infinite;
+    }
+
+    .status-dot.paused {
+      background: #FBBF24;
+      box-shadow: 0 0 10px #FBBF24;
+      animation: none;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    .driftwall-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .drift-ctrl-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-light);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .drift-ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(220, 230, 245, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .driftwall-viewport {
+      position: relative;
+      width: 100%;
+      height: 680px;
+      overflow: hidden;
+      perspective: 1250px;
+      perspective-origin: 50% 50%;
+      border-radius: 24px;
+      background: radial-gradient(ellipse 90% 70% at 50% 40%, rgba(20, 28, 48, 0.6) 0%, rgba(7, 10, 18, 0.98) 100%);
+      border: 1px solid var(--border-accent);
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.8), 0 25px 60px rgba(0, 0, 0, 0.5);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .driftwall-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    /* Ambient lighting gradients */
+    .driftwall-viewport::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(200, 215, 235, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(120, 150, 200, 0.06) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* 3D Stage that tilts in perspective */
+    .driftwall-stage {
+      position: absolute;
+      top: -25%;
+      left: -15%;
+      width: 130%;
+      height: 150%;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--drift-rot-x, 12deg)) rotateY(var(--drift-rot-y, -14deg)) rotateZ(var(--drift-rot-z, 2deg)) translate3d(var(--drift-pan-x, 0px), var(--drift-pan-y, 0px), 0);
+      transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    /* Columns drifting vertically */
+    .driftwall-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 310px;
+      flex-shrink: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    @keyframes driftDownLoop {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    @keyframes driftUpLoop {
+      0% { transform: translateY(-50%); }
+      100% { transform: translateY(0); }
+    }
+
+    .driftwall-col-1 { animation: driftDownLoop 40s linear infinite; }
+    .driftwall-col-2 { animation: driftUpLoop 46s linear infinite; }
+    .driftwall-col-3 { animation: driftDownLoop 38s linear infinite; }
+    .driftwall-col-4 { animation: driftUpLoop 44s linear infinite; }
+
+    /* Pause drift when user hovers or explicitly pauses */
+    .driftwall-stage.is-paused .driftwall-col,
+    .driftwall-stage.has-hovered .driftwall-col {
+      animation-play-state: paused !important;
+    }
+
+    /* Individual 3D Drift Card */
+    .drift-card {
+      position: relative;
+      background: rgba(14, 20, 32, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(200, 215, 235, 0.16);
+      border-radius: 18px;
+      padding: 26px 22px;
+      transform-style: preserve-3d;
+      transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1.2),
+                  border-color 0.35s ease,
+                  box-shadow 0.42s ease,
+                  opacity 0.35s ease,
+                  background 0.35s ease;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      z-index: 10;
+    }
+
+    /* Top metallic highlight */
+    .drift-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(230, 240, 255, 0.8), transparent);
+      border-radius: 18px 18px 0 0;
+      opacity: 0.3;
+      transition: opacity 0.35s ease;
+    }
+
+    /* LIFTING ON HOVER — Signatura Drift Wall de ReactBits */
+    .drift-card:hover {
+      transform: translateZ(85px) scale(1.08) rotateX(0deg) rotateY(0deg) !important;
+      z-index: 100;
+      border-color: rgba(240, 248, 255, 0.75);
+      background: rgba(24, 34, 54, 0.94);
+      box-shadow:
+        0 35px 85px rgba(0, 0, 0, 0.9),
+        0 0 50px rgba(220, 235, 255, 0.38),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+      opacity: 1 !important;
+    }
+
+    .drift-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Dim remaining cards when one is lifted */
+    .driftwall-stage.has-hovered .drift-card:not(:hover) {
+      opacity: 0.38;
+      filter: blur(0.6px);
+      transform: scale(0.97);
+    }
+
+    .drift-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .drift-emoji {
+      font-size: 38px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), filter 0.4s;
+    }
+
+    .drift-card:hover .drift-emoji {
+      transform: scale(1.22) translateY(-4px);
+      filter: drop-shadow(0 0 18px rgba(220, 235, 255, 0.7));
+    }
+
+    .drift-card h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .drift-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .drift-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drift-tag {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .driftwall-footer-hint {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .driftwall-footer-hint span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ====== CLASSIC CAROUSEL (OPCIÓN ALTERNATIVA) ====== */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 0;
+      display: none;
+    }
+
+    .carousel-container.active {
+      display: block;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 24px;
+      animation: carouselScroll 40s linear infinite;
+      width: max-content;
+    }
+
+    .carousel-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes carouselScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .feature-card {
+      flex-shrink: 0;
+      width: 280px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-8px);
+      border-color: rgba(200, 210, 225, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px var(--glow);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover .feature-emoji {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 12px rgba(200, 210, 225, 0.4));
+    }
+
+    .feature-emoji {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 16px;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    .feature-card:nth-child(2n) .feature-emoji { animation-delay: -0.5s; }
+    .feature-card:nth-child(3n) .feature-emoji { animation-delay: -1s; }
+    .feature-card:nth-child(4n) .feature-emoji { animation-delay: -1.5s; }
+    .feature-card:nth-child(5n) .feature-emoji { animation-delay: -2s; }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .feature-card h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ====== COMPATIBILITY GRID ====== */
+    .compat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .compat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .compat-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .compat-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+      border-color: rgba(200, 210, 225, 0.25);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .compat-card:hover .compat-emoji {
+      animation: iconPop 0.5s ease-out;
+    }
+
+    .compat-emoji {
+      font-size: 32px;
+      flex-shrink: 0;
+      animation: iconPulse 2.5s ease-in-out infinite;
+    }
+
+    .compat-card:nth-child(2n) .compat-emoji { animation-delay: -0.4s; }
+    .compat-card:nth-child(3n) .compat-emoji { animation-delay: -0.8s; }
+
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes iconPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3) rotate(10deg); }
+      100% { transform: scale(1); }
+    }
+
+    .compat-info h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+
+    .compat-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ====== TECH + LICENSE SPLIT ====== */
+    .dual-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .info-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .info-panel.from-right {
+      transform: translateX(40px);
+    }
+
+    .info-panel.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .info-panel.license {
+      border-color: rgba(200, 210, 225, 0.25);
+      background: linear-gradient(135deg, rgba(200, 210, 225, 0.06), rgba(200, 210, 225, 0.02));
+    }
+
+    .info-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--accent-light);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .info-panel h3 .panel-icon {
+      font-size: 28px;
+      animation: iconSpin 6s linear infinite;
+    }
+
+    .info-panel.license h3 .panel-icon {
+      animation: iconGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes iconSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes iconGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(200,210,225,0.2)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 16px rgba(200,210,225,0.5)); transform: scale(1.1); }
+    }
+
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tech-list li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--text-white);
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tech-list li:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border-accent);
+      transform: translateX(6px);
+    }
+
+    .tech-list li .li-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    .tech-list li:nth-child(2) .li-icon { animation-delay: -0.5s; }
+    .tech-list li:nth-child(3) .li-icon { animation-delay: -1s; }
+    .tech-list li:nth-child(4) .li-icon { animation-delay: -1.5s; }
+    .tech-list li:nth-child(5) .li-icon { animation-delay: -2s; }
+    .tech-list li:nth-child(6) .li-icon { animation-delay: -2.5s; }
+
+    .tech-label {
+      font-weight: 600;
+      color: var(--accent-light);
+    }
+
+    .tech-desc {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* ====== SCALABILITY BANNER ====== */
+    .scale-banner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .scale-inner {
+      text-align: center;
+      padding: 48px 60px;
+      background: linear-gradient(135deg, rgba(200,210,225,0.06), transparent, rgba(200,210,225,0.04));
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .scale-inner.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .scale-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--glow), transparent 70%);
+      animation: bannerGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes bannerGlow {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .scale-inner h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .scale-inner h3 span {
+      display: inline-block;
+      animation: rocketFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes rocketFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-4px) rotate(-3deg); }
+      75% { transform: translateY(2px) rotate(2deg); }
+    }
+
+    .scale-inner p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ====== STATS COUNTER ====== */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .stat-item {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .stat-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent-light);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ====== FOOTER ====== */
+    .footer {
+      text-align: center;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border-accent);
+      position: relative;
+    }
+
+    .footer p {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ====== REVEAL ANIMATION ====== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 1100px) {
+      .driftwall-col-4 { display: none; }
+      .driftwall-stage { gap: 20px; width: 140%; left: -20%; }
+      .driftwall-col { width: 280px; }
+    }
+
+    @media (max-width: 900px) {
+      .section { padding: 60px 24px; }
+      .compat-grid { padding: 0 24px; grid-template-columns: 1fr; }
+      .dual-section { grid-template-columns: 1fr; padding: 0 24px; }
+      .stats-row { gap: 32px; padding: 0 24px; }
+      .scale-banner { padding: 0 24px; }
+      .scale-inner { padding: 32px 24px; }
+      .feature-card { width: 240px; }
+      .driftwall-viewport { height: 560px; perspective: 900px; }
+      .driftwall-col-3 { display: none; }
+      .driftwall-stage { width: 160%; left: -30%; gap: 16px; }
+      .driftwall-col { width: 260px; }
+    }
+
+    @media (max-width: 600px) {
+      .driftwall-viewport { height: 490px; perspective: 700px; }
+      .driftwall-stage { width: 200%; left: -50%; }
+      .driftwall-toolbar { flex-direction: column; align-items: flex-start; }
+      .drift-card { padding: 18px 16px; }
+    }
+
+    @media print {
+      body { background: white; color: #1a1a1a; }
+      .particles, .scroll-indicator { display: none; }
+      .hero { min-height: auto; padding: 40px; }
+      .section { padding: 30px; }
+      .feature-card, .compat-card, .info-panel, .stat-item, .scale-inner { opacity: 1 !important; transform: none !important; }
+      .carousel-track { animation: none !important; flex-wrap: wrap; }
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero">
+    <div class="particles" id="particles"></div>
+    <h1>Sistema de Gestión Integral</h1>
+    <h2>para Restaurantes</h2>
+    <div class="diamond">◆ &nbsp; ◆ &nbsp; ◆</div>
+    <p class="tagline">Software escalable que se adapta a cualquier restaurante</p>
+    <div class="scroll-indicator" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+      <span>Descubrir</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ====== STATS ====== -->
+  <section class="section" style="padding-top: 40px; padding-bottom: 40px;">
+    <div class="stats-row">
+      <div class="stat-item" data-reveal>
+        <div class="stat-number" data-count="12">0</div>
+        <div class="stat-label">Módulos</div>
+      </div>
+      <div class="stat-item" data-reveal>
+        <div class="stat-number" data-count="5">0</div>
+        <div class="stat-label">Roles de Usuario</div>
+      </div>
+      <div class="stat-item" data-reveal>
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Escalabilidad</div>
+      </div>
+      <div class="stat-item" data-reveal>
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Tiempo Real</div>
+      </div>
+      <div class="stat-item" data-reveal>
+        <div class="stat-number">1×</div>
+        <div class="stat-label">Pago Único</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FUNCIONALIDADES DRIFT WALL ====== -->
+  <section class="section section-wide section-alt" id="features">
+    <h2 class="section-title reveal">Funcionalidades Principales</h2>
+    <div class="section-line"></div>
+    <p class="section-subtitle reveal">Todos los módulos que necesita para operar su restaurante</p>
+
+    <!-- Barra de selección de vista -->
+    <div class="view-switcher-bar reveal">
+      <button class="view-pill-btn active" id="btnViewDrift" onclick="switchFeaturesView('drift')">
+        <span>🌀 Vista 3D Drift Wall</span>
+      </button>
+      <button class="view-pill-btn" id="btnViewCarousel" onclick="switchFeaturesView('carousel')">
+        <span>⟷ Carrusel Clásico</span>
+      </button>
+    </div>
+
+    <!-- ====== DRIFT WALL 3D PERSPECTIVE (REACTBITS) ====== -->
+    <div class="driftwall-wrapper" id="driftWallView">
+      <div class="driftwall-toolbar">
+        <div class="driftwall-status">
+          <span class="status-dot" id="driftDot"></span>
+          <span id="driftStatusText">Deriva 3D Activa · 12 Módulos</span>
+        </div>
+        <div class="driftwall-actions">
+          <button class="drift-ctrl-btn" id="btnDriftPause" onclick="toggleDriftPause()">
+            <span id="pauseIcon">⏸</span> <span id="pauseText">Pausar Deriva</span>
+          </button>
+          <button class="drift-ctrl-btn" onclick="resetDriftAngle()">
+            <span>⟲</span> <span>Centrar Ángulo</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="driftwall-viewport" id="driftViewport">
+        <div class="driftwall-stage" id="driftStage">
+          <!-- Columna 1 -->
+          <div class="driftwall-col driftwall-col-1">
+            <div class="drift-card">
+              <span class="drift-badge">Operación en Vivo</span>
+              <span class="drift-emoji">📊</span>
+              <h4>Dashboard Inteligente</h4>
+              <p>KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Tiempo Real</span>
+                <span class="drift-tag">KPIs</span>
+                <span class="drift-tag">Alertas</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Producción</span>
+              <span class="drift-emoji">🍽️</span>
+              <h4>Cocina & KDS</h4>
+              <p>Producción sincronizada de cocina, barra y servicio con pantallas Kanban y timbres de comanda.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Kanban</span>
+                <span class="drift-tag">Web Audio</span>
+                <span class="drift-tag">Tiempos</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Abastecimiento</span>
+              <span class="drift-emoji">🛒</span>
+              <h4>Compras & Proveedores</h4>
+              <p>Requisiciones por área, órdenes de compra y catálogo con trazabilidad de costos e historial.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">OC Auto</span>
+                <span class="drift-tag">Proveedores</span>
+                <span class="drift-tag">Costeo</span>
+              </div>
+            </div>
+            <!-- Loop Duplicates -->
+            <div class="drift-card">
+              <span class="drift-badge">Operación en Vivo</span>
+              <span class="drift-emoji">📊</span>
+              <h4>Dashboard Inteligente</h4>
+              <p>KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Tiempo Real</span>
+                <span class="drift-tag">KPIs</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Producción</span>
+              <span class="drift-emoji">🍽️</span>
+              <h4>Cocina & KDS</h4>
+              <p>Producción sincronizada de cocina, barra y servicio con pantallas Kanban y timbres de comanda.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Kanban</span>
+                <span class="drift-tag">Web Audio</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Abastecimiento</span>
+              <span class="drift-emoji">🛒</span>
+              <h4>Compras & Proveedores</h4>
+              <p>Requisiciones por área, órdenes de compra y catálogo con trazabilidad de costos e historial.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">OC Auto</span>
+                <span class="drift-tag">Costeo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 2 -->
+          <div class="driftwall-col driftwall-col-2">
+            <div class="drift-card">
+              <span class="drift-badge">Salones & Servicio</span>
+              <span class="drift-emoji">🪑</span>
+              <h4>Mapa de Mesas</h4>
+              <p>Visualización interactiva por salones con estados en vivo (libre, ocupada, reservada) y apertura ágil.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Interactivo</span>
+                <span class="drift-tag">Zonas</span>
+                <span class="drift-tag">Salones</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Logística</span>
+              <span class="drift-emoji">🛵</span>
+              <h4>Domicilios & Delivery</h4>
+              <p>Delivery integrado con tracking de estados, tiempos de promesa y asignación de repartidores.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Tracking</span>
+                <span class="drift-tag">Repartidores</span>
+                <span class="drift-tag">Tiempos</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Seguridad Laboral</span>
+              <span class="drift-emoji">🛡️</span>
+              <h4>SG-SST Ocupacional</h4>
+              <p>Seguridad y salud en el trabajo con ciclo PHVA, capacitaciones, matriz de riesgos y dotación EPP.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Ciclo PHVA</span>
+                <span class="drift-tag">Normativa</span>
+                <span class="drift-tag">EPP</span>
+              </div>
+            </div>
+            <!-- Loop Duplicates -->
+            <div class="drift-card">
+              <span class="drift-badge">Salones & Servicio</span>
+              <span class="drift-emoji">🪑</span>
+              <h4>Mapa de Mesas</h4>
+              <p>Visualización interactiva por salones con estados en vivo (libre, ocupada, reservada) y apertura ágil.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Interactivo</span>
+                <span class="drift-tag">Zonas</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Logística</span>
+              <span class="drift-emoji">🛵</span>
+              <h4>Domicilios & Delivery</h4>
+              <p>Delivery integrado con tracking de estados, tiempos de promesa y asignación de repartidores.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Tracking</span>
+                <span class="drift-tag">Rutas</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Seguridad Laboral</span>
+              <span class="drift-emoji">🛡️</span>
+              <h4>SG-SST Ocupacional</h4>
+              <p>Seguridad y salud en el trabajo con ciclo PHVA, capacitaciones, matriz de riesgos y dotación EPP.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Ciclo PHVA</span>
+                <span class="drift-tag">EPP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 3 -->
+          <div class="driftwall-col driftwall-col-3">
+            <div class="drift-card">
+              <span class="drift-badge">Facturación</span>
+              <span class="drift-emoji">🖥️</span>
+              <h4>Punto de Venta (POS)</h4>
+              <p>Comandas inteligentes ultra veloces, impresión selectiva, cuentas separadas y múltiples medios de pago.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Térmica POS</span>
+                <span class="drift-tag">Cuentas</span>
+                <span class="drift-tag">Rápido</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Reservas Especiales</span>
+              <span class="drift-emoji">🎉</span>
+              <h4>Eventos & Banquetes</h4>
+              <p>Calendario visual de reservas, plan de pagos por hitos, contratos de catering y BEO imprimible.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">BEO 1-Clic</span>
+                <span class="drift-tag">Hitos</span>
+                <span class="drift-tag">Minuta</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Inteligencia</span>
+              <span class="drift-emoji">📈</span>
+              <h4>Reportes & Análisis</h4>
+              <p>Informes financieros detallados, productos estrella, matriz BCG e ingeniería del menú para maximizar margen.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Finanzas</span>
+                <span class="drift-tag">Matriz BCG</span>
+                <span class="drift-tag">Márgenes</span>
+              </div>
+            </div>
+            <!-- Loop Duplicates -->
+            <div class="drift-card">
+              <span class="drift-badge">Facturación</span>
+              <span class="drift-emoji">🖥️</span>
+              <h4>Punto de Venta (POS)</h4>
+              <p>Comandas inteligentes ultra veloces, impresión selectiva, cuentas separadas y múltiples medios de pago.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Térmica POS</span>
+                <span class="drift-tag">Cuentas</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Reservas Especiales</span>
+              <span class="drift-emoji">🎉</span>
+              <h4>Eventos & Banquetes</h4>
+              <p>Calendario visual de reservas, plan de pagos por hitos, contratos de catering y BEO imprimible.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">BEO 1-Clic</span>
+                <span class="drift-tag">Minuta</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Inteligencia</span>
+              <span class="drift-emoji">📈</span>
+              <h4>Reportes & Análisis</h4>
+              <p>Informes financieros detallados, productos estrella, matriz BCG e ingeniería del menú para maximizar margen.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Finanzas</span>
+                <span class="drift-tag">Rentabilidad</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna 4 -->
+          <div class="driftwall-col driftwall-col-4">
+            <div class="drift-card">
+              <span class="drift-badge">Almacén & Stock</span>
+              <span class="drift-emoji">📦</span>
+              <h4>Inventario por Áreas</h4>
+              <p>Control discriminado en cocina, barra y servicio con recetas estándar, mermas y alertas automáticas.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Recetas</span>
+                <span class="drift-tag">Mermas</span>
+                <span class="drift-tag">Stock Mínimo</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Control Financiero</span>
+              <span class="drift-emoji">💰</span>
+              <h4>Caja & Arqueos</h4>
+              <p>Apertura con base, registro de movimientos, arqueos ciegos por turno y reconciliación Z auditada.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Cierre Z</span>
+                <span class="drift-tag">Arqueo Ciego</span>
+                <span class="drift-tag">Auditoría</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Talento Humano</span>
+              <span class="drift-emoji">👥</span>
+              <h4>Gestión de Personal</h4>
+              <p>Administración de colaboradores, turnos, control de perfiles y matriz de permisos por rol de usuario.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">5 Roles</span>
+                <span class="drift-tag">Permisos</span>
+                <span class="drift-tag">Seguridad</span>
+              </div>
+            </div>
+            <!-- Loop Duplicates -->
+            <div class="drift-card">
+              <span class="drift-badge">Almacén & Stock</span>
+              <span class="drift-emoji">📦</span>
+              <h4>Inventario por Áreas</h4>
+              <p>Control discriminado en cocina, barra y servicio con recetas estándar, mermas y alertas automáticas.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Recetas</span>
+                <span class="drift-tag">Stock Mínimo</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Control Financiero</span>
+              <span class="drift-emoji">💰</span>
+              <h4>Caja & Arqueos</h4>
+              <p>Apertura con base, registro de movimientos, arqueos ciegos por turno y reconciliación Z auditada.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">Cierre Z</span>
+                <span class="drift-tag">Auditoría</span>
+              </div>
+            </div>
+            <div class="drift-card">
+              <span class="drift-badge">Talento Humano</span>
+              <span class="drift-emoji">👥</span>
+              <h4>Gestión de Personal</h4>
+              <p>Administración de colaboradores, turnos, control de perfiles y matriz de permisos por rol de usuario.</p>
+              <div class="drift-tags">
+                <span class="drift-tag">5 Roles</span>
+                <span class="drift-tag">Seguridad</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="driftwall-footer-hint">
+        <span>✦ Pasa el cursor sobre cualquier panel para elevarlo en 3D hacia la pantalla</span>
+        <span>✦ Mueve el cursor para inclinar la perspectiva</span>
+        <span>✦ Arrastra con el mouse o dedo para desplazar la pared</span>
+      </div>
+    </div>
+
+    <!-- ====== VISTA CARRUSEL CLÁSICO (ALTERNATIVA) ====== -->
+    <div class="carousel-container" id="carouselView">
+      <div class="carousel-track" id="featuresTrack">
+        <!-- Set 1 -->
+        <div class="feature-card">
+          <span class="feature-emoji">📊</span>
+          <h4>Dashboard Inteligente</h4>
+          <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🪑</span>
+          <h4>Mapa de Mesas</h4>
+          <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🖥️</span>
+          <h4>Punto de Venta (POS)</h4>
+          <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🍽️</span>
+          <h4>Cocina & KDS</h4>
+          <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛵</span>
+          <h4>Domicilios</h4>
+          <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🎉</span>
+          <h4>Eventos & Banquetes</h4>
+          <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">📦</span>
+          <h4>Inventario por Áreas</h4>
+          <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">💰</span>
+          <h4>Caja & Arqueos</h4>
+          <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛒</span>
+          <h4>Compras & Proveedores</h4>
+          <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛡️</span>
+          <h4>SG-SST</h4>
+          <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">📈</span>
+          <h4>Reportes & Análisis</h4>
+          <p>Informes financieros, productos estrella y tendencias de ventas</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">👥</span>
+          <h4>Gestión de Personal</h4>
+          <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
+        </div>
+        <!-- Set 2 (duplicado para loop infinito) -->
+        <div class="feature-card">
+          <span class="feature-emoji">📊</span>
+          <h4>Dashboard Inteligente</h4>
+          <p>KPIs en tiempo real, ventas del día, ocupación y alertas críticas en un solo vistazo</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🪑</span>
+          <h4>Mapa de Mesas</h4>
+          <p>Visualización interactiva por salones con estados en vivo y acceso directo a pedidos</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🖥️</span>
+          <h4>Punto de Venta (POS)</h4>
+          <p>Comandas inteligentes, impresión selectiva y borradores por mesa</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🍽️</span>
+          <h4>Cocina & KDS</h4>
+          <p>Gestión de cocina, barra y servicio con pantallas de producción en tiempo real</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛵</span>
+          <h4>Domicilios</h4>
+          <p>Delivery integrado con tracking de estados y asignación de repartidores</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🎉</span>
+          <h4>Eventos & Banquetes</h4>
+          <p>Calendario visual, plan de pagos por hitos y BEO imprimible</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">📦</span>
+          <h4>Inventario por Áreas</h4>
+          <p>Control de stock en cocina, barra y servicio con alertas de reposición automáticas</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">💰</span>
+          <h4>Caja & Arqueos</h4>
+          <p>Apertura, cierre de turnos, registro de movimientos y reconciliación de caja</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛒</span>
+          <h4>Compras & Proveedores</h4>
+          <p>Requisiciones, órdenes de compra y gestión integral de proveedores</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">🛡️</span>
+          <h4>SG-SST</h4>
+          <p>Seguridad ocupacional con ciclo PHVA, capacitaciones, EPP y documentación</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">📈</span>
+          <h4>Reportes & Análisis</h4>
+          <p>Informes financieros, productos estrella y tendencias de ventas</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-emoji">👥</span>
+          <h4>Gestión de Personal</h4>
+          <p>Administración de empleados, roles diferenciados y permisos por usuario</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== COMPATIBILIDAD ====== -->
+  <section class="section">
+    <h2 class="section-title reveal">Compatibilidad con Sistemas POS Actuales</h2>
+    <div class="section-line"></div>
+    <p class="section-subtitle reveal">Integración inmediata con su infraestructura existente</p>
+
+    <div class="compat-grid">
+      <div class="compat-card" data-reveal>
+        <span class="compat-emoji">🖨️</span>
+        <div class="compat-info">
+          <h4>Impresoras Térmicas POS</h4>
+          <p>Compatible con impresoras estándar de 80mm y 58mm. Impresión directa de comandas, facturas y reportes.</p>
+        </div>
+      </div>
+      <div class="compat-card" data-reveal>
+        <span class="compat-emoji">🌐</span>
+        <div class="compat-info">
+          <h4>Cualquier Navegador Moderno</h4>
+          <p>Chrome, Edge, Firefox y Safari. Sin instalación de software adicional — 100% basado en web.</p>
+        </div>
+      </div>
+      <div class="compat-card" data-reveal>
+        <span class="compat-emoji">📱</span>
+        <div class="compat-info">
+          <h4>Diseño Responsive</h4>
+          <p>Optimizado para PC, tablet y dispositivos móviles. Interfaz adaptativa para cada tamaño de pantalla.</p>
+        </div>
+      </div>
+      <div class="compat-card" data-reveal>
+        <span class="compat-emoji">⚡</span>
+        <div class="compat-info">
+          <h4>Conexión en Tiempo Real</h4>
+          <p>WebSocket para sincronización instantánea entre múltiples terminales y estaciones de trabajo.</p>
+        </div>
+      </div>
+      <div class="compat-card" data-reveal>
+        <span class="compat-emoji">🔗</span>
+        <div class="compat-info">
+          <h4>API REST Abierta</h4>
+          <p>Integración con cualquier sistema existente, pasarelas de pago o plataformas de terceros.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== TECNOLOGÍA + LICENCIA ====== -->
+  <section class="section section-alt">
+    <h2 class="section-title reveal">Tecnología & Licenciamiento</h2>
+    <div class="section-line"></div>
+    <p class="section-subtitle reveal">Construido con los frameworks más modernos y vigentes del mercado</p>
+
+    <div class="dual-section">
+      <div class="info-panel" data-reveal-panel>
+        <h3><span class="panel-icon">⚙️</span> Tecnología de Vanguardia</h3>
+        <ul class="tech-list">
+          <li>
+            <span class="li-icon">🅰️</span>
+            <span><span class="tech-label">Angular 16</span> <span class="tech-desc">— Frontend moderno y robusto</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🟢</span>
+            <span><span class="tech-label">Node.js + Express</span> <span class="tech-desc">— Backend escalable</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🍃</span>
+            <span><span class="tech-label">MongoDB</span> <span class="tech-desc">— Base de datos NoSQL flexible</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🔌</span>
+            <span><span class="tech-label">Socket.IO</span> <span class="tech-desc">— Comunicación en tiempo real</span></span>
+          </li>
+          <li>
+            <span class="li-icon">☁️</span>
+            <span><span class="tech-label">Cloud Deploy</span> <span class="tech-desc">— Vercel + Render</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🔄</span>
+            <span><span class="tech-label">Frameworks Vigentes</span> <span class="tech-desc">— Actualizados y con soporte activo</span></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="info-panel license from-right" data-reveal-panel>
+        <h3><span class="panel-icon">🏛️</span> Licenciamiento</h3>
+        <ul class="tech-list">
+          <li>
+            <span class="li-icon">📜</span>
+            <span><span class="tech-label">GNU GPL v3.0</span> <span class="tech-desc">— Licencia Pública General</span></span>
+          </li>
+          <li>
+            <span class="li-icon">💎</span>
+            <span><span class="tech-label">Pago Único</span> <span class="tech-desc">— Sin suscripciones mensuales</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🏆</span>
+            <span><span class="tech-label">Propiedad Intelectual</span> <span class="tech-desc">— Derechos de uso completos</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🔓</span>
+            <span><span class="tech-label">Código Abierto</span> <span class="tech-desc">— Software libre y transparente</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🚫</span>
+            <span><span class="tech-label">Sin Dependencia</span> <span class="tech-desc">— Independencia de proveedores</span></span>
+          </li>
+          <li>
+            <span class="li-icon">🔄</span>
+            <span><span class="tech-label">Actualizaciones</span> <span class="tech-desc">— Incluidas con la licencia</span></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ESCALABILIDAD ====== -->
+  <section class="section">
+    <div class="scale-banner">
+      <div class="scale-inner" data-reveal-scale>
+        <h3><span>🚀</span> Software Escalable</h3>
+        <p>Diseñado para crecer con su negocio. Desde un pequeño café hasta una cadena de restaurantes,
+           este sistema se adapta a las necesidades operativas de cualquier establecimiento gastronómico.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="footer">
+    <p>Software Escalable · Adaptable a Cualquier Restaurante · Tecnología Moderna y Vigente</p>
+  </footer>
+
+  <script>
+    // ====== PARTICLES ======
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (6 + Math.random() * 10) + 's';
+        p.style.animationDelay = (Math.random() * 8) + 's';
+        p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+        container.appendChild(p);
+      }
+    })();
+
+    // ====== SCROLL REVEAL ======
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Counter animation
+          const counter = entry.target.querySelector('[data-count]');
+          if (counter) {
+            const target = parseInt(counter.dataset.count);
+            let current = 0;
+            const step = Math.ceil(target / 30);
+            const timer = setInterval(() => {
+              current += step;
+              if (current >= target) { current = target; clearInterval(timer); }
+              counter.textContent = current;
+            }, 40);
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    // Observe all revealable elements
+    document.querySelectorAll('.reveal, [data-reveal], [data-reveal-panel], [data-reveal-scale]').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Stagger compat cards
+    document.querySelectorAll('.compat-card').forEach((card, i) => {
+      card.style.transitionDelay = (i * 0.12) + 's';
+    });
+
+    // Stagger stat items
+    document.querySelectorAll('.stat-item').forEach((item, i) => {
+      item.style.transitionDelay = (i * 0.1) + 's';
+    });
+
+    // ====== DRIFT WALL 3D CONTROLLER (REACTBITS) ======
+    const driftViewport = document.getElementById('driftViewport');
+    const driftStage = document.getElementById('driftStage');
+    const driftCards = document.querySelectorAll('.drift-card');
+    const driftDot = document.getElementById('driftDot');
+    const driftStatusText = document.getElementById('driftStatusText');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const pauseText = document.getElementById('pauseText');
+
+    let isManualPaused = false;
+    let targetRotX = 12;
+    let targetRotY = -14;
+    let currentRotX = 12;
+    let currentRotY = -14;
+    let panX = 0, panY = 0;
+    let targetPanX = 0, targetPanY = 0;
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let basePanX = 0, basePanY = 0;
+    let hoveredCard = null;
+
+    // Smooth Lerp loop for perspective tilt & pan
+    function updateDriftStage() {
+      currentRotX += (targetRotX - currentRotX) * 0.08;
+      currentRotY += (targetRotY - currentRotY) * 0.08;
+      panX += (targetPanX - panX) * 0.1;
+      panY += (targetPanY - panY) * 0.1;
+
+      if (driftStage) {
+        driftStage.style.setProperty('--drift-rot-x', currentRotX.toFixed(2) + 'deg');
+        driftStage.style.setProperty('--drift-rot-y', currentRotY.toFixed(2) + 'deg');
+        driftStage.style.setProperty('--drift-pan-x', panX.toFixed(1) + 'px');
+        driftStage.style.setProperty('--drift-pan-y', panY.toFixed(1) + 'px');
+      }
+      requestAnimationFrame(updateDriftStage);
+    }
+    requestAnimationFrame(updateDriftStage);
+
+    // Pointer move tilt calculation
+    if (driftViewport) {
+      driftViewport.addEventListener('pointermove', (e) => {
+        if (isDragging) {
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          targetPanX = basePanX + dx;
+          targetPanY = basePanY + dy;
+          return;
+        }
+        const rect = driftViewport.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        targetRotY = -14 + (px * 18);
+        targetRotX = 12 - (py * 16);
+      });
+
+      driftViewport.addEventListener('pointerleave', () => {
+        if (!isDragging) {
+          targetRotX = 12;
+          targetRotY = -14;
+        }
+      });
+
+      // Drag to pan stage
+      driftViewport.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.drift-card')) return;
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        basePanX = targetPanX;
+        basePanY = targetPanY;
+        driftViewport.classList.add('is-dragging');
+        driftViewport.setPointerCapture(e.pointerId);
+      });
+
+      driftViewport.addEventListener('pointerup', (e) => {
+        isDragging = false;
+        driftViewport.classList.remove('is-dragging');
+        try { driftViewport.releasePointerCapture(e.pointerId); } catch(_) {}
+      });
+    }
+
+    // Card lifting and hover spotlight
+    driftCards.forEach(card => {
+      card.addEventListener('pointerenter', () => {
+        hoveredCard = card;
+        if (driftStage) driftStage.classList.add('has-hovered');
+        if (!isManualPaused && driftDot && driftStatusText) {
+          driftDot.classList.add('paused');
+          driftStatusText.textContent = 'Enfocando módulo · Deriva en Pausa';
+        }
+      });
+
+      card.addEventListener('pointerleave', () => {
+        hoveredCard = null;
+        if (driftStage) driftStage.classList.remove('has-hovered');
+        if (!isManualPaused && driftDot && driftStatusText) {
+          driftDot.classList.remove('paused');
+          driftStatusText.textContent = 'Deriva 3D Activa · 12 Módulos';
+        }
+      });
+    });
+
+    // Pause/Resume toggle button
+    function toggleDriftPause() {
+      isManualPaused = !isManualPaused;
+      if (isManualPaused) {
+        if (driftStage) driftStage.classList.add('is-paused');
+        if (driftDot) driftDot.classList.add('paused');
+        if (driftStatusText) driftStatusText.textContent = 'Deriva en Pausa Manual';
+        if (pauseIcon) pauseIcon.textContent = '▶';
+        if (pauseText) pauseText.textContent = 'Reanudar Deriva';
+      } else {
+        if (driftStage) driftStage.classList.remove('is-paused');
+        if (!hoveredCard && driftDot && driftStatusText) {
+          driftDot.classList.remove('paused');
+          driftStatusText.textContent = 'Deriva 3D Activa · 12 Módulos';
+        }
+        if (pauseIcon) pauseIcon.textContent = '⏸';
+        if (pauseText) pauseText.textContent = 'Pausar Deriva';
+      }
+    }
+
+    // Reset perspective angle
+    function resetDriftAngle() {
+      targetRotX = 12;
+      targetRotY = -14;
+      targetPanX = 0;
+      targetPanY = 0;
+    }
+
+    // Switch between Drift Wall and Classic Carousel
+    function switchFeaturesView(mode) {
+      const driftView = document.getElementById('driftWallView');
+      const carouselView = document.getElementById('carouselView');
+      const btnDrift = document.getElementById('btnViewDrift');
+      const btnCarousel = document.getElementById('btnViewCarousel');
+
+      if (mode === 'drift') {
+        if (driftView) driftView.style.display = 'block';
+        if (carouselView) carouselView.classList.remove('active');
+        if (btnDrift) btnDrift.classList.add('active');
+        if (btnCarousel) btnCarousel.classList.remove('active');
+      } else {
+        if (driftView) driftView.style.display = 'none';
+        if (carouselView) carouselView.classList.add('active');
+        if (btnDrift) btnDrift.classList.remove('active');
+        if (btnCarousel) btnCarousel.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
