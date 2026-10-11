@@ -176,7 +176,7 @@ interface MenuItem {
   `]
 })
 export class SidebarComponent implements OnInit, OnDestroy {
-  collapsed = false;
+  collapsed = true;
   tipText = '';
   tipX = 0;
   tipY = 0;
@@ -191,11 +191,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const saved = localStorage.getItem('sidebar_collapsed');
+    this.collapsed = saved !== null ? saved === 'true' : true;
     this.buildMenu();
     this.checkActiveRoutes();
     this.routerSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => this.checkActiveRoutes());
+  }
+
+  toggleSidebar(): void {
+    this.collapsed = !this.collapsed;
+    try {
+      localStorage.setItem('sidebar_collapsed', String(this.collapsed));
+    } catch {}
   }
 
   ngOnDestroy(): void {
