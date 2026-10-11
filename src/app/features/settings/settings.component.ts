@@ -4,6 +4,7 @@ import { ApiService } from '@core/services/api.service';
 import { SettingsService } from '@core/services/settings.service';
 import { AuthService } from '@core/services/auth.service';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-settings',
@@ -58,16 +59,38 @@ import Swal from 'sweetalert2';
         <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
       </div>
       <div>
-        <div class="neon-card-violet" style="margin-bottom:1rem">
-          <h3 style="margin-bottom:1rem">🖼️ Logo</h3>
-          <div style="text-align:center;padding:1rem">
-            <img *ngIf="currentLogo" [src]="currentLogo" alt="Logo actual" style="max-height:120px;margin:0 auto 1rem;border-radius:12px">
-            <p *ngIf="!currentLogo" style="color:var(--text-muted);margin-bottom:1rem">Sin logo configurado</p>
-            <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display:none">
-            <button class="btn-outline" (click)="fileInput.click()">📤 Subir Logo</button>
-            <p *ngIf="selectedFile" style="font-size:0.8rem;margin-top:0.5rem;color:var(--brand-green)">
-              ✅ {{ selectedFile.name }}
-            </p>
+        <div class="neon-card" style="margin-bottom:1rem; border-color:var(--brand-gold)">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem">
+            <h3 style="margin:0">🖼️ Logo del Establecimiento</h3>
+            <span class="badge badge-gold" *ngIf="selectedFile">Listo para Guardar</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.9rem">
+            Logotipo oficial del restaurante visible en Navbar, comprobantes POS, comandas y pantalla de inicio.
+          </p>
+          <div style="text-align:center; padding:1.25rem; background:rgba(0,0,0,0.18); border-radius:12px; border:1px dashed var(--border); margin-bottom:1rem">
+            <div style="display:inline-block; padding:0.6rem; background:var(--bg-card); border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.12)">
+              <img [src]="logoDisplayUrl" alt="Logo actual" style="max-height:120px; max-width:220px; object-fit:contain; display:block; margin:0 auto; border-radius:8px">
+            </div>
+            <div *ngIf="selectedFile" style="margin-top:0.75rem">
+              <span style="font-size:0.85rem; font-weight:600; color:var(--brand-gold)">
+                ✨ Nueva imagen: {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
+              </span>
+            </div>
+            <div *ngIf="!selectedFile" style="margin-top:0.5rem; font-size:0.75rem; color:var(--text-muted)">
+              Formatos recomendados: PNG con transparencia o JPG (máx. 2 MB)
+            </div>
+          </div>
+          <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" (change)="onFileSelected($event)" #fileInput style="display:none">
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center">
+            <button class="btn-outline" (click)="fileInput.click()">
+              📁 {{ selectedFile ? 'Cambiar Selección' : '📤 Seleccionar Nuevo Logo' }}
+            </button>
+            <button class="btn-primary" *ngIf="selectedFile" [disabled]="uploadingLogo" (click)="uploadLogo()">
+              {{ uploadingLogo ? '⏳ Guardando...' : '💾 Guardar Logo' }}
+            </button>
+            <button class="btn-secondary" *ngIf="selectedFile" (click)="cancelSelectedFile()">
+              ✖ Cancelar
+            </button>
           </div>
         </div>
         <div class="neon-card" style="border-color:var(--brand-bronze)">
@@ -286,6 +309,8 @@ export class SettingsComponent implements OnInit {
   storeName = ''; phone = ''; address = ''; whatsappNumber = ''; paymentMode = 'pre-pago';
   currentLogo = '';
   selectedFile: File | null = null;
+  logoPreviewUrl = '';
+  uploadingLogo = false;
   smtpHost = ''; smtpPort = 587; smtpSecure = false;
   smtpUser = ''; smtpPass = ''; smtpFrom = ''; alertEmail = '';
 
@@ -364,8 +389,69 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  get logoDisplayUrl(): string {
+    if (this.logoPreviewUrl) {
+      return this.logoPreviewUrl;
+    }
+    if (this.currentLogo) {
+      if (this.currentLogo.startsWith('http') || this.currentLogo.startsWith('/assets/') || this.currentLogo.startsWith('data:')) {
+        return this.currentLogo;
+      }
+      return environment.apiUrl.replace('/api', '') + this.currentLogo;
+    }
+    return this.settingsService.logoFullUrl || '/assets/logo.png';
+  }
+
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+    const file = event.target?.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire('⚠️ Archivo demasiado grande', 'El tamaño máximo permitido es 2 MB.', 'warning');
+        return;
+      }
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.logoPreviewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  cancelSelectedFile(): void {
+    this.selectedFile = null;
+    this.logoPreviewUrl = '';
+  }
+
+  uploadLogo(): void {
+    if (!this.selectedFile) return;
+    this.uploadingLogo = true;
+    const formData = new FormData();
+    formData.append('logo', this.selectedFile);
+
+    this.api.updateSettings(formData).subscribe({
+      next: (updated: any) => {
+        this.uploadingLogo = false;
+        this.currentLogo = updated?.logoUrl || '';
+        this.logoPreviewUrl = '';
+        this.selectedFile = null;
+        this.settingsService.loadSettings();
+        Swal.fire('✅ Logo Actualizado', 'El logo del establecimiento se ha guardado exitosamente.', 'success');
+      },
+      error: (err: any) => {
+        this.uploadingLogo = false;
+        Swal.fire('❌ Error', 'No se pudo subir el logo: ' + (err.error?.message || 'Error del servidor'), 'error');
+      }
+    });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const dm = 1;
+    const sizes = ['B', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   saveSettings(): void {
@@ -387,7 +473,12 @@ export class SettingsComponent implements OnInit {
     if (this.selectedFile) formData.append('logo', this.selectedFile);
 
     this.api.updateSettings(formData).subscribe({
-      next: () => {
+      next: (updated: any) => {
+        if (updated?.logoUrl) {
+          this.currentLogo = updated.logoUrl;
+        }
+        this.selectedFile = null;
+        this.logoPreviewUrl = '';
         this.settingsService.loadSettings();
         Swal.fire('✅', 'Configuración actualizada con éxito', 'success');
       },
