@@ -21,190 +21,197 @@ import { environment } from '../../../environments/environment';
       </div>
     </div>
 
-    <!-- Pestañas para Admin -->
-    <div class="settings-tabs-bar" *ngIf="isAdmin">
-      <button class="tab-button" [class.active]="activeTab === 'general'" (click)="setTab('general')">
-        ⚙️ General
-      </button>
-      <button class="tab-button" [class.active]="activeTab === 'categories'" (click)="setTab('categories')">
-        📂 Categorías ({{ categories.length }})
-      </button>
-    </div>
+    <!-- CONFIGURACIÓN ADMIN (VISTA UNIFICADA) -->
+    <div *ngIf="isAdmin">
+      <div class="grid-2">
+        <div class="neon-card">
+          <h3 style="margin-bottom:1rem">🏪 Datos del Negocio</h3>
+          <div class="form-group">
+            <label class="form-label">Nombre del Establecimiento</label>
+            <input class="form-input" [(ngModel)]="storeName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input class="form-input" [(ngModel)]="phone">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dirección</label>
+            <input class="form-input" [(ngModel)]="address">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp (con código país: 573...)</label>
+            <input class="form-input" [(ngModel)]="whatsappNumber" placeholder="573137733408">
+          </div>
+          <div class="form-group" style="padding-top: 1rem; border-top: 1px solid var(--bg-input);">
+            <label class="form-label" style="color: var(--brand-gold);">Modelo de Operación (Ventas)</label>
+            <select class="form-input" [(ngModel)]="paymentMode">
+              <option value="pre-pago">⚡ Fast-Food (Cobro anticipado)</option>
+              <option value="post-pago">🍽️ Restaurante (Cuentas abiertas / Cobro al final)</option>
+            </select>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+              Determina si el cobro de la mesa se exige de inmediato o si queda pendiente de pago.
+            </p>
+          </div>
+          <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
+        </div>
 
-    <!-- PESTAÑA 1: CONFIGURACIÓN GENERAL -->
-    <div *ngIf="isAdmin && activeTab === 'general'" class="grid-2">
-      <div class="neon-card">
-        <h3 style="margin-bottom:1rem">🏪 Datos del Negocio</h3>
-        <div class="form-group">
-          <label class="form-label">Nombre del Establecimiento</label>
-          <input class="form-input" [(ngModel)]="storeName">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Teléfono</label>
-          <input class="form-input" [(ngModel)]="phone">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Dirección</label>
-          <input class="form-input" [(ngModel)]="address">
-        </div>
-        <div class="form-group">
-          <label class="form-label">WhatsApp (con código país: 573...)</label>
-          <input class="form-input" [(ngModel)]="whatsappNumber" placeholder="573137733408">
-        </div>
-        <div class="form-group" style="padding-top: 1rem; border-top: 1px solid var(--bg-input);">
-          <label class="form-label" style="color: var(--brand-gold);">Modelo de Operación (Ventas)</label>
-          <select class="form-input" [(ngModel)]="paymentMode">
-            <option value="pre-pago">⚡ Fast-Food (Cobro anticipado)</option>
-            <option value="post-pago">🍽️ Restaurante (Cuentas abiertas / Cobro al final)</option>
-          </select>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
-            Determina si el cobro de la mesa se exige de inmediato o si queda pendiente de pago.
-          </p>
-        </div>
-        <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
-      </div>
-      <div>
-        <div class="neon-card" style="margin-bottom:1rem; border-color:var(--brand-gold)">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem">
-            <h3 style="margin:0">🖼️ Logo del Establecimiento</h3>
-            <span class="badge badge-gold" *ngIf="selectedFile">Listo para Guardar</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.9rem">
-            Logotipo oficial del restaurante visible en Navbar, comprobantes POS, comandas y pantalla de inicio.
-          </p>
-          <div style="text-align:center; padding:1.25rem; background:rgba(0,0,0,0.18); border-radius:12px; border:1px dashed var(--border); margin-bottom:1rem">
-            <div style="display:inline-block; padding:0.6rem; background:var(--bg-card); border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.12)">
-              <img [src]="logoDisplayUrl" alt="Logo actual" style="max-height:120px; max-width:220px; object-fit:contain; display:block; margin:0 auto; border-radius:8px">
+        <div>
+          <div class="neon-card" style="margin-bottom:1rem; border-color:var(--brand-gold)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem">
+              <h3 style="margin:0">🖼️ Logo del Establecimiento</h3>
+              <span class="badge badge-gold" *ngIf="selectedFile">Listo para Guardar</span>
             </div>
-            <div *ngIf="selectedFile" style="margin-top:0.75rem">
-              <span style="font-size:0.85rem; font-weight:600; color:var(--brand-gold)">
-                ✨ Nueva imagen: {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
-              </span>
-            </div>
-            <div *ngIf="!selectedFile" style="margin-top:0.5rem; font-size:0.75rem; color:var(--text-muted)">
-              Formatos recomendados: PNG con transparencia o JPG (máx. 2 MB)
-            </div>
-          </div>
-          <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" (change)="onFileSelected($event)" #fileInput style="display:none">
-          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center">
-            <button class="btn-outline" (click)="fileInput.click()">
-              📁 {{ selectedFile ? 'Cambiar Selección' : '📤 Seleccionar Nuevo Logo' }}
-            </button>
-            <button class="btn-primary" *ngIf="selectedFile" [disabled]="uploadingLogo" (click)="uploadLogo()">
-              {{ uploadingLogo ? '⏳ Guardando...' : '💾 Guardar Logo' }}
-            </button>
-            <button class="btn-secondary" *ngIf="selectedFile" (click)="cancelSelectedFile()">
-              ✖ Cancelar
-            </button>
-          </div>
-        </div>
-        <div class="neon-card" style="border-color:var(--brand-bronze)">
-          <h3 style="margin-bottom:1rem">📧 Configuración Email (Alertas Stock)</h3>
-          <div class="form-group">
-            <label class="form-label">Servidor SMTP</label>
-            <input class="form-input" [(ngModel)]="smtpHost" placeholder="smtp.gmail.com">
-          </div>
-          <div class="grid-2">
-            <div class="form-group">
-              <label class="form-label">Puerto</label>
-              <input class="form-input" [(ngModel)]="smtpPort" type="number" placeholder="587">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Conexión Segura (SSL)</label>
-              <select class="form-input" [(ngModel)]="smtpSecure">
-                <option [ngValue]="false">No (587)</option>
-                <option [ngValue]="true">Sí (465)</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Usuario / Email SMTP</label>
-            <input class="form-input" [(ngModel)]="smtpUser" placeholder="correo@ejemplo.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña SMTP</label>
-            <input class="form-input" [(ngModel)]="smtpPass" type="password" placeholder="••••••••">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email Remitente (From)</label>
-            <input class="form-input" [(ngModel)]="smtpFrom" placeholder="alertas@ejemplo.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email para Recibir Alertas</label>
-            <input class="form-input" [(ngModel)]="alertEmail" placeholder="admin@ejemplo.com">
-          </div>
-        </div>
-        <div class="neon-card" style="margin-top:1rem;border-color:var(--brand-gold)">
-          <h3 style="margin-bottom:1rem">📖 Manual de Usuario</h3>
-          <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
-            Consulta el manual completo del sistema con descripción de cada módulo, capturas de pantalla, matriz de accesos y solución de problemas.
-          </p>
-          <a href="/assets/manual.pdf" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">📖 Abrir Manual (PDF)</a>
-          <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña</p>
-        </div>
-        <div class="neon-card" style="margin-top:1rem;border-color:rgba(200, 215, 235, 0.45)">
-          <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-            <span>📋</span> Ficha Técnica Comercial & Alcances
-          </h3>
-          <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
-            Landing publicitaria interactiva con los 12 módulos en perspectiva 3D Drift Wall, compatibilidad con sistemas POS actuales, frameworks vigentes y licenciamiento GNU GPL v3.0 (pago único y derechos de propiedad intelectual).
-          </p>
-          <a href="/ficha_tecnica.html" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;background:linear-gradient(135deg, #374151, #1F2937);border:1px solid rgba(220,230,245,0.3);color:#F9FAFB">
-            🚀 Abrir Ficha Técnica ↗
-          </a>
-          <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña (100% independiente del menú)</p>
-        </div>
-        <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
-          <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
-          <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>
-          <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Borra datos en caché para forzar recarga fresca</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- PESTAÑA 2: GESTIÓN DE CATEGORÍAS -->
-    <div *ngIf="isAdmin && activeTab === 'categories'">
-      <div class="categories-toolbar">
-        <div class="search-bar">
-          <input class="form-input" placeholder="🔍 Buscar categoría..." [(ngModel)]="searchCategory"
-                 (input)="applyFilter()" />
-        </div>
-        <button class="btn-primary" (click)="openCategoryForm()">+ Nueva Categoría</button>
-      </div>
-
-      <div class="card table-card">
-        <div *ngIf="loadingCategories" class="loading-state">Cargando categorías...</div>
-        <div *ngIf="!loadingCategories && filteredCategories.length === 0" class="empty-state">
-          No hay categorías registradas
-        </div>
-        <table *ngIf="!loadingCategories && filteredCategories.length > 0" class="data-table">
-          <thead>
-            <tr>
-              <th (click)="sortCategories('icon')" class="sortable">Icono</th>
-              <th (click)="sortCategories('name')" class="sortable">Nombre <span *ngIf="sortColumn === 'name'">{{ sortAsc ? '▲' : '▼' }}</span></th>
-              <th (click)="sortCategories('order')" class="sortable">Orden <span *ngIf="sortColumn === 'order'">{{ sortAsc ? '▲' : '▼' }}</span></th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let c of filteredCategories">
-              <td class="icon-cell">{{ c.icon || '📦' }}</td>
-              <td><strong>{{ c.name }}</strong></td>
-              <td>{{ c.order ?? '—' }}</td>
-              <td>
-                <span class="badge" [class.badge-green]="c.isActive !== false" [class.badge-red]="c.isActive === false">
-                  {{ c.isActive !== false ? 'Activa' : 'Inactiva' }}
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.9rem">
+              Logotipo oficial del restaurante visible en Navbar, comprobantes POS, comandas y pantalla de inicio.
+            </p>
+            <div style="text-align:center; padding:1.25rem; background:rgba(0,0,0,0.18); border-radius:12px; border:1px dashed var(--border); margin-bottom:1rem">
+              <div style="display:inline-block; padding:0.6rem; background:var(--bg-card); border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.12)">
+                <img [src]="logoDisplayUrl" alt="Logo actual" style="max-height:120px; max-width:220px; object-fit:contain; display:block; margin:0 auto; border-radius:8px">
+              </div>
+              <div *ngIf="selectedFile" style="margin-top:0.75rem">
+                <span style="font-size:0.85rem; font-weight:600; color:var(--brand-gold)">
+                  ✨ Nueva imagen: {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
                 </span>
-              </td>
-              <td class="actions">
-                <button class="btn-icon" title="Editar" (click)="editCategory(c)">✏️</button>
-                <button class="btn-icon btn-icon-danger" title="Eliminar"
-                        (click)="removeCategory(c._id)" *ngIf="c.isActive !== false">🗑️</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+              <div *ngIf="!selectedFile" style="margin-top:0.5rem; font-size:0.75rem; color:var(--text-muted)">
+                Formatos recomendados: PNG con transparencia o JPG (máx. 2 MB)
+              </div>
+            </div>
+            <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" (change)="onFileSelected($event)" #fileInput style="display:none">
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center">
+              <button class="btn-outline" (click)="fileInput.click()">
+                📁 {{ selectedFile ? 'Cambiar Selección' : '📤 Seleccionar Nuevo Logo' }}
+              </button>
+              <button class="btn-primary" *ngIf="selectedFile" [disabled]="uploadingLogo" (click)="uploadLogo()">
+                {{ uploadingLogo ? '⏳ Guardando...' : '💾 Guardar Logo' }}
+              </button>
+              <button class="btn-secondary" *ngIf="selectedFile" (click)="cancelSelectedFile()">
+                ✖ Cancelar
+              </button>
+            </div>
+          </div>
+
+          <div class="neon-card" style="border-color:var(--brand-bronze)">
+            <h3 style="margin-bottom:1rem">📧 Configuración Email (Alertas Stock)</h3>
+            <div class="form-group">
+              <label class="form-label">Servidor SMTP</label>
+              <input class="form-input" [(ngModel)]="smtpHost" placeholder="smtp.gmail.com">
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Puerto</label>
+                <input class="form-input" [(ngModel)]="smtpPort" type="number" placeholder="587">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Conexión Segura (SSL)</label>
+                <select class="form-input" [(ngModel)]="smtpSecure">
+                  <option [ngValue]="false">No (587)</option>
+                  <option [ngValue]="true">Sí (465)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Usuario / Email SMTP</label>
+              <input class="form-input" [(ngModel)]="smtpUser" placeholder="correo@ejemplo.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contraseña SMTP</label>
+              <input class="form-input" [(ngModel)]="smtpPass" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Remitente (From)</label>
+              <input class="form-input" [(ngModel)]="smtpFrom" placeholder="alertas@ejemplo.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email para Recibir Alertas</label>
+              <input class="form-input" [(ngModel)]="alertEmail" placeholder="admin@ejemplo.com">
+            </div>
+          </div>
+
+          <div class="neon-card" style="margin-top:1rem;border-color:var(--brand-gold)">
+            <h3 style="margin-bottom:1rem">📖 Manual de Usuario</h3>
+            <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
+              Consulta el manual completo del sistema con descripción de cada módulo, capturas de pantalla, matriz de accesos y solución de problemas.
+            </p>
+            <a href="/assets/manual.pdf" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">📖 Abrir Manual (PDF)</a>
+            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña</p>
+          </div>
+
+          <div class="neon-card" style="margin-top:1rem;border-color:rgba(200, 215, 235, 0.45)">
+            <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+              <span>📋</span> Ficha Técnica Comercial & Alcances
+            </h3>
+            <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
+              Landing publicitaria interactiva con los 12 módulos en perspectiva 3D Drift Wall, compatibilidad con sistemas POS actuales, frameworks vigentes y licenciamiento GNU GPL v3.0 (pago único y derechos de propiedad intelectual).
+            </p>
+            <a href="/ficha_tecnica.html" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;background:linear-gradient(135deg, #374151, #1F2937);border:1px solid rgba(220,230,245,0.3);color:#F9FAFB">
+              🚀 Abrir Ficha Técnica ↗
+            </a>
+            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña (100% independiente del menú)</p>
+          </div>
+
+          <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
+            <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
+            <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>
+            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Borra datos en caché para forzar recarga fresca</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL DE CATEGORÍAS DEL MENÚ (UNIFICADO EN GENERAL) -->
+      <div class="neon-card" id="categories-panel" style="margin-top:1.5rem;border-color:rgba(212, 175, 55, 0.45)">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem">
+          <div>
+            <h3 style="margin:0;display:flex;align-items:center;gap:0.5rem">
+              <span>📂</span> Categorías del Menú ({{ categories.length }})
+            </h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.25rem">
+              Clasificación oficial de platos y bebidas para la carta, POS y comandas de cocina
+            </p>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap">
+            <div class="search-bar" style="max-width:280px">
+              <input class="form-input" placeholder="🔍 Buscar categoría..." [(ngModel)]="searchCategory"
+                     (input)="applyFilter()" />
+            </div>
+            <button class="btn-primary" (click)="openCategoryForm()">+ Nueva Categoría</button>
+          </div>
+        </div>
+
+        <div class="card table-card" style="box-shadow:none; border:1px solid var(--border)">
+          <div *ngIf="loadingCategories" class="loading-state">Cargando categorías...</div>
+          <div *ngIf="!loadingCategories && filteredCategories.length === 0" class="empty-state">
+            No hay categorías registradas
+          </div>
+          <table *ngIf="!loadingCategories && filteredCategories.length > 0" class="data-table">
+            <thead>
+              <tr>
+                <th (click)="sortCategories('icon')" class="sortable">Icono</th>
+                <th (click)="sortCategories('name')" class="sortable">Nombre <span *ngIf="sortColumn === 'name'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+                <th (click)="sortCategories('order')" class="sortable">Orden <span *ngIf="sortColumn === 'order'">{{ sortAsc ? '▲' : '▼' }}</span></th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of filteredCategories">
+                <td class="icon-cell">{{ c.icon || '📦' }}</td>
+                <td><strong>{{ c.name }}</strong></td>
+                <td>{{ c.order ?? '—' }}</td>
+                <td>
+                  <span class="badge" [class.badge-green]="c.isActive !== false" [class.badge-red]="c.isActive === false">
+                    {{ c.isActive !== false ? 'Activa' : 'Inactiva' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon" title="Editar" (click)="editCategory(c)">✏️</button>
+                  <button class="btn-icon btn-icon-danger" title="Eliminar"
+                          (click)="removeCategory(c._id)" *ngIf="c.isActive !== false">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Modal Crear/Editar Categoría -->
@@ -272,33 +279,6 @@ import { environment } from '../../../environments/environment';
       font-size: 0.85rem;
       color: var(--text-muted);
       margin-top: 0.25rem;
-    }
-    .settings-tabs-bar {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-    .tab-button {
-      background: none;
-      border: none;
-      padding: 0.6rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tab-button:hover {
-      background: rgba(212, 175, 55, 0.08);
-      color: var(--text-primary);
-    }
-    .tab-button.active {
-      background: rgba(212, 175, 55, 0.15);
-      color: var(--brand-gold);
-      border-bottom: 2px solid var(--brand-gold);
     }
     .categories-toolbar {
       display: flex;
