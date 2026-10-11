@@ -50,7 +50,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/ficha_tecnica.html"
+              "src/ficha_tecnica.html",
+              "src/MANUAL_DE_USUARIO.html"
             ],
             "styles": [
               "src/styles.scss"

@@ -14,11 +14,12 @@ interface DocItem {
   descripcion: string;
   contenido?: string;
   archivoPdf?: string;
+  enlaceHtml?: string;
 }
 
 const SEED: DocItem[] = [
-  // ── Manual de operaciones de la app (descarga PDF) ──
-  { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v2.0', responsable: 'Administración', actualizado: '2026-10-11', estado: 'Vigente', paginas: 14, descripcion: 'Guía oficial actualizada con nuevo Dashboard interactivo como Home, menú lateral colapsable (60px) en 8 grupos (Personal, Análisis, Gestión) y Configuración unificada con Categorías. Incluye descarga en PDF.', contenido: 'MANUAL DE OPERACIONES V2.0 — LA SOUPE À L\'OIGNON & MARIE ANTOINETTE\n\n1. ROLES Y MATRIZ DE ACCESO:\n   • admin: Acceso completo a todos los módulos.\n   • cajero: POS, caja registradora, lectura de domicilios, alertas y talonarios.\n   • cocinero: Pantalla KDS de cocina, aceptación de domicilios y panel resumen.\n   • mesero: Vista adaptativa de comandas de salón y perfil propio.\n   • cliente: Perfil personal y carta pública.\n\n2. NAVEGACIÓN Y MENÚ LATERAL RETRAÍDO:\n   • Sidebar colapsable por defecto a 60px para mayor amplitud en pantallas táctiles y POS.\n   • Botón toggle ☰ / ✕ con persistencia en localStorage.\n   • 8 grupos en acordeón con auto-despliegue inteligente:\n     1. Inicio (/dashboard)\n     2. Operaciones (/mesas, /pos, /domicilios, /events)\n     3. Cocina y Carta (/dishes, /cocina, /barra, /servicio)\n     4. Caja y Ventas (/cash, /ticket-books)\n     5. Compras y Costos (/inventory/insumos, /suppliers, /purchases, /expenses)\n     6. Personal (/staff)\n     7. Análisis (/finance, /reports)\n     8. Administración (/documentacion, /sg-sst, /settings)\n\n3. NUEVO DASHBOARD DINÁMICO (HOME):\n   • KPIs en vivo: Ventas del día, transacciones cerradas, ticket promedio y pedidos activos.\n   • Mini mapa de mesas en tiempo real con estados por colores (🟢 Libre, 🔴 Ocupada, 🟡 Reservada).\n   • Monitor de domicilios activos con estado, repartidor y punto pulsante.\n   • Estado de caja del turno (abierta/cerrada, base y acumulado).\n   • Top 5 de insumos críticos con conteo y enlace directo a /inventory/insumos.\n   • Gráfica semanal comparativa y Top 5 de platos más vendidos.\n   • Accesos rápidos de 1 clic para operaciones clave.\n\n4. CONFIGURACIÓN UNIFICADA:\n   • Fusión de Categorías en /settings bajo dos pestañas: ⚙️ General y 📂 Categorías.\n   • Redirección automática desde /categories.\n\n5. PROCEDIMIENTOS CLAVE:\n   • POS: Asignación de mesa, búsqueda/barcode, métodos de pago y comanda WebSocket.\n   • KDS Cocina: Kanban con timbre Web Audio al entrar pedidos.\n   • Caja: Apertura con base, arqueo ciego y cierre Z auditado.\n\n(Para consultar el documento completo, descargue el PDF adjunto).', archivoPdf: 'assets/MANUAL_USUARIO.pdf' },
+  // ── Manual de operaciones de la app (Acceso HTML Interactivo) ──
+  { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v2.0', responsable: 'Administración', actualizado: '2026-10-11', estado: 'Vigente', paginas: 26, descripcion: 'Guía oficial interactiva del sistema con navegación por capítulos, búsqueda en vivo, arquitectura de 8 módulos y solución de incidencias en pantalla completa.', contenido: 'MANUAL DE OPERACIONES V2.0 — LA SOUPE À L\'OIGNON & MARIE ANTOINETTE\n\nAbra el manual interactivo en formato web para explorar los 26 capítulos completos con diagramas, explicaciones paso a paso y solución de problemas.', enlaceHtml: '/MANUAL_DE_USUARIO.html' },
   // ── Manuales operativos ──
   { _id: 'd1', codigo: 'MAN-001', titulo: 'Manual de cocina y BPM', categoria: 'Cocina', tipo: 'manual', version: 'v3.2', responsable: 'Chef ejecutivo', actualizado: '2026-08-15', estado: 'Vigente', paginas: 48, descripcion: 'Buenas prácticas de manufactura, temperaturas, contaminación cruzada y mise en place.', contenido: '1. Higiene del personal\n2. Temperaturas (refrigeración 0-4°C, congelación -18°C)\n3. Contaminación cruzada: tablas por color\n4. Mise en place por turno\n5. Control de mermas' },
   { _id: 'd2', codigo: 'MAN-002', titulo: 'Manual de servicio a la mesa', categoria: 'Servicio', tipo: 'manual', version: 'v2.8', responsable: 'Jefe de servicio', actualizado: '2026-07-20', estado: 'Vigente', paginas: 36, descripcion: 'Secuencia de servicio, montaje, atención de quejas y ventas sugeridas.', contenido: '1. Bienvenida en <2 min\n2. Secuencia: bebida → entrada → fuerte → postre\n3. Montaje básico y de eventos\n4. Manejo de quejas (escuchar, disculparse, compensar)\n5. Venta sugerida' },
@@ -96,9 +97,10 @@ const LS_KEY = 'soupe-docs-v1';
           <p class="doc-desc">{{ d.descripcion }}</p>
           <div class="doc-meta">👤 {{ d.responsable }} · 📅 {{ d.actualizado }} · 📄 {{ d.paginas }} pág.</div>
           <div class="doc-actions">
-            <button class="btn-secondary btn-sm" (click)="ver(d)">👁️ Ver</button>
-            <a *ngIf="d.archivoPdf" class="btn-secondary btn-sm" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
-            <button class="btn-secondary btn-sm" (click)="descargar(d)">⬇️ Plantilla</button>
+            <a *ngIf="d.enlaceHtml" class="btn-primary btn-sm" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem">📖 Abrir Manual HTML ↗</a>
+            <button *ngIf="!d.enlaceHtml" class="btn-secondary btn-sm" (click)="ver(d)">👁️ Ver</button>
+            <a *ngIf="d.archivoPdf && !d.enlaceHtml" class="btn-secondary btn-sm" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
+            <button *ngIf="!d.enlaceHtml" class="btn-secondary btn-sm" (click)="descargar(d)">⬇️ Plantilla</button>
             <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
             <button class="btn-icon btn-icon-danger" (click)="eliminar(d)" title="Eliminar">🗑️</button>
           </div>
@@ -121,9 +123,10 @@ const LS_KEY = 'soupe-docs-v1';
               <td>{{ d.actualizado }}</td>
               <td><span class="badge" [ngClass]="badge(d.estado)">{{ d.estado }}</span></td>
               <td class="actions">
-                <button class="btn-icon" (click)="ver(d)" title="Ver">👁️</button>
-                <a *ngIf="d.archivoPdf" class="btn-icon" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf" title="Descargar PDF">📕</a>
-                <button class="btn-icon" (click)="descargar(d)" title="Descargar plantilla">⬇️</button>
+                <a *ngIf="d.enlaceHtml" class="btn-icon" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" title="Abrir Manual HTML" style="text-decoration:none">📖</a>
+                <button *ngIf="!d.enlaceHtml" class="btn-icon" (click)="ver(d)" title="Ver">👁️</button>
+                <a *ngIf="d.archivoPdf && !d.enlaceHtml" class="btn-icon" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf" title="Descargar PDF">📕</a>
+                <button *ngIf="!d.enlaceHtml" class="btn-icon" (click)="descargar(d)" title="Descargar plantilla">⬇️</button>
                 <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
                 <button class="btn-icon btn-icon-danger" (click)="eliminar(d)" title="Eliminar">🗑️</button>
               </td>
@@ -140,8 +143,9 @@ const LS_KEY = 'soupe-docs-v1';
           <p style="margin:.75rem 0">{{ seleccionado.descripcion }}</p>
           <pre class="preview">{{ seleccionado.contenido || 'Contenido ficticio de demostración.' }}</pre>
           <div class="modal-actions">
-            <a *ngIf="seleccionado.archivoPdf" class="btn-secondary" [href]="seleccionado.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
-            <button class="btn-secondary" (click)="descargar(seleccionado)">⬇️ Descargar plantilla</button>
+            <a *ngIf="seleccionado.enlaceHtml" class="btn-primary" [href]="seleccionado.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">📖 Abrir Manual HTML ↗</a>
+            <a *ngIf="seleccionado.archivoPdf && !seleccionado.enlaceHtml" class="btn-secondary" [href]="seleccionado.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
+            <button *ngIf="!seleccionado.enlaceHtml" class="btn-secondary" (click)="descargar(seleccionado)">⬇️ Descargar plantilla</button>
             <button class="btn-outline" (click)="seleccionado=null">Cerrar</button>
           </div>
         </div>
@@ -223,7 +227,7 @@ export class DocumentacionComponent implements OnInit {
         // Migración: actualiza el manual de operaciones a v2.0
         const seed = SEED.find(s => s._id === 'd0');
         const idx = this.docs.findIndex(d => d._id === 'd0' || d.codigo === 'MAN-USU');
-        if (seed && idx >= 0 && (this.docs[idx].version !== 'v2.0' || !this.docs[idx].paginas)) {
+        if (seed && idx >= 0 && (!this.docs[idx].enlaceHtml || this.docs[idx].archivoPdf)) {
           this.docs[idx] = { ...seed };
           this.persistir();
         } else if (seed && idx === -1) {

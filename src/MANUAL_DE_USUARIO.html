@@ -1,0 +1,3049 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Usuario — La Soupe à l'Oignon & Marie Antoinette</title>
+  <meta name="description"
+    content="Guía completa de uso del Sistema Integral de Gestión Restaurantera La Soupe à l'Oignon & Marie Antoinette. Versión 2.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-main: #080C14;
+      --bg-section: #0D1220;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.09);
+      --accent: #C8CDD6;
+      --accent-light: #E8ECF2;
+      --accent-dim: #6B7280;
+      --text-white: #F0F0F0;
+      --text-muted: #8892A4;
+      --border-accent: rgba(200, 210, 225, 0.15);
+      --glow: rgba(200, 210, 225, 0.08);
+      --gold: #D4A853;
+      --gold-dim: rgba(212, 168, 83, 0.25);
+      --green: #4ADE80;
+      --red: #F87171;
+      --yellow: #FBBF24;
+      --blue: #60A5FA;
+      --sidebar-w: 280px;
+      --sidebar-collapsed: 0px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* ====== HERO ====== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 40px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(212, 168, 83, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(100, 120, 180, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(100, 120, 180, 0.04) 0%, transparent 60%);
+      animation: heroPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroPulse {
+      0% {
+        opacity: 0.6;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+      }
+
+      10% {
+        opacity: 0.5;
+      }
+
+      90% {
+        opacity: 0.2;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-20vh) scale(1);
+      }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(212, 168, 83, 0.1);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      padding: 8px 20px;
+      border-radius: 30px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out both;
+    }
+
+    .hero-badge .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulseDot 2s infinite;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4.5vw, 56px);
+      font-weight: 700;
+      color: var(--accent-light);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.15s both;
+    }
+
+    .hero h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(15px, 1.8vw, 20px);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.3s both;
+    }
+
+    .hero .diamond {
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: 12px;
+      margin: 16px 0;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.4s both;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.55s both;
+    }
+
+    .hero-meta span {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-meta span em {
+      color: var(--accent-light);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-dim);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: fadeSlideUp 1s ease-out 0.8s both;
+      cursor: pointer;
+    }
+
+    .scroll-arrow {
+      width: 18px;
+      height: 18px;
+      border-right: 2px solid var(--gold-dim);
+      border-bottom: 2px solid var(--gold-dim);
+      transform: rotate(45deg);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+
+      0%,
+      100% {
+        transform: rotate(45deg) translateY(0)
+      }
+
+      50% {
+        transform: rotate(45deg) translateY(8px)
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+
+      50% {
+        transform: scale(1.4);
+        opacity: 0.5
+      }
+    }
+
+    /* ====== TOP NAV ====== */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9000;
+      background: rgba(8, 12, 20, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-accent);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transform: translateY(-100%);
+      transition: transform 0.4s ease;
+    }
+
+    .top-nav.visible {
+      transform: translateY(0);
+    }
+
+    .top-nav .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--accent-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-nav .brand span {
+      font-size: 20px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-light);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(220, 235, 255, 0.4);
+    }
+
+    .search-box {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 7px 14px;
+      color: var(--text-white);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      width: 220px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .search-box:focus {
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, 0.1);
+      width: 280px;
+    }
+
+    .search-box::placeholder {
+      color: var(--accent-dim);
+    }
+
+    /* ====== SIDEBAR ====== */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: rgba(10, 14, 24, 0.97);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border-accent);
+      z-index: 8000;
+      overflow-y: auto;
+      padding: 20px 0;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(200, 215, 235, 0.15) transparent;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-group {
+      margin-bottom: 6px;
+    }
+
+    .sidebar-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 10px 24px 6px;
+      user-select: none;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+
+    .sidebar-link:hover {
+      color: var(--text-white);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .sidebar-link.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+      background: rgba(212, 168, 83, 0.08);
+    }
+
+    .sidebar-link .link-icon {
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-link .link-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--accent-dim);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.2s;
+    }
+
+    .sidebar-link:hover .link-icon svg,
+    .sidebar-link.active .link-icon svg {
+      stroke: var(--gold);
+    }
+
+    .sidebar-link .link-num {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-dim);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    /* ====== MAIN CONTENT ====== */
+    .main-content {
+      padding-top: 0;
+      transition: padding-left 0.35s ease;
+    }
+
+    .main-content.shifted {
+      padding-left: var(--sidebar-w);
+    }
+
+    /* ====== CONTENT SECTIONS ====== */
+    .manual-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 80px 48px;
+      border-bottom: 1px solid rgba(200, 210, 225, 0.06);
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+
+    .section-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-number::after {
+      content: '';
+      display: inline-block;
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 700;
+      color: var(--accent-light);
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.7;
+    }
+
+    /* ====== INFO CARDS ====== */
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
+      transition: all 0.35s ease;
+    }
+
+    .info-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(200, 210, 225, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .info-card h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-card h4 .card-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-card h4 .card-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .info-card p,
+    .info-card li {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .info-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-card ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .info-card ul li::before {
+      content: '✦';
+      color: var(--gold);
+      font-size: 9px;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    /* ====== STEP CARDS (paso a paso) ====== */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .steps-container::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 28px;
+      bottom: 28px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--gold), var(--border-accent), var(--gold));
+      border-radius: 2px;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 20px;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: rgba(212, 168, 83, 0.12);
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s;
+    }
+
+    .step-card:hover .step-num {
+      background: var(--gold);
+      color: var(--bg-main);
+      box-shadow: 0 0 20px rgba(212, 168, 83, 0.4);
+    }
+
+    .step-body {
+      flex: 1;
+      padding-top: 6px;
+    }
+
+    .step-body h5 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+
+    .step-body p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ====== CODE/URL INLINE ====== */
+    code,
+    .code-inline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: rgba(212, 168, 83, 0.1);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 5px;
+      border: 1px solid rgba(212, 168, 83, 0.2);
+    }
+
+    /* ====== ROLE CARDS ====== */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s ease;
+    }
+
+    .role-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .role-card.admin::before {
+      background: linear-gradient(90deg, #D4A853, #E8B95A);
+    }
+
+    .role-card.cajero::before {
+      background: linear-gradient(90deg, #60A5FA, #93C5FD);
+    }
+
+    .role-card.cocinero::before {
+      background: linear-gradient(90deg, #F87171, #FCA5A5);
+    }
+
+    .role-card.mesero::before {
+      background: linear-gradient(90deg, #4ADE80, #86EFAC);
+    }
+
+    .role-card.cliente::before {
+      background: linear-gradient(90deg, #A78BFA, #C4B5FD);
+    }
+
+    .role-emoji {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .role-emoji svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .role-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-light);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .role-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      background: rgba(212, 168, 83, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .role-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ====== PERMISSIONS TABLE ====== */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 24px 0;
+      border-radius: 14px;
+      border: 1px solid var(--border-accent);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(200, 215, 235, 0.15) transparent;
+    }
+
+    .perm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 700px;
+    }
+
+    .perm-table thead {
+      background: rgba(212, 168, 83, 0.08);
+    }
+
+    .perm-table th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border-accent);
+    }
+
+    .perm-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(200, 210, 225, 0.06);
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+
+    .perm-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    .perm-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .perm-table td:first-child {
+      color: var(--text-white);
+      font-weight: 500;
+    }
+
+    .perm-check {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .perm-deny {
+      color: rgba(255, 255, 255, 0.15);
+    }
+
+    .perm-partial {
+      color: var(--yellow);
+      font-size: 11px;
+    }
+
+    /* ====== SIDEBAR GROUPS / ACCORDION ====== */
+    .sidebar-items-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+      margin-top: 12px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid var(--border-accent);
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-white);
+    }
+
+    .sidebar-item .si-icon {
+      width: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-item .si-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--accent-dim);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sidebar-item .si-label {
+      font-weight: 500;
+      color: var(--text-white);
+    }
+
+    .sidebar-item .si-route {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent-dim);
+    }
+
+    /* ====== DASHBOARD MOCKUP ====== */
+    .mockup-window {
+      background: rgba(10, 14, 24, 0.95);
+      border: 1px solid rgba(220, 235, 255, 0.2);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      margin: 24px 0;
+    }
+
+    .mockup-bar {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(220, 235, 255, 0.1);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .mockup-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .mockup-dot.r {
+      background: #ff5f56;
+    }
+
+    .mockup-dot.y {
+      background: #ffbd2e;
+    }
+
+    .mockup-dot.g {
+      background: #27c93f;
+    }
+
+    .mockup-body {
+      padding: 20px;
+    }
+
+    .mockup-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .mockup-kpi {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(220, 235, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .mockup-kpi .kpi-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-dim);
+    }
+
+    .mockup-kpi .kpi-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-light);
+      font-family: 'Playfair Display', serif;
+      margin-top: 4px;
+    }
+
+    .mockup-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mockup-mini-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(220, 235, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .mockup-mini-card h6 {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .mesa-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .mesa-dot.libre {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    .mesa-dot.ocupada {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+    }
+
+    .mesa-dot.reservada {
+      background: var(--yellow);
+      box-shadow: 0 0 6px var(--yellow);
+    }
+
+    /* ====== KANBAN VISUAL ====== */
+    .kanban-visual {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .kanban-col {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .kanban-col:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .kanban-col .k-icon {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kanban-col .k-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .kanban-col .k-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-light);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .kanban-col .k-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ====== ALERT BOXES ====== */
+    .alert-box {
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .alert-box .alert-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+    }
+
+    .alert-box .alert-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .alert-box.tip {
+      background: rgba(74, 222, 128, 0.06);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #86EFAC;
+    }
+
+    .alert-box.warning {
+      background: rgba(251, 191, 36, 0.06);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      color: #FDE68A;
+    }
+
+    .alert-box.danger {
+      background: rgba(248, 113, 113, 0.06);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      color: #FCA5A5;
+    }
+
+    .alert-box.info {
+      background: rgba(96, 165, 250, 0.06);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      color: #BFDBFE;
+    }
+
+    /* ====== INVENTORY AREAS ====== */
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .area-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.3s;
+    }
+
+    .area-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .area-card .area-icon {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .area-card .area-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .area-card h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-light);
+      margin-bottom: 6px;
+    }
+
+    .area-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .area-card .area-route {
+      display: inline-block;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      background: rgba(212, 168, 83, 0.1);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* ====== CACHE TABLE ====== */
+    .cache-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .cache-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .cache-item:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .cache-item .cache-ttl {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .cache-item .cache-unit {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .cache-item .cache-label {
+      font-size: 12px;
+      color: var(--accent-light);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* ====== TROUBLESHOOTING ====== */
+    .trouble-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 14px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: all 0.35s;
+    }
+
+    .trouble-card:hover {
+      border-color: rgba(200, 210, 225, 0.25);
+    }
+
+    .trouble-header {
+      padding: 18px 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: background 0.2s;
+    }
+
+    .trouble-header:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .trouble-header .t-icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .trouble-header .t-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .trouble-header .t-symptom {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-white);
+      flex: 1;
+    }
+
+    .trouble-header .t-toggle {
+      font-size: 18px;
+      color: var(--accent-dim);
+      transition: transform 0.3s;
+    }
+
+    .trouble-card.open .trouble-header .t-toggle {
+      transform: rotate(180deg);
+    }
+
+    .trouble-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      border-top: 0 solid transparent;
+    }
+
+    .trouble-card.open .trouble-body {
+      max-height: 300px;
+      border-top: 1px solid var(--border-accent);
+    }
+
+    .trouble-inner {
+      padding: 18px 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .trouble-col h6 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .trouble-col.cause h6 {
+      color: var(--red);
+    }
+
+    .trouble-col.solution h6 {
+      color: var(--green);
+    }
+
+    .trouble-col p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ====== FOOTER ====== */
+    .manual-footer {
+      text-align: center;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border-accent);
+    }
+
+    .manual-footer p {
+      font-size: 12px;
+      color: var(--accent-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .manual-footer .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--accent-light);
+      margin-bottom: 8px;
+    }
+
+    /* ====== PROGRESS BAR ====== */
+    .reading-progress {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 9500;
+      background: transparent;
+    }
+
+    .reading-progress .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), #E8B95A, var(--gold));
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(212, 168, 83, 0.4);
+    }
+
+    /* ====== SCROLL REVEAL ====== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 900px) {
+      .manual-section {
+        padding: 50px 24px;
+      }
+
+      .kanban-visual {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .trouble-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .mockup-grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 260px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .manual-section {
+        padding: 40px 18px;
+      }
+
+      .roles-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kanban-visual {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .areas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 60px 20px;
+      }
+
+      .top-nav {
+        padding: 0 16px;
+      }
+
+      .search-box {
+        width: 140px;
+      }
+
+      .search-box:focus {
+        width: 180px;
+      }
+    }
+
+    @media print {
+
+      .top-nav,
+      .sidebar,
+      .reading-progress,
+      .scroll-indicator,
+      .particles {
+        display: none !important;
+      }
+
+      .main-content {
+        padding-left: 0 !important;
+      }
+
+      body {
+        background: white;
+        color: #1a1a1a;
+      }
+
+      .manual-section {
+        padding: 20px;
+        page-break-inside: avoid;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ====== READING PROGRESS ====== -->
+  <div class="reading-progress">
+    <div class="bar" id="progressBar"></div>
+  </div>
+
+  <!-- ====== TOP NAV ====== -->
+  <nav class="top-nav" id="topNav">
+    <div class="brand">
+      <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--accent-light)" fill="none" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg></span> Manual de Usuario
+    </div>
+    <div class="nav-controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="Buscar en el manual...">
+      <button class="nav-btn" id="sidebarToggle" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="14"
+          height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg> Índice</button>
+      <button class="nav-btn" onclick="window.print()"><svg viewBox="0 0 24 24" width="14" height="14"
+          stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
+        </svg> Imprimir</button>
+    </div>
+  </nav>
+
+  <!-- ====== SIDEBAR ====== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Inicio</div>
+      <a class="sidebar-link" data-target="intro"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg></span> Introducción <span class="link-num">01</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Acceso</div>
+      <a class="sidebar-link" data-target="roles"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg></span> Roles y Permisos <span class="link-num">02</span></a>
+      <a class="sidebar-link" data-target="login"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg></span> Iniciar Sesión <span class="link-num">03</span></a>
+      <a class="sidebar-link" data-target="navegacion"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <polygon points="3 11 22 2 13 21 11 13 3 11" />
+          </svg></span> Navegación <span class="link-num">04</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Operación Diaria</div>
+      <a class="sidebar-link" data-target="dashboard"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="9" rx="1" />
+            <rect x="14" y="3" width="7" height="5" rx="1" />
+            <rect x="14" y="12" width="7" height="9" rx="1" />
+            <rect x="3" y="16" width="7" height="5" rx="1" />
+          </svg></span> Dashboard <span class="link-num">05</span></a>
+      <a class="sidebar-link" data-target="mesas"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="9" />
+          </svg></span> Mesas <span class="link-num">06</span></a>
+      <a class="sidebar-link" data-target="pos"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg></span> Punto de Venta <span class="link-num">07</span></a>
+      <a class="sidebar-link" data-target="domicilios"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="1" y="3" width="15" height="13" />
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg></span> Domicilios <span class="link-num">08</span></a>
+      <a class="sidebar-link" data-target="eventos"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg></span> Eventos <span class="link-num">09</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Producción</div>
+      <a class="sidebar-link" data-target="cocina"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6 2 10c0 3 2 5.5 5 6.5V22h10v-5.5c3-1 5-3.5 5-6.5 0-4-4.48-8-10-8z" />
+          </svg></span> Cocina KDS <span class="link-num">10</span></a>
+      <a class="sidebar-link" data-target="barra"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="15" x2="12" y2="21" />
+            <path d="M5 3h14l-3 12H8L5 3z" />
+          </svg></span> Barra <span class="link-num">11</span></a>
+      <a class="sidebar-link" data-target="platos"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+          </svg></span> Platos y Recetas <span class="link-num">12</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Finanzas</div>
+      <a class="sidebar-link" data-target="caja"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg></span> Caja y Arqueos <span class="link-num">13</span></a>
+      <a class="sidebar-link" data-target="talonarios"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <polyline points="6 9 6 2 18 2 18 9" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <rect x="6" y="14" width="12" height="8" />
+          </svg></span> Talonarios <span class="link-num">14</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Inventarios</div>
+      <a class="sidebar-link" data-target="inventario"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg></span> Inventario <span class="link-num">15</span></a>
+      <a class="sidebar-link" data-target="proveedores"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg></span> Proveedores <span class="link-num">16</span></a>
+      <a class="sidebar-link" data-target="compras"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg></span> Compras <span class="link-num">17</span></a>
+      <a class="sidebar-link" data-target="gastos"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+            <polyline points="17 6 23 6 23 12" />
+          </svg></span> Gastos <span class="link-num">18</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Análisis</div>
+      <a class="sidebar-link" data-target="reportes"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg></span> Reportes <span class="link-num">19</span></a>
+      <a class="sidebar-link" data-target="finanzas"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg></span> Panel Financiero <span class="link-num">20</span></a>
+      <a class="sidebar-link" data-target="alertas"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg></span> Alertas <span class="link-num">21</span></a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Administración</div>
+      <a class="sidebar-link" data-target="personal"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg></span> Personal <span class="link-num">22</span></a>
+      <a class="sidebar-link" data-target="config"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg></span> Configuración <span class="link-num">23</span></a>
+      <a class="sidebar-link" data-target="docs"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg></span> Documentación <span class="link-num">24</span></a>
+      <a class="sidebar-link" data-target="tecnologia"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg></span> Tecnología <span class="link-num">25</span></a>
+      <a class="sidebar-link" data-target="troubleshooting"><span class="link-icon"><svg viewBox="0 0 24 24">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg></span> Solución de Problemas <span class="link-num">26</span></a>
+    </div>
+  </aside>
+
+  <!-- ====== MAIN ====== -->
+  <div class="main-content" id="mainContent">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="particles" id="particles"></div>
+      <div class="hero-badge"><span class="pulse"></span> Manual de Usuario v2.0</div>
+      <h1>La Soupe à l'Oignon</h1>
+      <h2>& Marie Antoinette</h2>
+      <div class="diamond">◆ &nbsp; ◆ &nbsp; ◆</div>
+      <div class="hero-meta">
+        <span><svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--text-muted)" fill="none" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg> <em>Octubre 2026</em></span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--text-muted)" fill="none" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg> <em>lasoupealoignon.vercel.app</em></span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--text-muted)" fill="none" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+          </svg> <em>Versión 2.0</em></span>
+      </div>
+      <div class="scroll-indicator" onclick="document.getElementById('intro').scrollIntoView({behavior:'smooth'})">
+        <span>Comenzar</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- ====== 01 · INTRODUCCIÓN ====== -->
+    <section class="manual-section" id="intro">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 01</div>
+        <h2 class="section-title">Bienvenido al Sistema</h2>
+        <p class="section-desc">Esta plataforma centraliza todas las operaciones de su restaurante y salón de té: desde
+          la atención en mesa hasta el análisis financiero, pasando por la cocina, el inventario y los domicilios.</p>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg></span> ¿Qué puede hacer con este sistema?</h4>
+        <ul>
+          <li>Gestionar mesas, comandas y facturación en tiempo real desde cualquier dispositivo</li>
+          <li>Controlar la producción de cocina y barra con pantallas KDS sincronizadas</li>
+          <li>Administrar inventarios por área con alertas automáticas de stock bajo</li>
+          <li>Llevar el control de caja con arqueos ciegos y cierres Z auditables</li>
+          <li>Analizar la rentabilidad con reportes de ventas, costos y estado P&amp;L mensual</li>
+          <li>Coordinar domicilios, eventos y banquetes con tableros Kanban en vivo</li>
+        </ul>
+      </div>
+
+      <div class="alert-box tip reveal">
+        <span class="alert-icon"><svg viewBox="0 0 24 24">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg></span>
+        <div><strong>Novedades de la Versión 2.0:</strong> Dashboard centralizado como página de inicio, menú lateral
+          colapsable con acordeón, categorías integradas en configuración y sincronización WebSocket instantánea en todo
+          el sistema.</div>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg></span> ¿Cómo acceder?</h4>
+        <p style="margin-bottom:10px">El sistema funciona desde cualquier navegador web. Estos son los entornos
+          disponibles:</p>
+        <ul>
+          <li><strong>Producción (Internet):</strong> <code>https://lasoupealoignon.vercel.app/</code></li>
+          <li><strong>API Backend:</strong> <code>https://demorestbknd.onrender.com/api</code></li>
+          <li><strong>Desarrollo local:</strong> <code>localhost:4200</code> (frontend) y <code>localhost:5000</code>
+            (backend)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 02 · ROLES Y PERMISOS ====== -->
+    <section class="manual-section" id="roles">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 02</div>
+        <h2 class="section-title">Roles y Permisos</h2>
+        <p class="section-desc">El sistema protege el acceso con tokens JWT. Cada usuario tiene un rol que determina qué
+          puede ver y hacer. Conozca cuál es el suyo.</p>
+      </div>
+
+      <div class="roles-grid reveal">
+        <div class="role-card admin">
+          <span class="role-emoji"><svg viewBox="0 0 24 24">
+              <path
+                d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z" />
+            </svg></span>
+          <div class="role-name">Administrador</div>
+          <span class="role-code">admin</span>
+          <p class="role-desc">Acceso total a todos los módulos: operaciones, finanzas, personal, configuración y
+            reportes.</p>
+        </div>
+        <div class="role-card cajero">
+          <span class="role-emoji"><svg viewBox="0 0 24 24">
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+            </svg></span>
+          <div class="role-name">Cajero</div>
+          <span class="role-code">cajero</span>
+          <p class="role-desc">Punto de Venta, control de turnos de caja, lectura de domicilios y alertas de stock.</p>
+        </div>
+        <div class="role-card cocinero">
+          <span class="role-emoji"><svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6 2 10c0 3 2 5.5 5 6.5V22h10v-5.5c3-1 5-3.5 5-6.5 0-4-4.48-8-10-8z" />
+            </svg></span>
+          <div class="role-name">Cocinero</div>
+          <span class="role-code">cocinero</span>
+          <p class="role-desc">Pantalla KDS de cocina, aceptación de comandas, despacho de domicilios y resumen
+            operativo.</p>
+        </div>
+        <div class="role-card mesero">
+          <span class="role-emoji"><svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></span>
+          <div class="role-name">Mesero</div>
+          <span class="role-code">mesero</span>
+          <p class="role-desc">Perfil personal y visualización del estado de sus mesas asignadas.</p>
+        </div>
+        <div class="role-card cliente">
+          <span class="role-emoji"><svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></span>
+          <div class="role-name">Cliente</div>
+          <span class="role-code">cliente</span>
+          <p class="role-desc">Acceso a su perfil personal e historial en la plataforma pública.</p>
+        </div>
+      </div>
+
+      <h4 style="margin-top:36px;margin-bottom:4px;color:var(--accent-light);font-size:16px;" class="reveal">Matriz de
+        Permisos por Módulo</h4>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px" class="reveal">Consulte qué puede hacer cada
+        rol en cada área del sistema.</p>
+
+      <div class="table-wrapper reveal">
+        <table class="perm-table">
+          <thead>
+            <tr>
+              <th>Módulo</th>
+              <th>Admin</th>
+              <th>Cajero</th>
+              <th>Cocinero</th>
+              <th>Mesero</th>
+              <th>Cliente</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dashboard (Home)</td>
+              <td class="perm-check">✔ Completo</td>
+              <td class="perm-check">✔ Ventas</td>
+              <td class="perm-check">✔ KDS</td>
+              <td class="perm-partial">⚠ Adaptado</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Mapa de Mesas</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Punto de Venta (POS)</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Cocina (KDS)</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Barra</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Domicilios</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-partial">⚠ Lectura</td>
+              <td class="perm-partial">⚠ Aceptar</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Caja y Turnos</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Talonarios</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Inventarios</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Platos y Recetas</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Proveedores y Compras</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Personal (Staff)</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Reportes y Análisis</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Alertas de Stock</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Finanzas (P&amp;L)</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+            </tr>
+            <tr>
+              <td>Configuración</td>
+              <td class="perm-check">✔</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-deny">✕</td>
+              <td class="perm-partial">⚠ Perfil</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====== 03 · INICIAR SESIÓN ====== -->
+    <section class="manual-section" id="login">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 03</div>
+        <h2 class="section-title">Cómo Iniciar Sesión</h2>
+        <p class="section-desc">Siga estos pasos para acceder al sistema por primera vez.</p>
+      </div>
+
+      <div class="steps-container reveal">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h5>Abra su navegador</h5>
+            <p>Ingrese a <code>https://lasoupealoignon.vercel.app/</code> desde Chrome, Firefox, Edge o Safari en
+              cualquier dispositivo.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h5>Ingrese sus credenciales</h5>
+            <p>Escriba el correo electrónico y contraseña que le fueron asignados. Si es la primera vez, use la cuenta
+              semilla del administrador.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h5>Presione "Ingresar"</h5>
+            <p>El sistema validará su identidad y lo redirigirá automáticamente al <strong>Dashboard Principal</strong>,
+              mostrándole solo los módulos que su rol permite.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-box warning reveal">
+        <span class="alert-icon"><svg viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg></span>
+        <div><strong>Seguridad:</strong> Se recomienda cambiar la contraseña de la cuenta de administrador semilla tras
+          el primer acceso. Las sesiones expiran por inactividad — si ve un error "401 No Autorizado", simplemente
+          vuelva a iniciar sesión.</div>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <path
+                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+            </svg></span> Cuentas de prueba (solo entorno local)</h4>
+        <ul>
+          <li><strong>Admin:</strong> <code>admin@test.com</code> / <code>Admin123!</code></li>
+          <li><strong>Cajero:</strong> <code>cajero@test.com</code> / <code>Cajero123!</code></li>
+          <li><strong>Cocinero:</strong> <code>cocinero@test.com</code> / <code>Cocinero123!</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 04 · NAVEGACIÓN ====== -->
+    <section class="manual-section" id="navegacion">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 04</div>
+        <h2 class="section-title">Navegación del Sistema</h2>
+        <p class="section-desc">El menú lateral retraído maximiza el espacio de trabajo. Aprenda a moverse por el
+          sistema con fluidez.</p>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+            </svg></span> El Sidebar Acordeón</h4>
+        <ul>
+          <li><strong>Estado inicial:</strong> Retraído a 60px mostrando solo iconos, para no saturar la pantalla</li>
+          <li><strong>Expandir:</strong> Presione el botón <code>☰</code> para abrir a 240px y ver los nombres de cada
+            sección</li>
+          <li><strong>Retraer:</strong> Presione <code>✕</code> para volver al modo compacto de iconos</li>
+          <li><strong>Memoria:</strong> El sistema recuerda su preferencia (abierto/cerrado) en el navegador</li>
+          <li><strong>Inteligente:</strong> Al navegar a una sección, el grupo correspondiente del acordeón se despliega
+            automáticamente y la opción activa se resalta con una barra dorada</li>
+        </ul>
+      </div>
+
+      <h4 style="margin-top:24px;margin-bottom:12px;color:var(--accent-light)" class="reveal">Los 8 Grupos del Menú
+        (Administrador)</h4>
+
+      <div class="sidebar-items-grid reveal">
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg></span><span class="si-label">Inicio</span><span class="si-route">/dashboard</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+            </svg></span><span class="si-label">Operaciones</span><span class="si-route">/mesas · /pos · /domicilios ·
+            /events</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6 2 10c0 3 2 5.5 5 6.5V22h10v-5.5c3-1 5-3.5 5-6.5 0-4-4.48-8-10-8z" />
+            </svg></span><span class="si-label">Cocina y Carta</span><span class="si-route">/cocina · /barra · /dishes ·
+            /ticket-books</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg></span><span class="si-label">Caja y Ventas</span><span class="si-route">/cash · /talonarios</span>
+        </div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg></span><span class="si-label">Compras y Costos</span><span class="si-route">/inventory · /suppliers ·
+            /purchases</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span><span class="si-label">Personal</span><span class="si-route">/staff</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg></span><span class="si-label">Análisis</span><span class="si-route">/reports · /alerts ·
+            /finance</span></div>
+        <div class="sidebar-item"><span class="si-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg></span><span class="si-label">Administración</span><span class="si-route">/documentacion · /sg-sst ·
+            /settings</span></div>
+      </div>
+    </section>
+
+    <!-- ====== 05 · DASHBOARD ====== -->
+    <section class="manual-section" id="dashboard">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 05</div>
+        <h2 class="section-title">El Dashboard</h2>
+        <p class="section-desc">Su pantalla de inicio. Aquí verá de un vistazo todo lo que ocurre en el restaurante en
+          este momento.</p>
+      </div>
+
+      <div class="mockup-window reveal">
+        <div class="mockup-bar">
+          <div class="mockup-dots"><span class="mockup-dot r"></span><span class="mockup-dot y"></span><span
+              class="mockup-dot g"></span></div>
+          <span>lasoupealoignon.vercel.app/dashboard</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-kpi-row">
+            <div class="mockup-kpi">
+              <div class="kpi-label">Ventas Hoy</div>
+              <div class="kpi-val">$1.842.500</div>
+            </div>
+            <div class="mockup-kpi">
+              <div class="kpi-label">Transacciones</div>
+              <div class="kpi-val">47</div>
+            </div>
+            <div class="mockup-kpi">
+              <div class="kpi-label">Ticket Promedio</div>
+              <div class="kpi-val">$39.202</div>
+            </div>
+            <div class="mockup-kpi">
+              <div class="kpi-label">Pendientes</div>
+              <div class="kpi-val">5</div>
+            </div>
+          </div>
+          <div class="mockup-grid-2">
+            <div class="mockup-mini-card">
+              <h6><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.8"
+                  style="vertical-align:-2px;margin-right:4px;">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="9" y1="21" x2="9" y2="9" />
+                </svg> Mesas en Vivo</h6>
+              <p style="font-size:12px;color:var(--text-muted)">
+                <span class="mesa-dot libre"></span>M1 Libre &nbsp;
+                <span class="mesa-dot ocupada"></span>M2 Ocupada &nbsp;
+                <span class="mesa-dot reservada"></span>M3 Reservada &nbsp;
+                <span class="mesa-dot libre"></span>M4 Libre
+              </p>
+            </div>
+            <div class="mockup-mini-card">
+              <h6><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.8"
+                  style="vertical-align:-2px;margin-right:4px;">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg> Domicilios Activos</h6>
+              <p style="font-size:12px;color:var(--text-muted)">2 en preparación · 1 en camino</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg></span> ¿Qué encontrará en el Dashboard?</h4>
+        <ul>
+          <li><strong>KPIs del día:</strong> Facturación total, número de ventas, ticket promedio y órdenes pendientes
+          </li>
+          <li><strong>Mini mapa de mesas:</strong> Verde = libre, rojo = ocupada, amarillo = reservada — actualización
+            en vivo</li>
+          <li><strong>Domicilios activos:</strong> Estado de despacho, dirección y tiempo con indicador pulsante</li>
+          <li><strong>Caja del turno:</strong> Base, acumulado de efectivo y ventas electrónicas</li>
+          <li><strong>Top 5 insumos críticos:</strong> Ingredientes con stock más bajo, con enlace directo al inventario
+          </li>
+          <li><strong>Gráfico semanal:</strong> Barras comparativas de ingresos de los últimos 7 días</li>
+          <li><strong>Productos estrella:</strong> Los 5 platos y bebidas más vendidos del periodo</li>
+          <li><strong>Accesos rápidos:</strong> Botones de un clic para abrir POS, Cocina, Caja o Compras</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 06 · MESAS ====== -->
+    <section class="manual-section" id="mesas">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 06</div>
+        <h2 class="section-title">Mapa de Mesas</h2>
+        <p class="section-desc">Visualice y gestione sus salones en tiempo real. Ruta: <code>/mesas</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+            </svg></span> ¿Cómo funciona?</h4>
+        <ul>
+          <li>Las mesas están organizadas por zonas: <strong>Salón 1</strong>, <strong>Salón 2</strong> y <strong>Para
+              llevar</strong></li>
+          <li>Los colores del indicador cambian automáticamente: <span style="color:var(--green)"><span
+                class="mesa-dot libre"></span>Libre</span>, <span style="color:var(--red)"><span
+                class="mesa-dot ocupada"></span>Ocupada</span>, <span style="color:var(--yellow)"><span
+                class="mesa-dot reservada"></span>Reservada</span></li>
+          <li>Haga clic en una mesa ocupada para ver la comanda asociada y su total</li>
+          <li>Puede <strong>cambiar de mesa</strong> una comanda activa o <strong>transferirla al POS</strong> para
+            facturar</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 07 · PUNTO DE VENTA ====== -->
+    <section class="manual-section" id="pos">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 07</div>
+        <h2 class="section-title">Punto de Venta (POS)</h2>
+        <p class="section-desc">Atención rápida y sin fricción. Ruta: <code>/pos</code></p>
+      </div>
+
+      <div class="steps-container reveal">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h5>Asigne la mesa o déjela vacía</h5>
+            <p>Use el selector superior para elegir mesa. Si es pedido para llevar o domicilio, no seleccione ninguna.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h5>Agregue productos al carrito</h5>
+            <p>Filtre por categorías o busque por nombre en la barra de búsqueda en vivo. Ajuste cantidades y agregue
+              observaciones (<em>"sin cebolla"</em>, <em>"té con leche de almendras"</em>).</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h5>Seleccione la forma de pago</h5>
+            <p><strong>Efectivo:</strong> calcula el cambio automáticamente. <strong>Transferencia:</strong> Nequi,
+              Daviplata, Bancolombia. <strong>Mixto:</strong> divide entre dos métodos.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h5>Presione "Cobrar"</h5>
+            <p>El sistema genera el ticket, notifica a cocina por WebSocket, descuenta ingredientes del inventario según
+              la receta y consume un consecutivo del talonario.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-box info reveal">
+        <span class="alert-icon"><svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg></span>
+        <div>Si la venta no tiene mesa asignada, el sistema crea automáticamente una orden en el tablero Kanban de
+          domicilios.</div>
+      </div>
+    </section>
+
+    <!-- ====== 08 · DOMICILIOS ====== -->
+    <section class="manual-section" id="domicilios">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 08</div>
+        <h2 class="section-title">Gestión de Domicilios</h2>
+        <p class="section-desc">Tablero Kanban para seguimiento de entregas. Ruta: <code>/domicilios</code></p>
+      </div>
+
+      <div class="kanban-visual reveal">
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg></span>
+          <div class="k-title">Pendientes</div>
+          <div class="k-desc">Nuevos pedidos por confirmar</div>
+        </div>
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6 2 10c0 3 2 5.5 5 6.5V22h10v-5.5c3-1 5-3.5 5-6.5 0-4-4.48-8-10-8z" />
+            </svg></span>
+          <div class="k-title">En Preparación</div>
+          <div class="k-desc">Aceptados por cocina</div>
+        </div>
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <rect x="1" y="3" width="15" height="13" />
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
+            </svg></span>
+          <div class="k-title">En Camino</div>
+          <div class="k-desc">Asignados a repartidor</div>
+        </div>
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12" />
+            </svg></span>
+          <div class="k-title">Entregados</div>
+          <div class="k-desc">Despachos completados</div>
+        </div>
+      </div>
+
+      <p class="reveal" style="font-size:14px;color:var(--text-muted)">Arrastre las tarjetas entre columnas para
+        actualizar el estado. Cada tarjeta muestra dirección de entrega, datos de contacto del cliente y tiempo
+        transcurrido con indicador luminoso pulsante.</p>
+    </section>
+
+    <!-- ====== 09 · EVENTOS ====== -->
+    <section class="manual-section" id="eventos">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 09</div>
+        <h2 class="section-title">Eventos y Banquetes</h2>
+        <p class="section-desc">Reservaciones especiales y salones privados. Ruta: <code>/events</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></span> Funcionalidades</h4>
+        <ul>
+          <li>Administración de reservaciones especiales, banquetes y eventos privados</li>
+          <li>Generación de la hoja <strong>BEO</strong> (Banquet Event Order) con minuta de alimentos</li>
+          <li>Cronograma de servicio detallado hora por hora</li>
+          <li>Registro de acuerdos de anticipo financiero y plan de pagos</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 10 · COCINA KDS ====== -->
+    <section class="manual-section" id="cocina">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 10</div>
+        <h2 class="section-title">Cocina — KDS en Tiempo Real</h2>
+        <p class="section-desc">Pantalla optimizada para tabletas y monitores táctiles en cocina. Ruta:
+          <code>/cocina</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg></span> Alerta sonora</h4>
+        <p>Cada vez que llega una nueva comanda desde el POS, la pantalla emite un timbre sonoro (Web Audio API).
+          Asegúrese de que el navegador tenga autorizado el audio para el sitio.</p>
+      </div>
+      <div class="kanban-visual reveal" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+            </svg></span>
+          <div class="k-title">Nuevos</div>
+          <div class="k-desc">Presione "Aceptar" para iniciar</div>
+        </div>
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg></span>
+          <div class="k-title">En Preparación</div>
+          <div class="k-desc">Ingredientes, notas y timer</div>
+        </div>
+        <div class="kanban-col"><span class="k-icon"><svg viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12" />
+            </svg></span>
+          <div class="k-title">Entregados</div>
+          <div class="k-desc">Listos para despacho</div>
+        </div>
+      </div>
+      <p class="reveal" style="font-size:14px;color:var(--text-muted)">Cada tarjeta de comanda muestra los ingredientes,
+        las modificaciones especiales del cliente y el tiempo transcurrido desde que se realizó el pedido.</p>
+    </section>
+
+    <!-- ====== 11 · BARRA ====== -->
+    <section class="manual-section" id="barra">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 11</div>
+        <h2 class="section-title">Barra y Coctelería</h2>
+        <p class="section-desc">Monitor dedicado para bebidas. Ruta: <code>/barra</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="15" x2="12" y2="21" />
+              <path d="M5 3h14l-3 12H8L5 3z" />
+            </svg></span> ¿Qué gestiona la Barra?</h4>
+        <ul>
+          <li>Preparación de café, té parisino, bebidas de autor y coctelería</li>
+          <li>Control de dosificación estándar (1.5 oz por copa)</li>
+          <li>Registro de mermas de licores y jarabes para cuadre de inventario</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 12 · PLATOS Y RECETAS ====== -->
+    <section class="manual-section" id="platos">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 12</div>
+        <h2 class="section-title">Platos, Recetas y Escandallo</h2>
+        <p class="section-desc">Catálogo completo de la carta con costeo automático. Ruta: <code>/dishes</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg></span> Ficha Técnica de cada Plato</h4>
+        <ul>
+          <li><strong>Escandallo:</strong> Lista de ingredientes con cantidades exactas y mermas estimadas</li>
+          <li><strong>Costeo automático:</strong> El sistema recalcula el costo de la receta según los precios más
+            recientes de compra</li>
+          <li><strong>Margen de rentabilidad:</strong> Sugerencia de precio de venta basada en costo real + porcentaje
+            de margen deseado</li>
+        </ul>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg></span> Tiqueteras y Pedidos</h4>
+        <p>Ruta: <code>/ticket-books</code> — Configuración de impresoras térmicas ESC/POS para emisión automática de
+          comandas en cocina y barra.</p>
+      </div>
+    </section>
+
+    <!-- ====== 13 · CAJA ====== -->
+    <section class="manual-section" id="caja">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 13</div>
+        <h2 class="section-title">Caja y Arqueos</h2>
+        <p class="section-desc">Control exacto del dinero en cada turno. Ruta: <code>/cash</code></p>
+      </div>
+
+      <div class="steps-container reveal">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h5>Apertura de turno</h5>
+            <p>Al iniciar la jornada, registre la base en efectivo disponible en gaveta (ej. $300.000 COP).</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h5>Movimientos del turno</h5>
+            <p>Registre ingresos extraordinarios o egresos menores autorizados (salidas para compras de urgencia con
+              comprobante).</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h5>Arqueo y Cierre Z</h5>
+            <p>Al final del turno: ingrese el conteo ciego de billetes y monedas. El sistema contrasta el conteo físico
+              contra las ventas registradas y genera el reporte de diferencia (Sobrante/Faltante).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-box tip reveal">
+        <span class="alert-icon"><svg viewBox="0 0 24 24">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg></span>
+        <div>El cierre Z emite un comprobante definitivo que sirve como respaldo de auditoría para cada turno.</div>
+      </div>
+    </section>
+
+    <!-- ====== 14 · TALONARIOS ====== -->
+    <section class="manual-section" id="talonarios">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 14</div>
+        <h2 class="section-title">Talonarios Consecutivos</h2>
+        <p class="section-desc">Control de numeración de facturación. Ruta: <code>/talonarios</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg></span> ¿Cómo funcionan?</h4>
+        <ul>
+          <li>Configure rangos numéricos autorizados (ej. Talonario POS del 001 al 5000)</li>
+          <li>Cada transacción consume un número consecutivo automáticamente</li>
+          <li>El sistema lanza una alerta cuando el talonario está próximo a agotarse</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 15 · INVENTARIO ====== -->
+    <section class="manual-section" id="inventario">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 15</div>
+        <h2 class="section-title">Inventario por Áreas</h2>
+        <p class="section-desc">Tres centros de costo diferenciados para control total.</p>
+      </div>
+
+      <div class="areas-grid reveal">
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6 2 10c0 3 2 5.5 5 6.5V22h10v-5.5c3-1 5-3.5 5-6.5 0-4-4.48-8-10-8z" />
+            </svg></span>
+          <h5>Insumos de Cocina</h5>
+          <p>Carnes, lácteos, vegetales, especias y abarrotes</p>
+          <span class="area-route">/inventory/insumos</span>
+        </div>
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24">
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="15" x2="12" y2="21" />
+              <path d="M5 3h14l-3 12H8L5 3z" />
+            </svg></span>
+          <h5>Barra</h5>
+          <p>Licores, vinos, jarabes, café gourmet y tés</p>
+          <span class="area-route">/inventory/barra</span>
+        </div>
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            </svg></span>
+          <h5>Servicio</h5>
+          <p>Servilletas, desechables, cristalería y empaque</p>
+          <span class="area-route">/inventory/servicio</span>
+        </div>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg></span> Capacidades del Inventario</h4>
+        <ul>
+          <li><strong>Códigos de barras:</strong> Generación automática (formato: Categoría + Proveedor + Consecutivo)
+          </li>
+          <li><strong>Stock mínimo:</strong> Umbral configurable por producto — cuando baja, se activan alertas</li>
+          <li><strong>Movimientos manuales:</strong> Entradas por compra o ajustes por avería/merma con registro de
+            trazabilidad</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 16 · PROVEEDORES ====== -->
+    <section class="manual-section" id="proveedores">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 16</div>
+        <h2 class="section-title">Directorio de Proveedores</h2>
+        <p class="section-desc">Catálogo de aliados comerciales. Ruta: <code>/suppliers</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span> Datos registrados por proveedor</h4>
+        <ul>
+          <li>Razón social y NIT</li>
+          <li>Teléfono y correo electrónico de contacto</li>
+          <li>Términos de crédito comercial</li>
+          <li>Código identificador único asignado</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 17 · COMPRAS ====== -->
+    <section class="manual-section" id="compras">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 17</div>
+        <h2 class="section-title">Órdenes de Compra</h2>
+        <p class="section-desc">Gestión de abastecimiento. Ruta: <code>/purchases</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg></span> Flujo de compras</h4>
+        <ul>
+          <li>Cree órdenes con detalle de insumos, cantidad y costo unitario</li>
+          <li>Estados: <strong>Pendiente</strong> → <strong>Recibida</strong> o <strong>Cancelada</strong></li>
+          <li>Al marcar como recibida, el stock se incrementa automáticamente y se actualiza el costo promedio ponderado
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 18 · GASTOS ====== -->
+    <section class="manual-section" id="gastos">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 18</div>
+        <h2 class="section-title">Gastos Operativos</h2>
+        <p class="section-desc">Costos fijos y variables. Ruta: <code>/finance/expenses</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg></span> ¿Qué se registra aquí?</h4>
+        <p>Categorice y registre costos como arriendo, nómina, servicios públicos, mantenimiento preventivo de hornos y
+          equipos, y cualquier gasto operativo recurrente o extraordinario.</p>
+      </div>
+    </section>
+
+    <!-- ====== 19 · REPORTES ====== -->
+    <section class="manual-section" id="reportes">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 19</div>
+        <h2 class="section-title">Centro de Reportes</h2>
+        <p class="section-desc">El motor analítico del restaurante. Ruta: <code>/reports</code></p>
+      </div>
+
+      <div class="roles-grid reveal">
+        <div class="role-card admin" style="border-left:3px solid var(--blue)">
+          <span class="role-emoji">📊</span>
+          <div class="role-name">Ventas</div>
+          <p class="role-desc">KPIs de facturación, ticket medio, tendencias por franja horaria y desglose por medio de
+            pago.</p>
+        </div>
+        <div class="role-card cajero" style="border-left:3px solid var(--green)">
+          <span class="role-emoji">📦</span>
+          <div class="role-name">Inventario</div>
+          <p class="role-desc">Valoración monetaria total del inventario y potencial de ganancia estimada.</p>
+        </div>
+        <div class="role-card cocinero" style="border-left:3px solid var(--gold)">
+          <span class="role-emoji">🏆</span>
+          <div class="role-name">Productos</div>
+          <p class="role-desc">Top 10 de mayor venta, productos sin rotación en 30 días y márgenes por familia.</p>
+        </div>
+        <div class="role-card mesero" style="border-left:3px solid var(--red)">
+          <span class="role-emoji">⏱️</span>
+          <div class="role-name">Cocina</div>
+          <p class="role-desc">Tiempos promedio de preparación y despacho por comanda.</p>
+        </div>
+      </div>
+
+      <div class="alert-box tip reveal">
+        <span class="alert-icon">📥</span>
+        <div><strong>Exportación:</strong> Cada pestaña incluye un botón <strong>"Exportar a CSV"</strong> con
+          codificación UTF-8 BOM, compatible con Microsoft Excel.</div>
+      </div>
+    </section>
+
+    <!-- ====== 20 · PANEL FINANCIERO ====== -->
+    <section class="manual-section" id="finanzas">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 20</div>
+        <h2 class="section-title">Panel Financiero (P&amp;L)</h2>
+        <p class="section-desc">Estado de resultados mensual. Ruta: <code>/finance</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon">💹</span> ¿Qué muestra?</h4>
+        <ul>
+          <li><strong>Pérdidas y Ganancias:</strong> Ingresos brutos (−) COGS (−) Gastos operativos (=) Utilidad Neta
+          </li>
+          <li><strong>Flujo de caja:</strong> Gráfico mensual de entradas y salidas de dinero</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 21 · ALERTAS ====== -->
+    <section class="manual-section" id="alertas">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 21</div>
+        <h2 class="section-title">Centro de Alertas</h2>
+        <p class="section-desc">Notificaciones proactivas de stock. Ruta: <code>/alerts</code></p>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon">🚦</span> Semaforización en tiempo real</h4>
+        <ul>
+          <li><span style="color:var(--yellow)">🟡 <strong>Bajo:</strong></span> Existencias entre el mínimo y el umbral
+            de seguridad</li>
+          <li><span style="color:#F97316">🟠 <strong>Crítico:</strong></span> Menos del 50% del stock mínimo</li>
+          <li><span style="color:var(--red)">🔴 <strong>Agotado:</strong></span> Existencia en cero — bloquea la venta
+            en POS o advierte al cocinero</li>
+        </ul>
+      </div>
+
+      <div class="alert-box info reveal">
+        <span class="alert-icon">📧</span>
+        <div>El botón <strong>"Verificar Stock"</strong> ejecuta un barrido inmediato y, si el servidor SMTP está
+          configurado, envía correos automáticos con las alertas detectadas.</div>
+      </div>
+    </section>
+
+    <!-- ====== 22 · PERSONAL ====== -->
+    <section class="manual-section" id="personal">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 22</div>
+        <h2 class="section-title">Personal y Talento Humano</h2>
+        <p class="section-desc">Gestión del equipo. Ruta: <code>/staff</code></p>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon">👥</span> Gestión de Personal y Turnos</h4>
+        <ul>
+          <li>Registro de colaboradores: nombre, cargo, salario base y tipo de contratación</li>
+          <li>Cargos disponibles: Chef, Cocinero, Cajero, Jefe de Sala, Mesero, Domiciliario</li>
+          <li>Programación de turnos semanales y control de asistencia</li>
+        </ul>
+      </div>
+      <div class="info-card reveal">
+        <h4><span class="card-icon">🔑</span> Usuarios del Sistema (pestaña Usuarios)</h4>
+        <ul>
+          <li>Creación de cuentas de acceso para el personal</li>
+          <li>Asignación de rol: <code>admin</code>, <code>cajero</code>, <code>cocinero</code>, <code>mesero</code>,
+            <code>cliente</code></li>
+          <li>Activación, bloqueo y restablecimiento de contraseña</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 23 · CONFIGURACIÓN ====== -->
+    <section class="manual-section" id="config">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 23</div>
+        <h2 class="section-title">Configuración del Sistema</h2>
+        <p class="section-desc">Variables maestras en una sola pantalla. Ruta: <code>/settings</code></p>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Pestaña: General</h4>
+        <ul>
+          <li><strong>Datos del establecimiento:</strong> Nombre comercial, NIT, teléfono, WhatsApp y dirección</li>
+          <li><strong>Identidad visual:</strong> Subida y actualización del logotipo oficial</li>
+          <li><strong>Servidor SMTP:</strong> Configuración del correo saliente para alertas automáticas (puerto 465 SSL
+            o 587 TLS)</li>
+          <li><strong>Manual de Usuario:</strong> Acceso directo para abrir el manual interactivo en formato web con navegación por capítulos</li>
+          <li><strong>Limpiar Caché Local:</strong> Renueva los datos cacheados en el navegador</li>
+        </ul>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span> Pestaña: Categorías</h4>
+        <ul>
+          <li>Listado interactivo con código, nombre, tipo (Alimentos, Bebidas, Servicios), icono y orden</li>
+          <li>Creación, edición y eliminación de categorías con confirmaciones seguras</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== 24 · DOCUMENTACIÓN ====== -->
+    <section class="manual-section" id="docs">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 24</div>
+        <h2 class="section-title">Documentación y SG-SST</h2>
+        <p class="section-desc">Repositorio documental y seguridad laboral. Rutas: <code>/documentacion</code> ·
+          <code>/sg-sst</code></p>
+      </div>
+      <div class="areas-grid reveal">
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+          <h5>Documentación Operativa</h5>
+          <p>Manuales BPM, servicio al salón, coctelería, formatos de temperatura y actas de arqueo</p>
+        </div>
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>
+          <h5>Carpeta Legal</h5>
+          <p>Control de vencimientos: RUT, Cámara de Comercio, Sayco & Acinpro, certificados de manipulación</p>
+        </div>
+        <div class="area-card">
+          <span class="area-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <h5>SG-SST</h5>
+          <p>Matriz de riesgos laborales, protocolos de emergencia y dotación de seguridad</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 25 · TECNOLOGÍA ====== -->
+    <section class="manual-section" id="tecnologia">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 25</div>
+        <h2 class="section-title">Tecnología del Sistema</h2>
+        <p class="section-desc">Características técnicas que trabajan por usted de forma invisible.</p>
+      </div>
+
+      <div class="info-card reveal">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Conexión en Tiempo Real (Socket.IO)</h4>
+        <p>Un indicador visual en la interfaz muestra el estado de la conexión. Las notificaciones de comandas y
+          despachos se transmiten <strong>instantáneamente</strong> entre salón, caja y cocina — sin necesidad de
+          recargar la página.</p>
+      </div>
+
+      <h4 style="margin-top:24px;margin-bottom:12px;color:var(--accent-light)" class="reveal">Caché Inteligente
+        Multinivel</h4>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px" class="reveal">Datos se almacenan
+        temporalmente para rapidez. Estos son los tiempos de vida (TTL):</p>
+
+      <div class="cache-grid reveal">
+        <div class="cache-item">
+          <div class="cache-ttl">5</div>
+          <div class="cache-unit">minutos</div>
+          <div class="cache-label">Catálogo de Productos</div>
+        </div>
+        <div class="cache-item">
+          <div class="cache-ttl">10</div>
+          <div class="cache-unit">minutos</div>
+          <div class="cache-label">Categorías de la Carta</div>
+        </div>
+        <div class="cache-item">
+          <div class="cache-ttl">2</div>
+          <div class="cache-unit">minutos</div>
+          <div class="cache-label">Alertas de Stock</div>
+        </div>
+        <div class="cache-item">
+          <div class="cache-ttl">30</div>
+          <div class="cache-unit">minutos</div>
+          <div class="cache-label">Configuración General</div>
+        </div>
+      </div>
+
+      <div class="info-card reveal" style="margin-top:20px">
+        <h4><span class="card-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span> Diseño Responsivo</h4>
+        <p>La interfaz se adapta automáticamente a monitores de escritorio, pantallas táctiles de cocina y dispositivos
+          móviles de supervisión.</p>
+      </div>
+    </section>
+
+    <!-- ====== 26 · SOLUCIÓN DE PROBLEMAS ====== -->
+    <section class="manual-section" id="troubleshooting">
+      <div class="section-header reveal">
+        <div class="section-number">Capítulo 26</div>
+        <h2 class="section-title">Solución de Problemas</h2>
+        <p class="section-desc">Haga clic en cada problema para ver la causa y cómo resolverlo.</p>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          <span class="t-symptom">El Dashboard no muestra datos recientes</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>Conexión a internet inestable o caché local expirada.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Recargue el navegador. Si persiste, vaya a <strong>Configuración → Limpiar Caché Local</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></span>
+          <span class="t-symptom">Los pedidos no suenan ni entran a Cocina</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>Conexión WebSocket interrumpida o volumen del dispositivo silenciado.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Verifique que el indicador Socket esté en verde. Autorice la reproducción de audio para el sitio en su
+                navegador.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          <span class="t-symptom">No llegan los correos de alerta de stock</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>Parámetros SMTP erróneos o contraseña de aplicación no configurada.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Vaya a <strong>Configuración → General → SMTP</strong>. Verifique el puerto y pruebe con una contraseña
+                de aplicación de Gmail/Outlook.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></span>
+          <span class="t-symptom">Error "403 Prohibido" al ingresar a un menú</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>Su usuario no tiene el rol necesario para ese módulo.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Ingrese con una cuenta de Administrador o solicite la actualización de permisos en
+                <strong>Personal</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="t-symptom">Error "401 No Autorizado"</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>El token de autenticación expiró por inactividad prolongada.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Cierre sesión y vuelva a ingresar sus credenciales en la pantalla de Login.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trouble-card reveal">
+        <div class="trouble-header" onclick="toggleTrouble(this)">
+          <span class="t-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+          <span class="t-symptom">No permite cobrar una venta en POS</span>
+          <span class="t-toggle">▼</span>
+        </div>
+        <div class="trouble-body">
+          <div class="trouble-inner">
+            <div class="trouble-col cause">
+              <h6>Causa probable</h6>
+              <p>No hay caja abierta en el turno actual o el talonario se agotó.</p>
+            </div>
+            <div class="trouble-col solution">
+              <h6>Solución recomendada</h6>
+              <p>Abra el turno en <strong>Caja</strong> y verifique la disponibilidad de números en
+                <strong>Talonarios</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="manual-footer">
+      <div class="footer-brand">La Soupe à l'Oignon & Marie Antoinette</div>
+      <p>Manual de Usuario — Documentación Oficial del Sistema · Versión 2.0 · Octubre 2026</p>
+    </footer>
+  </div>
+
+  <script>
+    // ====== PARTICLES ======
+    (function () {
+      const c = document.getElementById('particles');
+      if (!c) return;
+      for (let i = 0; i < 35; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (6 + Math.random() * 10) + 's';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        p.style.width = p.style.height = (1.5 + Math.random() * 2) + 'px';
+        c.appendChild(p);
+      }
+    })();
+
+    // ====== TOP NAV VISIBILITY ======
+    const topNav = document.getElementById('topNav');
+    const hero = document.querySelector('.hero');
+    function checkNav() {
+      if (!hero) return;
+      const r = hero.getBoundingClientRect();
+      topNav.classList.toggle('visible', r.bottom < 0);
+    }
+    window.addEventListener('scroll', checkNav, { passive: true });
+
+    // ====== SIDEBAR ======
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    let sidebarOpen = false;
+    function toggleSidebar() {
+      sidebarOpen = !sidebarOpen;
+      sidebar.classList.toggle('open', sidebarOpen);
+      mainContent.classList.toggle('shifted', sidebarOpen);
+    }
+
+    // Sidebar links
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const target = link.getAttribute('data-target');
+        const el = document.getElementById(target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        // Highlight
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    // Active section on scroll
+    const sections = document.querySelectorAll('.manual-section');
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    function updateActiveSection() {
+      let current = '';
+      sections.forEach(s => {
+        const top = s.getBoundingClientRect().top;
+        if (top < 200) current = s.id;
+      });
+      sidebarLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-target') === current);
+      });
+    }
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+
+    // ====== READING PROGRESS ======
+    const progressBar = document.getElementById('progressBar');
+    function updateProgress() {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+      progressBar.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+
+    // ====== SCROLL REVEAL ======
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ====== TROUBLESHOOTING ACCORDION ======
+    function toggleTrouble(header) {
+      const card = header.parentElement;
+      card.classList.toggle('open');
+    }
+
+    // ====== SEARCH ======
+    const searchBox = document.getElementById('searchBox');
+    if (searchBox) {
+      searchBox.addEventListener('input', () => {
+        const q = searchBox.value.toLowerCase().trim();
+        sections.forEach(s => {
+          if (!q) {
+            s.style.display = '';
+            return;
+          }
+          const text = s.textContent.toLowerCase();
+          s.style.display = text.includes(q) ? '' : 'none';
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>
