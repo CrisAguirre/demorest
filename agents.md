@@ -41,9 +41,9 @@ Frontend desplegado en Vercel, Backend en Render.
     3. `🍽️ Cocina y Carta` (`/dishes`, `/cocina`, `/barra`, `/servicio`)
     4. `💰 Caja y Ventas` (`/cash`, `/ticket-books`)
     5. `🛒 Compras y Costos` (`/suppliers`, `/purchases`, `/expenses`)
-    6. `👥 Equipo` (`/staff`)
-    7. `📈 Inteligencia` (`/finance`, `/reports`)
-    8. `⚙️ Administración` (`/documentacion`, `/sg-sst`, `/settings`)
+    6. `👥 Personal` (`/staff`)
+    7. `📈 Análisis` (`/finance`, `/reports`)
+    8. `💼 Administración` (`/documentacion`, `/sg-sst`, `/settings`)
   - Auto-despliegue del grupo padre al navegar a cualquier sub-ruta (`checkActiveRoutes()` con `NavigationEnd`) y resaltado visual `.has-active-child`.
   - Enlace de Landing exterior retirado del menú lateral para evitar distracciones.
 - **Configuración + Categorías Unificados (2026-10-11)**:
@@ -55,7 +55,10 @@ Frontend desplegado en Vercel, Backend en Render.
 - **Cobro**: aviso con consumidos + total → *Imprimir factura* / *Aceptar y liberar*. `pagoInmediato` en mesa libre.
 - **Inventario por áreas**: Insumos estilo reporte (PEDIR si stock < mínimo); Cocina (55 ítems)/Barra (24 ítems)/Servicio con requisición al API (`origen=requisicion`, fallback `localStorage`) y bandeja en Compras.
 - **Eventos**: calendario Mes/Semana/Día, drawer con plan de pagos por hitos manuales, BEO imprimible, formulario por secciones.
-- **Documentación** (`/documentacion`, admin): 4 pestañas — Manuales (7: operaciones app MAN-USU con PDF descargable + cocina/BPM, servicio, barra, caja, domicilios, eventos), Formatos (6: requisición, temperaturas, limpieza, arqueo, PQRS, domicilios), Contratos modelo (6: fijo, indefinido, OPS, SENA, proveedor, arriendo), Políticas y legal (6: RIT, calidad, saneamiento, manipulación, carpeta legal, alérgenos).
+- **Documentación** (`/documentacion`, admin): 4 pestañas — Manuales (7: operaciones app MAN-USU v2.0 con PDF descargable y nuevo Dashboard/Sidebar + cocina/BPM, servicio, barra, caja, domicilios, eventos), Formatos (6: requisición, temperaturas, limpieza, arqueo, PQRS, domicilios), Contratos modelo (6: fijo, indefinido, OPS, SENA, proveedor, arriendo), Políticas y legal (6: RIT, calidad, saneamiento, manipulación, carpeta legal, alérgenos).
+- **Manual de Usuario v2.0**:
+  - `MANUAL_DE_USUARIO.md` en raíz y en frontend con toda la arquitectura operativa, roles, procedimientos y troubleshooting paso a paso.
+  - Generador automatizado en `demorestbknd/generate-manual.js` (PDFKit) con diseño vectorizado de alta gama, portada estilo parisino y copia automática a `demorest/src/assets/manual.pdf` y `MANUAL_USUARIO.pdf`.
 - **SG-SST** (`/sg-sst`, admin): ciclo PHVA + KPIs (87% estándares); 5 pestañas — Matriz 8 peligros, 6 capacitaciones, 3 casos ATEL, 6 EPP/dotación, 6 documentos plan. CRUD local (`soupe-sgsst-v1`).
 - **Responsive global**: `styles.scss` con Mobile Fix Pack (cero scroll lateral, tablas con scroll interno, grids a 1 col, modales hoja inferior, inputs 16px).
 - **Scroll independiente**: layout `height: calc(100dvh-60px)` con overflow independiente en sidebar y contenido principal.

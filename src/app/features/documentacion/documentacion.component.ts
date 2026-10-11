@@ -18,7 +18,7 @@ interface DocItem {
 
 const SEED: DocItem[] = [
   // ── Manual de operaciones de la app (descarga PDF) ──
-  { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v1.0', responsable: 'Administración', actualizado: '2026-10-03', estado: 'Vigente', descripcion: 'Guía por menús del sidebar con ejemplos de datos reales y accesos (Vercel + admin). Incluye descarga en PDF.', contenido: 'Secciones: acceso y roles, mesas, POS, eventos, inventario cocina/barra/servicio, platos C1..C15, caja, dashboard, proveedores, compras, tiqueteras, gastos, personal, financiero, reportes, documentación, SG-SST, domicilios y configuración. Ver PDF adjunto.', archivoPdf: 'assets/MANUAL_USUARIO.pdf' },
+  { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v2.0', responsable: 'Administración', actualizado: '2026-10-11', estado: 'Vigente', descripcion: 'Guía oficial actualizada con nuevo Dashboard interactivo como Home, menú lateral colapsable (60px) en 8 grupos y Configuración unificada con Categorías. Incluye descarga en PDF.', contenido: 'Secciones: acceso y roles, sidebar colapsable, nuevo dashboard en vivo, mesas, POS, cocina KDS, eventos, inventario cocina/barra/servicio, platos C1..C15, caja, proveedores, compras, tiqueteras, gastos, personal, financiero, reportes, documentación, SG-SST, domicilios y configuración unificada. Ver PDF adjunto.', archivoPdf: 'assets/MANUAL_USUARIO.pdf' },
   // ── Manuales operativos ──
   { _id: 'd1', codigo: 'MAN-001', titulo: 'Manual de cocina y BPM', categoria: 'Cocina', tipo: 'manual', version: 'v3.2', responsable: 'Chef ejecutivo', actualizado: '2026-08-15', estado: 'Vigente', paginas: 48, descripcion: 'Buenas prácticas de manufactura, temperaturas, contaminación cruzada y mise en place.', contenido: '1. Higiene del personal\n2. Temperaturas (refrigeración 0-4°C, congelación -18°C)\n3. Contaminación cruzada: tablas por color\n4. Mise en place por turno\n5. Control de mermas' },
   { _id: 'd2', codigo: 'MAN-002', titulo: 'Manual de servicio a la mesa', categoria: 'Servicio', tipo: 'manual', version: 'v2.8', responsable: 'Jefe de servicio', actualizado: '2026-07-20', estado: 'Vigente', paginas: 36, descripcion: 'Secuencia de servicio, montaje, atención de quejas y ventas sugeridas.', contenido: '1. Bienvenida en <2 min\n2. Secuencia: bebida → entrada → fuerte → postre\n3. Montaje básico y de eventos\n4. Manejo de quejas (escuchar, disculparse, compensar)\n5. Venta sugerida' },
@@ -220,10 +220,15 @@ export class DocumentacionComponent implements OnInit {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
         this.docs = JSON.parse(raw);
-        // Migración: garantiza el manual de operaciones aunque hubiera caché vieja.
-        if (!this.docs.some(d => d._id === 'd0' || d.codigo === 'MAN-USU')) {
-          const seed = SEED.find(s => s._id === 'd0');
-          if (seed) { this.docs = [seed, ...this.docs]; this.persistir(); }
+        // Migración: actualiza el manual de operaciones a v2.0
+        const seed = SEED.find(s => s._id === 'd0');
+        const idx = this.docs.findIndex(d => d._id === 'd0' || d.codigo === 'MAN-USU');
+        if (seed && idx >= 0 && this.docs[idx].version !== 'v2.0') {
+          this.docs[idx] = { ...seed };
+          this.persistir();
+        } else if (seed && idx === -1) {
+          this.docs = [seed, ...this.docs];
+          this.persistir();
         }
         return;
       }

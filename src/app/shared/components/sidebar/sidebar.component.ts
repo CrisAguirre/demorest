@@ -283,16 +283,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
             { icon: '💸', label: 'Gastos',      route: '/expenses' }
           ]
         },
-        { icon: '👥', label: 'Equipo', route: '/staff' },
+        { icon: '👥', label: 'Personal', route: '/staff' },
         {
-          icon: '📈', label: 'Inteligencia', expanded: false,
+          icon: '📈', label: 'Análisis', expanded: false,
           subItems: [
             { icon: '🧠', label: 'Financiero', route: '/finance' },
             { icon: '📈', label: 'Reportes',   route: '/reports' }
           ]
         },
         {
-          icon: '⚙️', label: 'Administración', expanded: false,
+          icon: '💼', label: 'Administración', expanded: false,
           subItems: [
             { icon: '📚', label: 'Documentación', route: '/documentacion' },
             { icon: '🦺', label: 'SG-SST',         route: '/sg-sst' },
