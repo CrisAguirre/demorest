@@ -14,11 +14,6 @@ import { environment } from '../../../environments/environment';
         <h1>{{ isAdmin ? '⚙️ Configuración del Establecimiento' : '👤 Mi Perfil' }}</h1>
         <p class="subtitle" *ngIf="isAdmin">Ajustes generales del restaurante y gestión de categorías del menú</p>
       </div>
-      <div *ngIf="isAdmin" style="display:flex;gap:0.5rem">
-        <a href="/ficha_tecnica.html" target="_blank" rel="noopener noreferrer" class="btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem">
-          📋 Ficha Técnica ↗
-        </a>
-      </div>
     </div>
 
     <!-- CONFIGURACIÓN ADMIN (VISTA UNIFICADA) -->
@@ -53,6 +48,12 @@ import { environment } from '../../../environments/environment';
             </p>
           </div>
           <button class="btn-primary" (click)="saveSettings()">💾 Guardar Cambios</button>
+
+          <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
+            <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
+            <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>
+            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Borra datos en caché para forzar recarga fresca</p>
+          </div>
         </div>
 
         <div>
@@ -128,35 +129,7 @@ import { environment } from '../../../environments/environment';
             </div>
           </div>
 
-          <div class="neon-card" style="margin-top:1rem;border-color:var(--brand-gold)">
-            <h3 style="margin-bottom:1rem">📖 Manual de Usuario Interactivo</h3>
-            <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
-              Consulta la guía completa del sistema con navegación por capítulos, búsqueda en vivo, matriz de roles y resolución de problemas.
-            </p>
-            <a href="/MANUAL_DE_USUARIO.html" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">
-              📖 Abrir Manual Interactivo ↗
-            </a>
-            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña en formato web interactivo</p>
-          </div>
 
-          <div class="neon-card" style="margin-top:1rem;border-color:rgba(200, 215, 235, 0.45)">
-            <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-              <span>📋</span> Ficha Técnica Comercial & Alcances
-            </h3>
-            <p style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)">
-              Landing publicitaria interactiva con los 12 módulos en perspectiva 3D Drift Wall, compatibilidad con sistemas POS actuales, frameworks vigentes y licenciamiento GNU GPL v3.0 (pago único y derechos de propiedad intelectual).
-            </p>
-            <a href="/ficha_tecnica.html" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;background:linear-gradient(135deg, #374151, #1F2937);border:1px solid rgba(220,230,245,0.3);color:#F9FAFB">
-              🚀 Abrir Ficha Técnica ↗
-            </a>
-            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Se abre en una nueva pestaña (100% independiente del menú)</p>
-          </div>
-
-          <div class="neon-card" style="margin-top:1rem;border-color:#D32F2F">
-            <h3 style="margin-bottom:1rem">🗑️ Mantenimiento</h3>
-            <button class="btn-outline" style="color:#D32F2F" (click)="clearCache()">🧹 Limpiar Caché Local</button>
-            <p style="font-size:0.75rem;margin-top:0.5rem;color:var(--text-muted)">Borra datos en caché para forzar recarga fresca</p>
-          </div>
         </div>
       </div>
 
