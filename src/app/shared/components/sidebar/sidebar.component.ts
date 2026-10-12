@@ -40,8 +40,8 @@ interface MenuItem {
           </a>
 
           <!-- Enlace con Submenú (Acordeón) -->
-          <div *ngIf="!item.divider && item.subItems" class="nav-item-group">
-            <div class="nav-item nav-parent" [class.has-active-child]="hasActiveChild(item)"
+          <div *ngIf="!item.divider && item.subItems" class="nav-item-group" [class.is-expanded]="item.expanded">
+            <div class="nav-item nav-parent" [class.has-active-child]="hasActiveChild(item)" [class.is-open]="item.expanded"
                  (click)="item.expanded = !item.expanded; $event.preventDefault()" style="cursor: pointer;" [attr.aria-label]="item.label"
                  (mouseenter)="showTip($event, item.label)" (mouseleave)="hideTip()"
                  (focus)="showTip($event, item.label)" (blur)="hideTip()"
@@ -102,6 +102,24 @@ interface MenuItem {
       color: var(--text-secondary); padding: .9rem 1.5rem .3rem;
       opacity: .6;
     }
+    .nav-item-group {
+      margin: 2px 0.35rem;
+      border-radius: 8px;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nav-item-group.is-expanded {
+      background: rgba(212,175,55,0.04);
+      box-shadow: inset 0 0 0 1px rgba(212,175,55,0.18), 0 2px 6px rgba(0,0,0,0.03);
+      padding-bottom: 4px;
+    }
+    .nav-item-group.is-expanded .nav-parent {
+      background: rgba(212,175,55,0.08);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .nav-item-group.is-expanded .nav-arrow {
+      color: var(--brand-gold);
+    }
     .nav-item {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.65rem 1rem; margin: 0 0.5rem;
@@ -115,25 +133,38 @@ interface MenuItem {
       background: rgba(212,175,55,0.06);
       font-weight: 600;
     }
-    .nav-arrow { margin-left: auto; font-size: 0.7rem; transition: transform 0.2s; }
+    .nav-arrow {
+      margin-left: auto; font-size: 0.65rem;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
+    }
     .nav-arrow.rotated { transform: rotate(180deg); }
     .nav-subitems {
       display: flex; flex-direction: column; gap: 2px;
-      margin: 0.2rem 0.5rem 0.2rem 2.5rem;
-      border-left: 1px solid var(--border);
-      padding-left: 0.5rem;
+      margin: 0.3rem 0.5rem 0.2rem 1.85rem;
+      border-left: 2px solid var(--brand-gold);
+      padding-left: 0.6rem;
+      animation: subitemsSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes subitemsSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .nav-subitem {
       display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.8rem;
-      color: var(--text-secondary); transition: all 0.15s;
+      padding: 0.45rem 0.7rem; border-radius: 6px; font-size: 0.8rem;
+      color: var(--text-secondary); transition: all 0.18s ease;
       text-decoration: none; position: relative;
       white-space: nowrap; overflow: hidden;
     }
-    .nav-subitem:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
+    .nav-subitem:hover {
+      background: rgba(212,175,55,0.08);
+      color: var(--text-primary);
+      transform: translateX(3px);
+    }
     .nav-subitem.active {
       color: var(--brand-gold); font-weight: 600;
-      background: rgba(212,175,55,0.05);
+      background: rgba(212,175,55,0.1);
+      box-shadow: inset 0 0 0 1px rgba(212,175,55,0.25);
     }
     .nav-item:hover { background: rgba(212,175,55,0.06); color: var(--text-primary); }
     .nav-item.active {
@@ -164,9 +195,15 @@ interface MenuItem {
     .nav-label { transition: opacity 0.2s; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
     .collapsed .nav-item { justify-content: center; padding: 0.65rem; }
-    .collapsed .nav-item-group { display: flex; flex-direction: column; align-items: stretch; }
+    .collapsed .nav-item-group { display: flex; flex-direction: column; align-items: stretch; margin: 2px 2px; }
+    .collapsed .nav-item-group.is-expanded {
+      background: rgba(212,175,55,0.05);
+      box-shadow: inset 0 0 0 1px rgba(212,175,55,0.2);
+      padding-bottom: 2px;
+    }
     .collapsed .nav-subitems { margin: 0.15rem 0.25rem 0.35rem; padding: 0; border-left: none; align-items: stretch; }
     .collapsed .nav-subitem { justify-content: center; padding: 0.65rem; margin: 0; }
+    .collapsed .nav-subitem:hover { transform: none; }
     .collapsed .nav-subitem .nav-label { display: none; }
     .sidebar-tip {
       position: fixed; z-index: 9999;

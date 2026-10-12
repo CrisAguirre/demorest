@@ -1,10 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { registerLocaleData } from '@angular/common';
+import localeEsCo from '@angular/common/locales/es-CO';
 import { DashboardComponent } from './dashboard.component';
 import { ApiService } from '@core/services/api.service';
 import { AuthService } from '@core/services/auth.service';
 import { WebSocketService } from '@core/services/websocket.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+
+registerLocaleData(localeEsCo);
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
