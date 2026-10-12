@@ -20,6 +20,8 @@ interface DocItem {
 const SEED: DocItem[] = [
   // ── Manual de operaciones de la app (Acceso HTML Interactivo) ──
   { _id: 'd0', codigo: 'MAN-USU', titulo: 'Manual de operaciones de la aplicación', categoria: 'Sistema', tipo: 'manual', version: 'v2.0', responsable: 'Administración', actualizado: '2026-10-11', estado: 'Vigente', paginas: 26, descripcion: 'Guía oficial interactiva del sistema con navegación por capítulos, búsqueda en vivo, arquitectura de 8 módulos y solución de incidencias en pantalla completa.', contenido: 'MANUAL DE OPERACIONES V2.0 — SISTEMA DE GESTIÓN INTEGRAL PARA RESTAURANTES\n\nAbra el manual interactivo en formato web para explorar los 26 capítulos completos con diagramas, explicaciones paso a paso y solución de problemas.', enlaceHtml: '/MANUAL_DE_USUARIO.html' },
+  // ── Ficha Técnica Comercial & Arquitectura (Acceso HTML Interactivo) ──
+  { _id: 'd_ficha', codigo: 'FCH-TEC', titulo: 'Ficha Técnica Comercial & Arquitectura', categoria: 'Sistema', tipo: 'manual', version: 'v2.0', responsable: 'Arquitectura & Desarrollo', actualizado: '2026-10-11', estado: 'Vigente', paginas: 18, descripcion: 'Especificación comercial y técnica con perspectiva 3D Drift Wall de los 12 módulos, compatibilidad de hardware POS, stack y licenciamiento GNU GPL v3.0.', contenido: 'FICHA TÉCNICA COMERCIAL & ALCANCES V2.0 — SISTEMA DE GESTIÓN INTEGRAL PARA RESTAURANTES\n\nAbra la ficha técnica interactiva en formato web para explorar los 12 módulos funcionales, especificaciones de hardware, stack full-stack moderno y licenciamiento perpetuo.', enlaceHtml: '/ficha_tecnica.html' },
   // ── Manuales operativos ──
   { _id: 'd1', codigo: 'MAN-001', titulo: 'Manual de cocina y BPM', categoria: 'Cocina', tipo: 'manual', version: 'v3.2', responsable: 'Chef ejecutivo', actualizado: '2026-08-15', estado: 'Vigente', paginas: 48, descripcion: 'Buenas prácticas de manufactura, temperaturas, contaminación cruzada y mise en place.', contenido: '1. Higiene del personal\n2. Temperaturas (refrigeración 0-4°C, congelación -18°C)\n3. Contaminación cruzada: tablas por color\n4. Mise en place por turno\n5. Control de mermas' },
   { _id: 'd2', codigo: 'MAN-002', titulo: 'Manual de servicio a la mesa', categoria: 'Servicio', tipo: 'manual', version: 'v2.8', responsable: 'Jefe de servicio', actualizado: '2026-07-20', estado: 'Vigente', paginas: 36, descripcion: 'Secuencia de servicio, montaje, atención de quejas y ventas sugeridas.', contenido: '1. Bienvenida en <2 min\n2. Secuencia: bebida → entrada → fuerte → postre\n3. Montaje básico y de eventos\n4. Manejo de quejas (escuchar, disculparse, compensar)\n5. Venta sugerida' },
@@ -97,8 +99,10 @@ const LS_KEY = 'soupe-docs-v1';
           <p class="doc-desc">{{ d.descripcion }}</p>
           <div class="doc-meta">👤 {{ d.responsable }} · 📅 {{ d.actualizado }} · 📄 {{ d.paginas }} pág.</div>
           <div class="doc-actions">
-            <a *ngIf="d.enlaceHtml" class="btn-primary btn-sm" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem">📖 Abrir Manual HTML ↗</a>
-            <button *ngIf="!d.enlaceHtml" class="btn-secondary btn-sm" (click)="ver(d)">👁️ Ver</button>
+            <a *ngIf="d.enlaceHtml" class="btn-primary btn-sm" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem">
+              {{ d.codigo === 'FCH-TEC' ? '📋 Abrir Ficha Técnica ↗' : '📖 Abrir Manual HTML ↗' }}
+            </a>
+            <button class="btn-secondary btn-sm" (click)="ver(d)">👁️ {{ d.enlaceHtml ? 'Detalle' : 'Ver' }}</button>
             <a *ngIf="d.archivoPdf && !d.enlaceHtml" class="btn-secondary btn-sm" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
             <button *ngIf="!d.enlaceHtml" class="btn-secondary btn-sm" (click)="descargar(d)">⬇️ Plantilla</button>
             <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
@@ -123,8 +127,8 @@ const LS_KEY = 'soupe-docs-v1';
               <td>{{ d.actualizado }}</td>
               <td><span class="badge" [ngClass]="badge(d.estado)">{{ d.estado }}</span></td>
               <td class="actions">
-                <a *ngIf="d.enlaceHtml" class="btn-icon" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" title="Abrir Manual HTML" style="text-decoration:none">📖</a>
-                <button *ngIf="!d.enlaceHtml" class="btn-icon" (click)="ver(d)" title="Ver">👁️</button>
+                <a *ngIf="d.enlaceHtml" class="btn-icon" [href]="d.enlaceHtml" target="_blank" rel="noopener noreferrer" [title]="d.codigo === 'FCH-TEC' ? 'Abrir Ficha Técnica' : 'Abrir Manual HTML'" style="text-decoration:none">{{ d.codigo === 'FCH-TEC' ? '📋' : '📖' }}</a>
+                <button class="btn-icon" (click)="ver(d)" title="Ver">👁️</button>
                 <a *ngIf="d.archivoPdf && !d.enlaceHtml" class="btn-icon" [href]="d.archivoPdf" download="MANUAL_USUARIO.pdf" title="Descargar PDF">📕</a>
                 <button *ngIf="!d.enlaceHtml" class="btn-icon" (click)="descargar(d)" title="Descargar plantilla">⬇️</button>
                 <button class="btn-icon" (click)="editar(d)" title="Editar">✏️</button>
@@ -143,7 +147,9 @@ const LS_KEY = 'soupe-docs-v1';
           <p style="margin:.75rem 0">{{ seleccionado.descripcion }}</p>
           <pre class="preview">{{ seleccionado.contenido || 'Contenido ficticio de demostración.' }}</pre>
           <div class="modal-actions">
-            <a *ngIf="seleccionado.enlaceHtml" class="btn-primary" [href]="seleccionado.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">📖 Abrir Manual HTML ↗</a>
+            <a *ngIf="seleccionado.enlaceHtml" class="btn-primary" [href]="seleccionado.enlaceHtml" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem">
+              {{ seleccionado.codigo === 'FCH-TEC' ? '📋 Abrir Ficha Técnica ↗' : '📖 Abrir Manual HTML ↗' }}
+            </a>
             <a *ngIf="seleccionado.archivoPdf && !seleccionado.enlaceHtml" class="btn-secondary" [href]="seleccionado.archivoPdf" download="MANUAL_USUARIO.pdf">📕 Descargar PDF</a>
             <button *ngIf="!seleccionado.enlaceHtml" class="btn-secondary" (click)="descargar(seleccionado)">⬇️ Descargar plantilla</button>
             <button class="btn-outline" (click)="seleccionado=null">Cerrar</button>
@@ -225,15 +231,24 @@ export class DocumentacionComponent implements OnInit {
       if (raw) {
         this.docs = JSON.parse(raw);
         // Migración: actualiza el manual de operaciones a v2.0
-        const seed = SEED.find(s => s._id === 'd0');
-        const idx = this.docs.findIndex(d => d._id === 'd0' || d.codigo === 'MAN-USU');
-        if (seed && idx >= 0 && (!this.docs[idx].enlaceHtml || this.docs[idx].archivoPdf)) {
-          this.docs[idx] = { ...seed };
-          this.persistir();
-        } else if (seed && idx === -1) {
-          this.docs = [seed, ...this.docs];
-          this.persistir();
+        const seedManual = SEED.find(s => s._id === 'd0');
+        const idxManual = this.docs.findIndex(d => d._id === 'd0' || d.codigo === 'MAN-USU');
+        if (seedManual && idxManual >= 0) {
+          this.docs[idxManual] = { ...seedManual };
+        } else if (seedManual && idxManual === -1) {
+          this.docs = [seedManual, ...this.docs];
         }
+
+        // Migración: asegura la Ficha Técnica en la documentación
+        const seedFicha = SEED.find(s => s._id === 'd_ficha');
+        const idxFicha = this.docs.findIndex(d => d._id === 'd_ficha' || d.codigo === 'FCH-TEC');
+        if (seedFicha && idxFicha >= 0) {
+          this.docs[idxFicha] = { ...seedFicha };
+        } else if (seedFicha && idxFicha === -1) {
+          const insertIdx = this.docs.findIndex(d => d._id === 'd0') + 1;
+          this.docs.splice(insertIdx > 0 ? insertIdx : 0, 0, seedFicha);
+        }
+        this.persistir();
         return;
       }
     } catch { /* semilla */ }
