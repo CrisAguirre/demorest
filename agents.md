@@ -48,6 +48,7 @@ Frontend desplegado en Vercel, Backend en Render.
     6. `Análisis` (`/finance`, `/reports`)
     7. `Administración` (`/staff`, `/documentacion`, `/sg-sst`, `/settings`)
   - Auto-despliegue del grupo padre al navegar a cualquier sub-ruta (`checkActiveRoutes()` con `NavigationEnd`) y resaltado visual `.has-active-child`.
+  - **Demarcación Visual de Acordeones Abiertos (`.is-expanded`)**: Al expandir cualquier menú padre, el contenedor adquiere un marco dorado sutil (`box-shadow: inset 0 0 0 1px rgba(212,175,55,0.18)`), fondo tenue de contraste (`rgba(212,175,55,0.04)`), realce del encabezado padre con rotación del indicador y animación fluida `subitemsSlide` con guía vertical izquierda (`border-left: 2px solid var(--brand-gold)`).
 
 - **Configuración del Establecimiento (`/settings`)**:
   - Módulo `/settings` con barra de pestañas: `⚙️ General` y `📂 Categorías`.
@@ -104,11 +105,11 @@ npm test                           # Suite completa Jest
 - **Frontend**:
   - `npm run build` (producción) pasa al 100% en verde con código de salida 0.
   - `npx stylelint "src/**/*.scss"` pasa sin ningún problema (0 errores, 0 warnings).
-  - Tests unitarios de componentes actualizados (`DashboardComponent` con cobertura de mocks para `WebSocketService`, `getTables` y `getCurrentCash`).
+  - Tests unitarios y compilación con soporte de internacionalización `es-CO` (`registerLocaleData(localeEsCo)`) en `AppModule` y specs.
 - **Backend (`demorestbknd`)**:
   - `npx eslint src/` pasa al 100% limpio (0 errores, 0 warnings) bajo las reglas Airbnb-base v15.
   - Corregido `src/controllers/sale.controller.js` eliminando variables huérfanas (`settings`) y alineando saltos de línea de parámetros de llamada de funciones (`recordMovement`).
-  - Suite de pruebas Jest (`npm test`) validando controladores de ventas, insumos, alertas, reportes y finanzas.
+  - Suite de pruebas Jest (`npm test`) validando al 100% con **34 suites pasadas de 34** y **241 pruebas pasadas de 241**.
 - **Regla tras cada edición**: `ng build` + `stylelint` sin errores en frontend; `eslint` + `jest` sin errores en backend.
 
 ## Reglas de trabajo
