@@ -69,7 +69,7 @@ describe('LoginComponent', () => {
       component.onLogin();
 
       expect(auth.login).toHaveBeenCalledWith('a@b.com', 'pass');
-      expect(router.navigate).toHaveBeenCalledWith(['/mesas']);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
     it('should set error on login failure', () => {
@@ -87,7 +87,7 @@ describe('LoginComponent', () => {
       component.onRegister();
 
       expect(auth.registerClient).toHaveBeenCalledWith(component.registerData);
-      expect(router.navigate).toHaveBeenCalledWith(['/mesas']);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
     it('should set error on register failure', () => {
