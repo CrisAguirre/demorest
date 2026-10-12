@@ -1646,6 +1646,371 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+
+    /* ==========================================================
+       MOBILE & TABLET CAROUSEL (≤1024px)
+       Replaces the 3D DriftWall on touch and smaller viewports
+       ========================================================== */
+
+    .mobile-drift-carousel {
+      display: none; /* Hidden on desktop >1024px */
+      width: 100%;
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 0 16px;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mobile-carousel-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-accent);
+      padding: 8px 18px;
+      border-radius: 30px;
+      margin-bottom: 22px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .mc-hint-arrow {
+      color: #D4A853;
+      font-size: 1.1rem;
+      font-weight: 700;
+      animation: mcHintNudge 1.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes mcHintNudge {
+      0% { transform: translateX(-3px); opacity: 0.5; }
+      100% { transform: translateX(3px); opacity: 1; }
+    }
+
+    .mobile-carousel-viewport {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 22px;
+      position: relative;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .mobile-carousel-track {
+      display: flex;
+      width: 100%;
+      transition: transform 0.42s cubic-bezier(0.2, 0.9, 0.3, 1);
+      will-change: transform;
+    }
+
+    .mobile-carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px;
+    }
+
+    .mobile-module-card {
+      position: relative;
+      background: rgba(14, 20, 32, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(200, 215, 235, 0.22);
+      border-radius: 20px;
+      padding: 26px 22px 22px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6), 0 0 35px rgba(200, 215, 235, 0.06);
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(230, 240, 255, 0.8), transparent);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .mobile-module-card:active {
+      transform: scale(0.985);
+    }
+
+    .mc-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .mc-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .mc-module-num {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .mc-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mc-icon-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .mc-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-bottom: 0 !important;
+    }
+
+    .mc-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .mc-title-group h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .mc-tagline {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .mc-desc {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin: 2px 0 4px;
+    }
+
+    .mc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .mc-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-light);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(200, 215, 235, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .mc-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(200, 215, 235, 0.12), rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--border-accent);
+      color: #FFFFFF;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 4px;
+      font-family: inherit;
+    }
+
+    .mc-action-btn:hover {
+      background: linear-gradient(135deg, rgba(200, 215, 235, 0.22), rgba(255, 255, 255, 0.08));
+      border-color: rgba(240, 248, 255, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .mc-action-btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      transition: transform 0.25s ease;
+    }
+
+    .mc-action-btn:hover svg {
+      transform: translate(2px, -2px);
+    }
+
+    /* Controls Bar */
+    .mobile-carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .mobile-carousel-nav {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      outline: none;
+      flex-shrink: 0;
+    }
+
+    .mobile-carousel-nav:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(240, 248, 255, 0.5);
+      transform: scale(1.08);
+    }
+
+    .mobile-carousel-nav:active {
+      transform: scale(0.94);
+    }
+
+    .mobile-carousel-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 220px;
+    }
+
+    .mc-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .mc-dot.active {
+      width: 20px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #38BDF8, #818CF8);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    .mobile-carousel-counter {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .mobile-carousel-counter span {
+      color: #38BDF8;
+      font-weight: 700;
+    }
+
+    /* Responsive Rules for Mobile/Tablet Carousel */
+    @media (max-width: 1024px) {
+      /* Hide the 3D drift wall viewport, toolbar and footer hint */
+      .driftwall-viewport,
+      .driftwall-toolbar,
+      .driftwall-footer-hint {
+        display: none !important;
+      }
+
+      /* Show the touch-friendly mobile carousel */
+      .mobile-drift-carousel {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .mobile-module-card {
+        padding: 22px 18px 20px;
+      }
+
+      .mc-icon-title-wrap {
+        gap: 12px;
+      }
+
+      .mc-icon {
+        width: 44px;
+        height: 44px;
+      }
+
+      .mc-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .mc-title-group h3 {
+        font-size: 1.18rem;
+      }
+
+      .mc-desc {
+        font-size: 0.84rem;
+      }
+
+      .mobile-carousel-nav {
+        width: 38px;
+        height: 38px;
+      }
+    }
 </style>
 </head>
 <body>
@@ -2012,6 +2377,417 @@
         <span>✦ Pasa el cursor sobre cualquier panel para elevarlo en 3D hacia la pantalla</span>
         <span>✦ Mueve el cursor para inclinar la perspectiva</span>
         <span>✦ Arrastra con el mouse o dedo para desplazar la pared</span>
+      </div>
+    </div>
+
+    <!-- ====== MOBILE & TABLET CAROUSEL (≤1024px) ====== -->
+    <div class="mobile-drift-carousel" id="mobileDriftCarousel">
+      <!-- Hint Pill -->
+      <div class="mobile-carousel-hint">
+        <span class="mc-hint-arrow">‹</span>
+        <span>Desliza para explorar módulos</span>
+        <span class="mc-hint-arrow">›</span>
+      </div>
+
+      <!-- Viewport & Track -->
+      <div class="mobile-carousel-viewport" id="mobileCarouselViewport">
+        <div class="mobile-carousel-track" id="mobileCarouselTrack">
+
+          <!-- Slide 1: Dashboard -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('dashboard')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Operación en Vivo</span>
+                <span class="mc-module-num">01 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-dashboard">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Dashboard Inteligente</h3>
+                    <div class="mc-tagline">Centro de control integral</div>
+                  </div>
+                </div>
+                <p class="mc-desc">KPIs en tiempo real, ventas del día, ocupación de salones y alertas críticas operativas.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Tiempo Real</span>
+                  <span class="mc-tag">KPIs</span>
+                  <span class="mc-tag">Alertas</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('dashboard')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Mesas -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('mesas')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Salones & Servicio</span>
+                <span class="mc-module-num">02 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-mesas">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="12" rx="2.5"/><line x1="6" y1="17" x2="6" y2="21"/><line x1="18" y1="17" x2="18" y2="21"/><circle cx="12" cy="11" r="2.5"/><path d="M4 11h2"/><path d="M18 11h2"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Mapa de Mesas & Salones</h3>
+                    <div class="mc-tagline">Plano interactivo en tiempo real</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Visualización interactiva por salones con estados en vivo (libre, ocupada, reservada) y apertura ágil.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Interactivo</span>
+                  <span class="mc-tag">Zonas</span>
+                  <span class="mc-tag">Salones</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('mesas')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: POS -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('pos')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Facturación Rápida</span>
+                <span class="mc-module-num">03 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-pos">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M7 21h10"/><path d="M12 16v5"/><path d="M7 8h10"/><circle cx="8" cy="11.5" r="0.75" fill="currentColor"/><circle cx="12" cy="11.5" r="0.75" fill="currentColor"/><circle cx="16" cy="11.5" r="0.75" fill="currentColor"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Punto de Venta (POS)</h3>
+                    <div class="mc-tagline">Comandas táctiles y cuentas</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Comandas inteligentes ultra veloces, impresión selectiva, cuentas separadas y múltiples medios de pago.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Térmica POS</span>
+                  <span class="mc-tag">Cuentas Separadas</span>
+                  <span class="mc-tag">Rápido</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('pos')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Cocina -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('cocina')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Producción</span>
+                <span class="mc-module-num">04 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-cocina">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 2v4"/><path d="M10 2v4"/><path d="M14 2v4"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Cocina & KDS</h3>
+                    <div class="mc-tagline">Pantallas Kanban sincronizadas</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Producción sincronizada de cocina, barra y servicio con pantallas Kanban y timbres de comanda.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Kanban</span>
+                  <span class="mc-tag">Web Audio</span>
+                  <span class="mc-tag">Tiempos</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('cocina')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Domicilios -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('domicilios')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Ventas Externas</span>
+                <span class="mc-module-num">05 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-domicilios">
+                    <svg viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M15 6h4l2 5v4h-2.5"/><path d="M12 17.5V11l-3-3 4-3 2 3h2"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Domicilios & Delivery</h3>
+                    <div class="mc-tagline">Despachos y logística integrada</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Delivery integrado con tracking de estados, tiempos de promesa y asignación de repartidores.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Tracking</span>
+                  <span class="mc-tag">Repartidores</span>
+                  <span class="mc-tag">Tiempos</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('domicilios')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Eventos -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('eventos')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Reservas Especiales</span>
+                <span class="mc-module-num">06 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-eventos">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2.5"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m12 13 1 2 2.5.5-1.8 1.8.4 2.5-2.1-1.1-2.1 1.1.4-2.5-1.8-1.8 2.5-.5z"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Eventos & Banquetes</h3>
+                    <div class="mc-tagline">Minutas técnicas y cronogramas</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Calendario visual de reservas, plan de pagos por hitos, contratos de catering y BEO imprimible.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">BEO 1-Clic</span>
+                  <span class="mc-tag">Hitos</span>
+                  <span class="mc-tag">Minuta</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('eventos')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Inventario -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('inventario')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Almacén & Stock</span>
+                <span class="mc-module-num">07 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-inventario">
+                    <svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Inventario por Áreas</h3>
+                    <div class="mc-tagline">Control de materias primas</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Control discriminado en cocina, barra y servicio con recetas estándar, mermas y alertas automáticas.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Recetas</span>
+                  <span class="mc-tag">Stock Mínimo</span>
+                  <span class="mc-tag">Mermas</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('inventario')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 8: Caja -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('caja')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Control Financiero</span>
+                <span class="mc-module-num">08 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-caja">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/><path d="M2 10V8a2 2 0 0 1 2-2h2"/><path d="M22 10V8a2 2 0 0 0-2-2h-2"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Caja & Arqueos</h3>
+                    <div class="mc-tagline">Auditoría y cierres blindados</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Apertura con base, registro de movimientos, arqueos ciegos por turno y reconciliación Z auditada.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Cierre Z</span>
+                  <span class="mc-tag">Arqueo Ciego</span>
+                  <span class="mc-tag">Auditoría</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('caja')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 9: Compras -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('compras')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Abastecimiento</span>
+                <span class="mc-module-num">09 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-compras">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="20" cy="21" r="1.5"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Compras & Proveedores</h3>
+                    <div class="mc-tagline">Costeo y órdenes automáticas</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Requisiciones por área, órdenes de compra y catálogo con trazabilidad de costos e historial.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">OC Auto</span>
+                  <span class="mc-tag">Proveedores</span>
+                  <span class="mc-tag">Costeo</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('compras')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 10: SG-SST -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('sgsst')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Seguridad Laboral</span>
+                <span class="mc-module-num">10 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-sgsst">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>SG-SST Ocupacional</h3>
+                    <div class="mc-tagline">Salud y prevención laboral</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Seguridad y salud en el trabajo con ciclo PHVA, capacitaciones, matriz de riesgos y dotación EPP.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Ciclo PHVA</span>
+                  <span class="mc-tag">Dotación EPP</span>
+                  <span class="mc-tag">Riesgos</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('sgsst')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 11: Reportes -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('reportes')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Inteligencia</span>
+                <span class="mc-module-num">11 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-reportes">
+                    <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/><circle cx="13.5" cy="15.5" r="1.5" fill="currentColor"/><circle cx="8.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="23" cy="6" r="1.5" fill="currentColor"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Reportes & Análisis</h3>
+                    <div class="mc-tagline">Finanzas y rentabilidad menú</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Informes financieros detallados, productos estrella, matriz BCG e ingeniería del menú para maximizar margen.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">Finanzas</span>
+                  <span class="mc-tag">Matriz BCG</span>
+                  <span class="mc-tag">Márgenes</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('reportes')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 12: Personal -->
+          <div class="mobile-carousel-slide">
+            <div class="mobile-module-card" onclick="openModuleModal('personal')">
+              <div class="mc-header-row">
+                <span class="mc-badge">Talento Humano</span>
+                <span class="mc-module-num">12 / 12</span>
+              </div>
+              <div class="mc-body">
+                <div class="mc-icon-title-wrap">
+                  <div class="mc-icon drift-emoji mod-personal">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="mc-title-group">
+                    <h3>Gestión de Personal</h3>
+                    <div class="mc-tagline">Roles, turnos y matriz PIN</div>
+                  </div>
+                </div>
+                <p class="mc-desc">Administración de colaboradores, turnos, control de perfiles y matriz de permisos por rol de usuario.</p>
+                <div class="mc-tags">
+                  <span class="mc-tag">5 Roles</span>
+                  <span class="mc-tag">PIN Rápido</span>
+                  <span class="mc-tag">Seguridad</span>
+                </div>
+                <button type="button" class="mc-action-btn" onclick="event.stopPropagation(); openModuleModal('personal')">
+                  <span>Ver Ficha Técnica Completa</span>
+                  <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Controls: Prev, Dots, Next -->
+      <div class="mobile-carousel-controls">
+        <button class="mobile-carousel-nav prev" id="mobileCarouselPrev" aria-label="Módulo anterior" onclick="mobileCarouselPrev()">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="mobile-carousel-dots" id="mobileCarouselDots"></div>
+
+        <button class="mobile-carousel-nav next" id="mobileCarouselNext" aria-label="Siguiente módulo" onclick="mobileCarouselNext()">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Counter -->
+      <div class="mobile-carousel-counter">
+        <span id="mobileCarouselCurrent">1</span> de 12 módulos
       </div>
     </div>
 
@@ -3106,6 +3882,119 @@
         navigateModule(1);
       }
     });
+
+    // ====== MOBILE & TABLET CAROUSEL CONTROLLER (≤1024px) ======
+    let mobileCurrentSlide = 0;
+    const mobileTotalSlides = 12;
+    let mobileAutoplayTimer = null;
+    let touchStartX = 0;
+    let touchDeltaX = 0;
+    let isTouching = false;
+
+    function mobileCarouselGoTo(index) {
+      if (index < 0) index = mobileTotalSlides - 1;
+      if (index >= mobileTotalSlides) index = 0;
+      mobileCurrentSlide = index;
+
+      const track = document.getElementById('mobileCarouselTrack');
+      if (track) {
+        track.style.transform = 'translateX(-' + (mobileCurrentSlide * 100) + '%)';
+      }
+
+      // Update dots
+      const dots = document.querySelectorAll('.mobile-carousel-dots .mc-dot');
+      dots.forEach((dot, idx) => {
+        if (idx === mobileCurrentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      // Update counter
+      const counterEl = document.getElementById('mobileCarouselCurrent');
+      if (counterEl) {
+        counterEl.textContent = mobileCurrentSlide + 1;
+      }
+    }
+
+    function mobileCarouselNext() {
+      mobileCarouselGoTo(mobileCurrentSlide + 1);
+      resetMobileAutoplay();
+    }
+
+    function mobileCarouselPrev() {
+      mobileCarouselGoTo(mobileCurrentSlide - 1);
+      resetMobileAutoplay();
+    }
+
+    function startMobileAutoplay() {
+      if (mobileAutoplayTimer) clearInterval(mobileAutoplayTimer);
+      mobileAutoplayTimer = setInterval(() => {
+        if (!isModalOpen && window.innerWidth <= 1024) {
+          mobileCarouselGoTo(mobileCurrentSlide + 1);
+        }
+      }, 6000);
+    }
+
+    function resetMobileAutoplay() {
+      if (mobileAutoplayTimer) clearInterval(mobileAutoplayTimer);
+      startMobileAutoplay();
+    }
+
+    function initMobileCarousel() {
+      // Generate dots
+      const dotsContainer = document.getElementById('mobileCarouselDots');
+      if (dotsContainer && dotsContainer.children.length === 0) {
+        for (let i = 0; i < mobileTotalSlides; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'mc-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', 'Ir al módulo ' + (i + 1));
+          dot.onclick = () => {
+            mobileCarouselGoTo(i);
+            resetMobileAutoplay();
+          };
+          dotsContainer.appendChild(dot);
+        }
+      }
+
+      // Touch swipe gestures
+      const viewport = document.getElementById('mobileCarouselViewport');
+      if (viewport) {
+        viewport.addEventListener('touchstart', (e) => {
+          if (e.touches && e.touches[0]) {
+            touchStartX = e.touches[0].clientX;
+            touchDeltaX = 0;
+            isTouching = true;
+          }
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+          if (!isTouching || !e.touches || !e.touches[0]) return;
+          touchDeltaX = e.touches[0].clientX - touchStartX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', () => {
+          if (!isTouching) return;
+          isTouching = false;
+          const threshold = 45;
+          if (touchDeltaX < -threshold) {
+            mobileCarouselNext();
+          } else if (touchDeltaX > threshold) {
+            mobileCarouselPrev();
+          }
+          touchDeltaX = 0;
+        });
+      }
+
+      startMobileAutoplay();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMobileCarousel);
+    } else {
+      initMobileCarousel();
+    }
   </script>
 </body>
 </html>
