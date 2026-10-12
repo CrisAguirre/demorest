@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manual de Usuario — La Soupe à l'Oignon & Marie Antoinette</title>
+  <title>Sistema de Gestión Integral para Restaurantes — Manual de Usuario</title>
   <meta name="description"
-    content="Guía completa de uso del Sistema Integral de Gestión Restaurantera La Soupe à l'Oignon & Marie Antoinette. Versión 2.0">
+    content="Guía completa de uso del Sistema de Gestión Integral para Restaurantes. Manual de Usuario Versión 2.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -167,7 +167,20 @@
       animation: fadeSlideUp 1s ease-out 0.15s both;
     }
 
-    .hero h2 {
+        .hero .manual-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin: 10px 0 4px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 1s ease-out 0.45s both;
+    }
+
+.hero h2 {
       font-family: 'Inter', sans-serif;
       font-size: clamp(15px, 1.8vw, 20px);
       font-weight: 300;
@@ -1715,9 +1728,10 @@
     <section class="hero">
       <div class="particles" id="particles"></div>
       <div class="hero-badge"><span class="pulse"></span> Manual de Usuario v2.0</div>
-      <h1>La Soupe à l'Oignon</h1>
-      <h2>& Marie Antoinette</h2>
+      <h1>Sistema de Gestión Integral</h1>
+      <h2>para Restaurantes</h2>
       <div class="diamond">◆ &nbsp; ◆ &nbsp; ◆</div>
+      <p class="manual-subtitle">Manual de Usuario</p>
       <div class="hero-meta">
         <span><svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--text-muted)" fill="none" stroke-width="1.8"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1749,7 +1763,7 @@
       <div class="section-header reveal">
         <div class="section-number">Capítulo 01</div>
         <h2 class="section-title">Bienvenido al Sistema</h2>
-        <p class="section-desc">Esta plataforma centraliza todas las operaciones de su restaurante y salón de té: desde
+        <p class="section-desc">Esta plataforma centraliza todas las operaciones de su restaurante: desde
           la atención en mesa hasta el análisis financiero, pasando por la cocina, el inventario y los domicilios.</p>
       </div>
 
@@ -2556,7 +2570,7 @@
               <path d="M5 3h14l-3 12H8L5 3z" />
             </svg></span>
           <h5>Barra</h5>
-          <p>Licores, vinos, jarabes, café gourmet y tés</p>
+          <p>Licores, vinos, jarabes y café gourmet</p>
           <span class="area-route">/inventory/barra</span>
         </div>
         <div class="area-card">
@@ -2998,7 +3012,7 @@
 
     <!-- ====== FOOTER ====== -->
     <footer class="manual-footer">
-      <div class="footer-brand">La Soupe à l'Oignon & Marie Antoinette</div>
+      <div class="footer-brand">Sistema de Gestión Integral para Restaurantes — Manual de Usuario</div>
       <p>Manual de Usuario — Documentación Oficial del Sistema · Versión 2.0 · Octubre 2026</p>
     </footer>
   </div>

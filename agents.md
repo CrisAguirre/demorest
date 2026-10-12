@@ -2,7 +2,7 @@
 
 ## Proyecto
 Angular 16 + Karma/Jasmine (Frontend `demorest`) y Node.js/Express + MongoDB + Socket.IO (Backend `demorestbknd`).
-Sistema integral para la gestión del restaurante y salón de té La Soupe à l'Oignon / Marie Antoinette.
+Sistema de gestión integral para restaurantes.
 Frontend desplegado en Vercel, Backend en Render.
 
 ## Accesos

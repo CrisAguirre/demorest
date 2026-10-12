@@ -359,7 +359,7 @@ import { WebSocketService } from '@core/services/websocket.service';
       <!-- VISTA SIMPLIFICADA PARA CLIENTES -->
       <section *ngIf="isCliente" class="cliente-dashboard">
         <div class="neon-card mb-4">
-          <h3>🍽️ Bienvenido a Marie Antoinette</h3>
+          <h3>🍽️ Bienvenido al Sistema de Gestión para Restaurantes</h3>
           <p style="color:var(--text-secondary);margin:0.5rem 0 1.5rem">
             Revisa la carta de platos, consulta mesas disponibles o haz seguimiento a tus pedidos.
           </p>

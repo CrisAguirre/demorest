@@ -1,5 +1,5 @@
-# 📖 Manual de Usuario — La Soupe à l'Oignon & Marie Antoinette
-**Sistema Integral de Gestión Restaurantera y Salón de Té**  
+# 📖 Sistema de Gestión Integral para Restaurantes
+**Manual de Usuario**  
 *Versión 2.0 — Actualizado Octubre 2026*  
 *Entornos: Producción ([Vercel](https://lasoupealoignon.vercel.app/) / [Render](https://demorestbknd.onrender.com/api)) | Local (`localhost:4200` / `localhost:5000`)*
 
@@ -47,7 +47,7 @@
 ---
 
 ## 1. Introducción y Visión General
-**La Soupe à l'Oignon / Marie Antoinette** es una plataforma tecnológica desarrollada para orquestar de manera fluida y en tiempo real todas las operaciones gastronómicas: desde el servicio a la mesa, el salón de té y las ventas por mostrador, hasta el control de recetas con costeo de escandallo, seguimiento de compras, auditoría de caja y análisis financiero de rentabilidad.
+**Sistema de Gestión Integral para Restaurantes** es una plataforma tecnológica desarrollada para orquestar de manera fluida y en tiempo real todas las operaciones gastronómicas: desde el servicio a la mesa y las ventas por mostrador, hasta el control de recetas con costeo de escandallo, seguimiento de compras, auditoría de caja y análisis financiero de rentabilidad.
 
 ### Principales Beneficios de la Versión 2.0
 * **Dashboard Centralizado:** Vista ejecutiva en tiempo real como página de inicio predeterminada (`/dashboard`).
@@ -337,4 +337,4 @@ Gestión integral de familias de productos y bebidas:
 | **No permite cobrar una venta en POS** | No hay caja abierta en el turno o el talonario actual se ha agotado. | Abra el turno correspondiente en el menú `Caja` y verifique la disponibilidad de números en `Talonarios`. |
 
 ---
-*Manual de Usuario — La Soupe à l'Oignon & Marie Antoinette. Documentación Oficial del Sistema.*
+*Sistema de Gestión Integral para Restaurantes — Manual de Usuario. Documentación Oficial del Sistema.*
